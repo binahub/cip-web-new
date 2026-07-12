@@ -1,36 +1,55 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Next.js Starter
 
-## Getting Started
+Frontend-only boilerplate with Next.js 16, TanStack Query v5, Axios, and Tailwind CSS v4.
 
-First, run the development server:
+## Quick Start
 
 ```bash
+cp .env.example .env.local
+npm install
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+## Scripts
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+| Command | Description |
+|---|---|
+| `npm run dev` | Start development server |
+| `npm run build` | Production build |
+| `npm run start` | Start production server |
+| `npm run lint` | Run ESLint |
+| `npm run typecheck` | Run TypeScript type checking |
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+## Project Structure
 
-## Learn More
+```
+src/
+  app/                  # App Router — pages, layouts, error/loading states only
+  services/             # Data-access layer — Axios calls + React Query hooks
+    api-client.ts       # Shared Axios instance with interceptors
+    users/              # User service (queries, mutations, types)
+    orders/             # Order service (queries, mutations, types)
+  components/
+    ui/                 # Generic primitives (Button, Card, Input, Spinner)
+    layout/             # App-wide structure (Header, Footer)
+    users/              # User-specific components
+    orders/             # Order-specific components
+  hooks/                # Shared generic hooks
+  providers/            # App-wide providers (QueryClientProvider)
+  lib/                  # Cross-cutting helpers
+  types/                # Shared TypeScript types (ApiResponse<T>)
+  config/               # Environment variable access
+```
 
-To learn more about Next.js, take a look at the following resources:
+## Adding a New Service
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+1. Create `src/services/<name>/` with `types.ts`, `queries.ts`, `mutations.ts`
+2. Create `src/components/<name>/` for route-specific UI
+3. Create `src/app/<name>/page.tsx` that imports from both
+4. Follow the `users` folder as a template
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+## Assumptions
 
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+- Backend API returns responses shaped as `ApiResponse<T>`: `{ data: T, status: number, message?: string }`
+- Auth uses Bearer token in localStorage (scaffolded, not implemented)
+- API base URL comes from `NEXT_PUBLIC_API_BASE_URL` env var

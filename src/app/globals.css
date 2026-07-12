@@ -1,26 +1,46 @@
 @import "tailwindcss";
 
-:root {
-  --background: #ffffff;
-  --foreground: #171717;
-}
+@theme {
+  /* Original boilerplate tokens */
+  --color-brand: oklch(0.6 0.2 250);
+  --color-brand-light: oklch(0.7 0.15 250);
+  --color-brand-dark: oklch(0.5 0.2 250);
+  --color-surface: oklch(0.99 0 0);
+  --color-surface-dim: oklch(0.96 0 0);
+  --color-border: oklch(0.88 0 0);
+  --color-text: oklch(0.2 0.02 250);
+  --color-text-muted: oklch(0.5 0.02 250);
+  --color-danger: oklch(0.6 0.2 25);
+  --color-success: oklch(0.6 0.2 145);
 
-@theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
+  /* CIP Lounge design tokens */
+  --color-bg: #000000;
+  --color-text-hero: #f2e9e4;
+  --color-text-secondary: #969696;
+  --color-text-nav: #979dac;
+  --color-text-price: #555555;
+  --color-accent: #c9ada7;
+  --color-badge-bg: rgba(34, 34, 59, 0.6);
+  --color-header-bg: rgba(23, 28, 31, 0.47);
+  --color-search-card-bg: rgba(23, 28, 31, 0.6);
+  --color-card-bg-subtle: rgba(23, 28, 31, 0.3);
+  --color-photo-card-bg: rgba(13, 16, 18, 0.85);
+  --color-login-pill-bg: rgba(201, 173, 167, 0.14);
+  --color-cta-pill-bg: rgba(201, 173, 167, 0.16);
+  --color-border-input: #969696;
+  --color-lounge-map-bg: rgba(34, 34, 59, 0.53);
+
+  /* Font families */
+  --font-yekan-bakh: var(--font-yekan-bakh-local);
+  --font-kavo-serif: "Kavo Serif", serif;
+  --font-rokh: "Rokh", serif;
+  --font-inter: "Inter", sans-serif;
   --font-sans: var(--font-geist-sans);
   --font-mono: var(--font-geist-mono);
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
-}
-
 body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  background: var(--color-bg);
+  color: var(--color-text-hero);
+  font-family: var(--font-yekan-bakh);
 }

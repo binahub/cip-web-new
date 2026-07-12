@@ -1,12 +1,17 @@
+"use client";
+
+import { useState } from "react";
 import Image from "next/image";
-import { User, ArrowDown } from "iconsax-react";
+import { User, ArrowDown, Menu, CloseSquare } from "iconsax-react";
 
 export default function Header() {
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+
   return (
     <header className="sticky top-0 z-50 mx-auto w-full max-w-[1296px] rounded-2xl bg-header-bg backdrop-blur-md">
-      <div className="flex h-[72px] items-center justify-between px-6">
+      <div className="flex h-[72px] items-center justify-between px-4 sm:px-6">
         {/* Brand wordmark + logomark */}
-        <div className="flex items-center gap-3">
+        <div className="flex items-center gap-2 sm:gap-3">
           <Image
             src="/logo/logo-mark.svg"
             alt="Mehrabad CIP Lounge Logo"
@@ -15,13 +20,13 @@ export default function Header() {
             className="object-contain"
           />
           <div className="flex flex-col leading-tight">
-            <span className="font-['Kavo_Serif:Black_Styled'] text-sm text-text-hero">mehrabad</span>
-            <span className="font-['Kavo_Serif:Light_Styled'] text-sm text-text-hero">CIP lounge</span>
+            <span className="font-['Kavo_Serif:Black_Styled'] text-xs sm:text-sm text-text-hero">mehrabad</span>
+            <span className="font-['Kavo_Serif:Light_Styled'] text-xs sm:text-sm text-text-hero">CIP lounge</span>
           </div>
         </div>
 
-        {/* Nav links */}
-        <nav className="flex items-center gap-6">
+        {/* Nav links - hidden on mobile */}
+        <nav className="hidden md:flex items-center gap-6">
           <a href="#" className="text-base font-normal text-text-nav hover:text-white transition-colors">
             وبلاگ
           </a>
@@ -34,12 +39,43 @@ export default function Header() {
           <div className="h-6 w-px bg-border-input/30" />
         </nav>
 
-        {/* Login pill */}
-        <button className="flex items-center gap-2 rounded-xl bg-login-pill-bg px-4 py-2 text-sm font-semibold text-accent transition-colors hover:opacity-80">
-          <User size={18} color="#c9ada7" variant="Bulk" />
-          <span>ورود | ثبت نام</span>
-        </button>
+        {/* Right side: Login pill + mobile menu toggle */}
+        <div className="flex items-center gap-2 sm:gap-4">
+          <button className="hidden sm:flex items-center gap-2 rounded-xl bg-login-pill-bg px-4 py-2 text-sm font-semibold text-accent transition-colors hover:opacity-80">
+            <User size={18} color="#c9ada7" variant="Bulk" />
+            <span>ورود | ثبت نام</span>
+          </button>
+          <button className="sm:hidden flex items-center justify-center w-10 h-10 rounded-xl bg-login-pill-bg transition-colors hover:opacity-80">
+            <User size={20} color="#c9ada7" variant="Bulk" />
+          </button>
+
+          {/* Mobile menu toggle */}
+          <button
+            className="md:hidden flex items-center justify-center w-10 h-10 rounded-xl bg-card-bg-subtle transition-colors hover:opacity-80"
+            onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
+          >
+            {mobileMenuOpen ? (
+              <CloseSquare size={20} color="#979dac" variant="Linear" />
+            ) : (
+              <Menu size={20} color="#979dac" variant="Linear" />
+            )}
+          </button>
+        </div>
       </div>
+
+      {/* Mobile menu dropdown */}
+      {mobileMenuOpen && (
+        <div className="md:hidden border-t border-border-input/20 px-4 py-4">
+          <nav className="flex flex-col gap-4">
+            <a href="#" className="text-base font-normal text-text-nav hover:text-white transition-colors">
+              وبلاگ
+            </a>
+            <a href="#" className="text-base font-normal text-text-nav hover:text-white transition-colors">
+              خدمات
+            </a>
+          </nav>
+        </div>
+      )}
     </header>
   );
 }

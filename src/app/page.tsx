@@ -8,13 +8,13 @@ import BlogTeaser from "@/components/home/BlogTeaser";
 export default function Home() {
   return (
     <div className="min-h-screen bg-bg">
-      <div className="mx-auto max-w-[1440px] px-[72px]">
+      <div className="mx-auto max-w-[1440px] px-4 sm:px-6 lg:px-12 xl:px-[72px]">
         <Header />
         <Hero />
         <ServiceCategoryGrid />
         <FeatureHighlights />
-        <section className="px-6 py-12">
-          <div className="mx-auto flex max-w-[1296px] items-start gap-6">
+        <section className="px-0 sm:px-6 py-12">
+          <div className="mx-auto flex max-w-[1296px] flex-col items-start gap-6 lg:flex-row">
             <BlogTeaser />
             <LoungeShowcase />
           </div>

@@ -11,10 +11,14 @@ export default function Home() {
       <div className="mx-auto max-w-[1440px] px-[72px]">
         <Header />
         <Hero />
-        <FeatureHighlights />
         <ServiceCategoryGrid />
-        <LoungeShowcase />
-        <BlogTeaser />
+        <FeatureHighlights />
+        <section className="px-6 py-12">
+          <div className="mx-auto flex max-w-[1296px] items-start gap-6">
+            <BlogTeaser />
+            <LoungeShowcase />
+          </div>
+        </section>
       </div>
     </div>
   );

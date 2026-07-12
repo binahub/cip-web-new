@@ -1,12 +1,41 @@
 import ServiceCard from "./ServiceCard";
 
 const services = [
-  { title: "لانژ اضافه مسافران", price: "۲۳,۱۰۰,۰۰۰" },
-  { title: "صندلی چرخدار و بالابر", price: "۲۳,۱۰۰,۰۰۰" },
-  { title: "خدمات تشریفات", price: "۲۳,۱۰۰,۰۰۰" },
-  { title: "مشایعت کننده", price: "۲۳,۱۰۰,۰۰۰" },
-  { title: "پارکینگ مسقف اختصاصی", price: "۲۳,۱۰۰,۰۰۰" },
-  { title: "لانژ ویژه کادر پرواز", price: "۲۳,۱۰۰,۰۰۰" },
+  { 
+    title: "لانژ اضافه مسافران", 
+    price: "۲۳,۱۰۰,۰۰۰",
+    imageUrl: "/images/home/service-lounge-extra-passengers.jpg"
+  },
+  { 
+    title: "صندلی چرخدار و بالابر", 
+    price: "۲۳,۱۰۰,۰۰۰",
+    imageUrl: "/images/home/service-wheelchair-lift.jpg"
+  },
+  { 
+    title: "خدمات تشریفات", 
+    price: "۲۳,۱۰۰,۰۰۰",
+    imageUrl: "/images/home/service-vip-services.jpg"
+  },
+  { 
+    title: "مشایعت کننده", 
+    price: "۲۳,۱۰۰,۰۰۰",
+    imageUrl: "/images/home/service-farewell-companion.jpg"
+  },
+  { 
+    title: "پارکینگ مسقف اختصاصی", 
+    price: "۲۳,۱۰۰,۰۰۰",
+    imageUrl: "/images/home/service-covered-parking.jpg"
+  },
+  { 
+    title: "لانژ ویژه کادر پرواز", 
+    price: "۲۳,۱۰۰,۰۰۰",
+    imageUrl: "/images/home/service-crew-lounge.jpg"
+  },
+  { 
+    title: "سوئیت اختصاصی", 
+    price: "۲۳,۱۰۰,۰۰۰",
+    imageUrl: "/images/home/service-exclusive-suite.jpg"
+  },
 ];
 
 export default function ServiceCategoryGrid() {
@@ -19,6 +48,7 @@ export default function ServiceCategoryGrid() {
               key={service.title}
               title={service.title}
               price={service.price}
+              imageUrl={service.imageUrl}
             />
           ))}
         </div>

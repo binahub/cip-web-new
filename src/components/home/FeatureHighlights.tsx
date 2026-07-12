@@ -24,16 +24,14 @@ const features = [
 export default function FeatureHighlights() {
   return (
     <section className="px-6 py-12">
+      <h3 className="z-10 mb-4 px-6 pt-6 text-2xl font-bold text-white text-center">
+        خدمات سی آی پی
+      </h3>
       <div className="mx-auto flex max-w-[1296px] gap-6">
         {features.map((feature) => (
-          <div
-            key={feature.title}
-            className="relative flex-1 rounded-3xl bg-card-bg-subtle p-6"
-          >
+          <div key={feature.title} className="relative flex-1 rounded-3xl bg-card-bg-subtle p-6">
             <div className="mb-4">{feature.icon}</div>
-            <h3 className="mb-2 text-xl font-semibold text-white">
-              {feature.title}
-            </h3>
+            <h3 className="mb-2 text-xl font-semibold text-white">{feature.title}</h3>
             <p className="w-[280px] text-sm leading-[1.808] text-text-secondary">
               {feature.description}
             </p>

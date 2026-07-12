@@ -1,3 +1,4 @@
+import Image from "next/image";
 import { Profile2User, Calendar, Location, ArrowDown } from "iconsax-react";
 
 export default function Hero() {
@@ -5,18 +6,31 @@ export default function Hero() {
     <section className="relative overflow-hidden px-6 pt-8 pb-16">
       {/* Decorative background glows */}
       <div className="pointer-events-none absolute inset-0">
-        <div className="absolute -left-[446px] -top-[409px] h-[1002px] w-[2366px] rounded-full bg-accent/10 blur-[120px]" />
-        <div className="absolute -bottom-[200px] left-[622px] h-[1002px] w-[1183px] rounded-full bg-accent/10 blur-[120px]" />
+        <Image
+          src="/images/home/hero-glow-primary.png"
+          alt=""
+          fill
+          className="object-cover opacity-30"
+        />
+        <Image
+          src="/images/home/hero-glow-secondary.png"
+          alt=""
+          fill
+          className="object-cover opacity-30"
+        />
       </div>
 
       <div className="relative z-10 mx-auto max-w-[1296px]">
         {/* Brand heading */}
         <div className="flex flex-col items-center gap-2 text-center">
           {/* Logomark */}
-          <div className="mb-2 flex h-[77px] w-[76px] items-center justify-center rounded-full bg-accent/20">
-            {/* TODO: replace with exported logo-mark.svg from Figma */}
-            <div className="h-12 w-12 rounded-full bg-accent/60" />
-          </div>
+          <Image
+            src="/logo/logo-mark.svg"
+            alt="Mehrabad CIP Lounge Logo"
+            width={76}
+            height={77}
+            className="mb-2 object-contain"
+          />
           <h1 className="font-['Kavo_Serif:Black_Styled'] text-[32px] leading-[1.808] text-text-hero">
             mehrabad CIP lounge
           </h1>

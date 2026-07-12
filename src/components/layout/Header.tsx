@@ -1,3 +1,4 @@
+import Image from "next/image";
 import { User, ArrowDown } from "iconsax-react";
 
 export default function Header() {
@@ -6,10 +7,13 @@ export default function Header() {
       <div className="flex h-[72px] items-center justify-between px-6">
         {/* Brand wordmark + logomark */}
         <div className="flex items-center gap-3">
-          <div className="flex h-10 w-10 items-center justify-center rounded-full bg-accent/20">
-            {/* TODO: replace with exported logo-mark.svg from Figma */}
-            <div className="h-6 w-6 rounded-full bg-accent/60" />
-          </div>
+          <Image
+            src="/logo/logo-mark.svg"
+            alt="Mehrabad CIP Lounge Logo"
+            width={40}
+            height={40}
+            className="object-contain"
+          />
           <div className="flex flex-col leading-tight">
             <span className="font-['Kavo_Serif:Black_Styled'] text-sm text-text-hero">mehrabad</span>
             <span className="font-['Kavo_Serif:Light_Styled'] text-sm text-text-hero">CIP lounge</span>

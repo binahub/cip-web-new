@@ -1,10 +1,11 @@
+import Image from "next/image";
 import { Crown1, Diamonds, ArrowLeft } from "iconsax-react";
 import Badge from "@/components/ui/Badge";
 
 interface ServiceCardData {
   title: string;
   price: string;
-  imageUrl?: string;
+  imageUrl: string;
 }
 
 export default function ServiceCard({ title, price, imageUrl }: ServiceCardData) {
@@ -47,15 +48,14 @@ export default function ServiceCard({ title, price, imageUrl }: ServiceCardData)
       <div className="absolute bottom-0 left-0 right-0 h-[225px]">
         {/* Gradient overlay */}
         <div
-          className="absolute inset-0"
+          className="absolute inset-0 z-10"
           style={{
             background:
               "linear-gradient(180deg, transparent 4.5%, rgba(13,16,18,0.59) 40%, #0d1012 88%)",
           }}
         />
-        {/* Photo placeholder */}
-        {/* TODO: replace with exported asset from Figma */}
-        <div className="h-full w-full bg-gradient-to-b from-accent/10 to-photo-card-bg" />
+        {/* Photo */}
+        <Image src={imageUrl} alt={title} fill className="object-cover" />
       </div>
     </div>
   );

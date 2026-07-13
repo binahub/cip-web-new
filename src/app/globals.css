@@ -72,3 +72,37 @@ body {
   color: #fff;
   border: 1px solid var(--color-border-input, #969696);
 }
+
+/* Year/Month selector panels */
+.rmdp-container .rmdp-year-picker,
+.rmdp-container .rmdp-month-picker {
+  background-color: #17181b;
+}
+.rmdp-container .rmdp-year-picker .rmdp-year,
+.rmdp-container .rmdp-month-picker .rmdp-month {
+  color: #fff;
+  border-radius: 8px;
+}
+.rmdp-container .rmdp-year-picker .rmdp-year:hover,
+.rmdp-container .rmdp-month-picker .rmdp-month:hover {
+  background-color: rgba(201, 173, 167, 0.16);
+}
+.rmdp-container .rmdp-year-picker .rmdp-year.rmdp-selected,
+.rmdp-container .rmdp-month-picker .rmdp-month.rmdp-selected {
+  background-color: var(--color-accent, #c9ada7);
+  color: #000;
+}
+
+/* Header values (year/month clickable) */
+.rmdp-container .rmdp-header .rmdp-header-values {
+  background-color: transparent;
+}
+.rmdp-container .rmdp-header .rmdp-header-values span {
+  color: #fff;
+  cursor: pointer;
+  padding: 4px 8px;
+  border-radius: 8px;
+}
+.rmdp-container .rmdp-header .rmdp-header-values span:hover {
+  background-color: rgba(201, 173, 167, 0.16);
+}

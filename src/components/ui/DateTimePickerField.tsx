@@ -49,7 +49,7 @@ export default function DateTimePickerField({
         )}
       />
 
-      <div className="h-14b w-px shrink-0 bg-border-input/40" />
+      <div className="h-14 w-px shrink-0 bg-border-input/40" />
 
       {/* تاریخ پرواز — date-only picker, Jalali calendar */}
       <DatePicker

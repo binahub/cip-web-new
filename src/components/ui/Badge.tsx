@@ -9,7 +9,7 @@ interface BadgeProps {
 export default function Badge({ icon, label, className = "" }: BadgeProps) {
   return (
     <span
-      className={`inline-flex items-center gap-1 rounded-[10px] bg-badge-bg px-2 py-0.5 text-xs font-normal text-white ${className}`}
+      className={`inline-flex h-5 items-center justify-center gap-1 rounded-[10px] bg-badge-bg px-1 py-px text-xs font-normal text-white ${className}`}
     >
       {icon}
       {label}

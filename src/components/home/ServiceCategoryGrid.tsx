@@ -1,41 +1,13 @@
 import ServiceCard from "./ServiceCard";
 
 const services = [
-  {
-    title: "لانژ اضافه مسافران",
-    price: "۲۳,۱۰۰,۰۰۰",
-    imageUrl: "/images/home/service-lounge-extra-passengers.jpg",
-  },
-  {
-    title: "صندلی چرخدار و بالابر",
-    price: "۲۳,۱۰۰,۰۰۰",
-    imageUrl: "/images/home/service-wheelchair-lift.jpg",
-  },
-  {
-    title: "خدمات تشریفات",
-    price: "۲۳,۱۰۰,۰۰۰",
-    imageUrl: "/images/home/service-vip-services.jpg",
-  },
-  {
-    title: "مشایعت کننده",
-    price: "۲۳,۱۰۰,۰۰۰",
-    imageUrl: "/images/home/service-farewell-companion.jpg",
-  },
-  {
-    title: "پارکینگ مسقف اختصاصی",
-    price: "۲۳,۱۰۰,۰۰۰",
-    imageUrl: "/images/home/service-covered-parking.jpg",
-  },
-  {
-    title: "لانژ ویژه کادر پرواز",
-    price: "۲۳,۱۰۰,۰۰۰",
-    imageUrl: "/images/home/service-crew-lounge.jpg",
-  },
-  {
-    title: "سوئیت اختصاصی",
-    price: "۲۳,۱۰۰,۰۰۰",
-    imageUrl: "/images/home/service-exclusive-suite.jpg",
-  },
+  { title: "لانژ اضافه مسافران", price: "۲۳,۱۰۰,۰۰۰", imageUrl: "/images/home/service-lounge-extra-passengers.jpg" },
+  { title: "صندلی چرخدار و بالابر", price: "۲۳,۱۰۰,۰۰۰", imageUrl: "/images/home/service-wheelchair-lift.jpg" },
+  { title: "خدمات تشریفات", price: "۲۳,۱۰۰,۰۰۰", imageUrl: "/images/home/service-vip-services.jpg" },
+  { title: "مشایعت کننده", price: "۲۳,۱۰۰,۰۰۰", imageUrl: "/images/home/service-farewell-companion.jpg" },
+  { title: "پارکینگ مسقف اختصاصی", price: "۲۳,۱۰۰,۰۰۰", imageUrl: "/images/home/service-covered-parking.jpg" },
+  { title: "لانژ ویژه کادر پرواز", price: "۲۳,۱۰۰,۰۰۰", imageUrl: "/images/home/service-crew-lounge.jpg" },
+  { title: "سوئیت اختصاصی", price: "۲۳,۱۰۰,۰۰۰", imageUrl: "/images/home/service-exclusive-suite.jpg" },
 ];
 
 function TitleDecoration() {
@@ -49,6 +21,11 @@ function TitleDecoration() {
 }
 
 export default function ServiceCategoryGrid() {
+  // Only meaningful when the final row has exactly 1 leftover card at a given
+  // breakpoint's column count. With 7 items this is true at both sm (2 cols,
+  // remainder 1) and lg (3 cols, remainder 1).
+  const isLastItemAlone = services.length % 3 === 1;
+
   return (
     <>
       {/* Section title with decorative vectors */}
@@ -59,17 +36,32 @@ export default function ServiceCategoryGrid() {
         </h2>
         <TitleDecoration />
       </div>
-      <section className="px-4 sm:px-6 py-8 sm:py-12">
+      <section className="mt-10 px-4 sm:px-6 pb-12">
         <div className="mx-auto max-w-[1296px]">
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6 justify-center">
-            {services.map((service) => (
-              <ServiceCard
-                key={service.title}
-                title={service.title}
-                price={service.price}
-                imageUrl={service.imageUrl}
-              />
-            ))}
+          <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
+            {services.map((service, index) => {
+              const isLast = index === services.length - 1;
+              const centerAlone = isLast && isLastItemAlone;
+
+              return (
+                <div
+                  key={service.title}
+                  className={
+                    centerAlone
+                      ? "flex justify-center sm:col-span-2 lg:col-span-3"
+                      : undefined
+                  }
+                >
+                  <div className={centerAlone ? "w-full lg:max-w-[416px]" : "w-full"}>
+                    <ServiceCard
+                      title={service.title}
+                      price={service.price}
+                      imageUrl={service.imageUrl}
+                    />
+                  </div>
+                </div>
+              );
+            })}
           </div>
         </div>
       </section>

@@ -1,60 +1,79 @@
 import Image from "next/image";
-import { Crown1, Diamonds, ArrowLeft } from "iconsax-react";
+import { ArrowLeft } from "iconsax-react";
 import Badge from "@/components/ui/Badge";
 
 interface ServiceCardData {
   title: string;
   price: string;
   imageUrl: string;
+  imagePosition?: string;
 }
 
-export default function ServiceCard({ title, price, imageUrl }: ServiceCardData) {
+export default function ServiceCard({
+  title,
+  price,
+  imageUrl,
+  imagePosition = "50% 30%",
+}: ServiceCardData) {
   return (
-    <div className="group relative flex h-[320px] sm:h-[405px] w-full flex-col overflow-hidden rounded-3xl bg-photo-card-bg">
-      {/* Top section: title, badges, price, CTA — in that order */}
-      <div className="relative z-10 flex flex-1 flex-col items-center p-4 sm:p-6 pt-6 sm:pt-8">
-        {/* Title */}
-        <h3 className="mb-3 text-lg sm:text-2xl font-bold text-white text-center">{title}</h3>
+    <div className="relative h-[405px] w-full overflow-hidden rounded-[24px] bg-photo-card-bg">
+      <div className="pointer-events-none absolute inset-x-0 bottom-0 z-0 h-[160px] sm:h-[205px] overflow-hidden">
+        {/* Photo — dynamic, will come from the booking API later. object-position
+            approximates Figma's crop bias (source photo is cropped higher than
+            center); tune per-image via the `imagePosition` prop once real photos
+            are in and you can eyeball each one. */}
+        <Image
+          src={imageUrl}
+          alt={title}
+          fill
+          className="object-cover"
+          style={{ objectPosition: imagePosition }}
+          sizes="416px"
+        />
 
-        {/* Badges */}
-        <div className="mb-3 flex gap-2">
-          <Badge
-            icon={<Crown1 size={12} color="white" variant="Bold" />}
-            label="VIP Services"
-            className="font-['Inter']"
-          />
-          <Badge
-            icon={<Diamonds size={12} color="white" variant="Bold" />}
-            label="CIP Services"
-            className="font-['Inter']"
-          />
-        </div>
-
-        {/* Price row */}
-        <div className="mb-3 flex items-baseline gap-1">
-          <span className="text-[10px] sm:text-xs text-text-price">تومان</span>
-          <span className="text-lg sm:text-xl font-bold text-white">{price}</span>
-          <span className="text-[10px] sm:text-xs text-text-price">قیمت از</span>
-        </div>
-
-        {/* CTA button */}
-        <button className="flex h-[32px] w-[132px] items-center justify-center gap-2 rounded-lg bg-cta-pill-bg px-2 py-1 transition-colors hover:opacity-80">
-          <ArrowLeft size={20} color="#c9ada7" variant="Linear" />
-          <span className="px-1 text-xs font-normal leading-[22px] text-accent">مشاهده جزئیات</span>
-        </button>
-      </div>
-
-      {/* Bottom photo band */}
-      <div className="absolute bottom-0 left-0 right-0 h-[160px] sm:h-[225px]">
+        {/* Gradient fade — always a CSS layer on top of the photo, independent of
+            image source. Matches Figma's actual fade curve: no darkening for the
+            top ~29% of the band, then ramping to near-black by the bottom. */}
         <div
-          className="absolute inset-0 z-10"
+          className="pointer-events-none absolute inset-0 z-10"
           style={{
             background:
-              "linear-gradient(180deg, transparent 4.5%, rgba(13,16,18,0.59) 40%, #0d1012 88%)",
+              "linear-gradient(180deg, rgba(13,16,18,0) 0%, rgba(13,16,18,0) 15%, rgba(13,16,18,0.59) 55%, rgba(13,16,18,0.93) 100%)",
           }}
         />
-        <Image src={imageUrl} alt={title} fill className="object-cover object-top" />
       </div>
+
+      {/* Content — Figma absolute Y positions */}
+      <h3 className="absolute left-1/2 top-8 z-10 -translate-x-1/2 whitespace-nowrap text-center text-2xl font-bold leading-normal text-white">
+        {title}
+      </h3>
+
+      <div className="absolute left-1/2 top-[81px] z-10 flex -translate-x-1/2 flex-row-reverse gap-2.5">
+        <Badge
+          icon={<Image src="/icons/crown.svg" alt="" width={18} height={18} />}
+          label="VIP Services"
+          className="font-inter"
+        />
+        <Badge
+          icon={<Image src="/icons/diamond.svg" alt="" width={18} height={18} />}
+          label="CIP Services"
+          className="font-inter"
+        />
+      </div>
+
+      <div
+        className="absolute left-1/2 top-[113px] z-10 flex -translate-x-1/2 items-end gap-2"
+        dir="rtl"
+      >
+        <span className="pb-[9px] text-xs leading-[1.808] text-text-price">قیمت از</span>
+        <span className="text-xl font-bold leading-[1.808] text-white">{price}</span>
+        <span className="pb-[9px] text-xs leading-[1.808] text-text-price">تومان</span>
+      </div>
+
+      <button className="absolute left-1/2 top-[161px] z-10 flex h-8 -translate-x-1/2 items-center justify-center rounded-lg bg-cta-pill-bg px-2 py-1 transition-colors hover:opacity-80">
+        <ArrowLeft size={20} color="#c9ada7" variant="Linear" />
+        <span className="px-2 text-xs font-normal leading-[22px] text-accent">مشاهده جزئیات</span>
+      </button>
     </div>
   );
 }

@@ -19,10 +19,13 @@ export default function Header() {
             height={40}
             className="object-contain"
           />
-          <div className="flex flex-col leading-tight">
-            <span className="font-['Kavo_Serif:Black_Styled'] text-xs sm:text-sm text-text-hero">mehrabad</span>
-            <span className="font-['Kavo_Serif:Light_Styled'] text-xs sm:text-sm text-text-hero">CIP lounge</span>
-          </div>
+          <Image
+            src="/cip-lounge-text-header.svg"
+            alt="Mehrabad CIP Lounge"
+            width={104}
+            height={24}
+            className="h-[16px] sm:h-[24px] w-auto"
+          />
         </div>
 
         {/* Nav links - hidden on mobile */}

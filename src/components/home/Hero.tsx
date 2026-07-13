@@ -31,12 +31,20 @@ export default function Hero() {
             height={77}
             className="mb-2 object-contain w-[50px] h-[51px] sm:w-[76px] sm:h-[77px]"
           />
-          <h1 className="font-['Kavo_Serif:Black_Styled'] text-2xl sm:text-[32px] leading-[1.808] text-text-hero">
-            mehrabad CIP lounge
-          </h1>
-          <p className="font-['Rokh:Medium'] text-base sm:text-[20px] leading-[1.808] text-text-hero">
-            سی آی پی فرودگاه مهرآباد
-          </p>
+          <Image
+            src="/cip-lounge-text-wide.svg"
+            alt="Mehrabad CIP Lounge"
+            width={435}
+            height={23}
+            className="w-[250px] sm:w-[435px] h-auto"
+          />
+          <Image
+            src="/cip-mehr-farsi-text.svg"
+            alt="سی آی پی فرودگاه مهرآباد"
+            width={181}
+            height={21}
+            className="w-[120px] sm:w-[181px] h-auto"
+          />
         </div>
 
         <SearchBar />

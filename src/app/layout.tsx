@@ -41,9 +41,9 @@ export default function RootLayout({
       lang="fa"
       className={`${geistSans.variable} ${geistMono.variable} ${yekanBakh.variable} h-full antialiased`}
     >
-      <body className="min-h-full flex flex-col">
+      <body className="min-h-full flex flex-col overflow-x-hidden">
         <QueryProvider>
-          <main className="flex-1">{children}</main>
+          <main className="flex-1 overflow-x-hidden">{children}</main>
         </QueryProvider>
       </body>
     </html>

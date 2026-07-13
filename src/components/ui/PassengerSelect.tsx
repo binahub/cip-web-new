@@ -45,32 +45,31 @@ export default function PassengerSelect({ value, onChange }: PassengerSelectProp
   const updateCount = (key: keyof PassengerCounts, delta: number) => {
     const newCount = value[key] + delta;
     if (newCount < 0) return;
-    if (key === "adult" && newCount < 1) return;
     onChange({ ...value, [key]: newCount });
   };
 
   return (
-    <div ref={dropdownRef} className="relative flex-1">
+    <div ref={dropdownRef} className="relative w-full min-w-0 flex-1">
       <button
         type="button"
         onClick={() => setIsOpen(!isOpen)}
-        className="flex h-12 w-full items-center gap-2 rounded-2xl border border-border-input bg-transparent px-4 sm:h-14"
+        className="flex h-14 w-full items-center gap-2 rounded-2xl border border-border-input bg-transparent px-4"
       >
         <Profile2User size={20} color="#969696" variant="Linear" />
-        <span dir="rtl" className="flex-1 text-right text-sm text-text-secondary sm:text-base">
+        <span dir="rtl" className="min-w-0 flex-1 truncate text-right text-sm text-text-secondary sm:text-base">
           {getDisplayText()}
         </span>
       </button>
 
       {isOpen && (
-        <div className="absolute top-full left-0 z-50 mt-2 w-full min-w-[280px] rounded-2xl border border-border-input bg-[#17181b] p-4 shadow-lg">
+        <div className="absolute inset-x-0 top-full z-[100] mt-2 rounded-2xl border border-border-input bg-dropdown-bg p-4 shadow-2xl">
           {categories.map((cat) => (
-            <div key={cat.key} className="flex items-center justify-between py-3">
-              <div className="flex flex-col">
+            <div key={cat.key} className="flex items-center justify-between gap-3 py-3">
+              <div className="min-w-0 flex flex-col text-right" dir="rtl">
                 <span className="text-sm font-medium text-white sm:text-base">{cat.label}</span>
                 <span className="text-xs text-text-secondary">{cat.description}</span>
               </div>
-              <div className="flex items-center gap-3">
+              <div className="flex shrink-0 items-center gap-3">
                 <button
                   type="button"
                   onClick={() => updateCount(cat.key, -1)}

@@ -1,0 +1,8 @@
+<svg preserveAspectRatio="none" width="100%" height="100%" overflow="visible" style="display: block;" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+<g id="Layer_1">
+<g id="Group" opacity="0.4">
+<path id="Vector" d="M9 3.62C9 4.24 9.5 4.74 10.12 4.74H10.88V6.3C11.26 6.26 11.62 6.24 12 6.24C12.38 6.24 12.76 6.24 13.12 6.3V4.74H13.88C14.5 4.74 15 4.24 15 3.62C15 3 14.5 2.5 13.88 2.5H10.12C9.5 2.5 9 3 9 3.62ZM0 19.38C0 20 0.5 20.5 1.12 20.5H22.88C23.5 20.5 24 20 24 19.38C24 18.76 23.5 18.26 22.88 18.26H1.12C0.5 18.26 0 18.76 0 19.38Z" fill="var(--fill-0, #C9ADA7)"/>
+</g>
+<path id="Vector_2" d="M22.5 16.7402C22.5 10.9402 17.8 6.24023 12 6.24023C6.2 6.24023 1.5 10.9602 1.5 16.7402V18.2402H22.5V16.7402Z" fill="var(--fill-0, #C9ADA7)"/>
+</g>
+</svg>

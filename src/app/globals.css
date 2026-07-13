@@ -25,10 +25,14 @@
   --color-search-card-bg: rgba(23, 28, 31, 0.6);
   --color-card-bg-subtle: rgba(23, 28, 31, 0.3);
   --color-photo-card-bg: rgba(13, 16, 18, 0.85);
+  --color-service-detail-card: rgba(13, 16, 18, 0.64);
+  --color-service-body: #7d7d7d;
   --color-login-pill-bg: rgba(201, 173, 167, 0.14);
   --color-cta-pill-bg: rgba(201, 173, 167, 0.16);
   --color-border-input: #969696;
   --color-lounge-map-bg: rgba(34, 34, 59, 0.53);
+  --color-service-chip-bg: #111517;
+  --color-dropdown-bg: #17181b;
 
   /* Font families */
   --font-yekan-bakh: var(--font-yekan-bakh-local);

@@ -1,8 +1,10 @@
 import Image from "next/image";
+import Link from "next/link";
 import { ArrowLeft } from "iconsax-react";
 import Badge from "@/components/ui/Badge";
 
 interface ServiceCardData {
+  id: string;
   title: string;
   price: string;
   imageUrl: string;
@@ -10,6 +12,7 @@ interface ServiceCardData {
 }
 
 export default function ServiceCard({
+  id,
   title,
   price,
   imageUrl,
@@ -44,7 +47,7 @@ export default function ServiceCard({
       </div>
 
       {/* Content — Figma absolute Y positions */}
-      <h3 className="absolute left-1/2 top-8 -translate-x-1/2 whitespace-nowrap text-center text-2xl font-bold leading-normal text-white">
+      <h3 className="absolute left-1/2 top-8 w-[90%] -translate-x-1/2 text-center text-xl font-bold leading-normal text-white sm:text-2xl">
         {title}
       </h3>
 
@@ -70,10 +73,13 @@ export default function ServiceCard({
         <span className="pb-[9px] text-xs leading-[1.808] text-text-price">تومان</span>
       </div>
 
-      <button className="absolute left-1/2 top-[161px] z-10 flex h-8 -translate-x-1/2 items-center justify-center rounded-lg bg-cta-pill-bg px-2 py-1 transition-colors hover:opacity-80">
+      <Link
+        href={`/services/${id}`}
+        className="absolute left-1/2 top-[161px] z-10 flex h-8 -translate-x-1/2 items-center justify-center rounded-lg bg-cta-pill-bg px-2 py-1 transition-colors hover:opacity-80"
+      >
         <span className="px-2 text-xs font-normal leading-[22px] text-accent">مشاهده جزئیات</span>
         <ArrowLeft size={20} color="#c9ada7" variant="Linear" />
-      </button>
+      </Link>
     </div>
   );
 }

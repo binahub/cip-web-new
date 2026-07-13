@@ -13,7 +13,7 @@ export default function SearchField({ label, icon, leadingIcon, onClick }: Searc
       type="button"
       onClick={onClick}
       dir="ltr"
-      className="flex h-12 flex-1 items-center gap-2 rounded-2xl border border-border-input bg-transparent px-4 sm:h-14"
+      className="flex h-14 flex-1 items-center gap-2 rounded-2xl border border-border-input bg-transparent px-4"
     >
       {leadingIcon}
       <span dir="rtl" className="flex-1 text-right text-sm text-text-secondary sm:text-base">

@@ -25,7 +25,7 @@ export default function DateTimePickerField({
   return (
     <div
       dir="ltr"
-      className="relative z-50 flex h-12 flex-1 items-center gap-2 rounded-2xl border border-border-input bg-transparent px-4 sm:h-14"
+      className="relative z-40 flex h-14 w-full min-w-0 flex-1 items-center gap-2 rounded-2xl border border-border-input bg-transparent px-4"
     >
       {/* زمان پرواز — time-only picker */}
       <DatePicker
@@ -36,20 +36,20 @@ export default function DateTimePickerField({
         calendar={persian}
         locale={persian_fa}
         plugins={[<TimePicker key="time" hideSeconds />]}
-        containerClassName="flex-1"
+        containerClassName="min-w-0 flex-1"
         render={(value, openCalendar) => (
           <button
             type="button"
             onClick={openCalendar}
             dir="rtl"
-            className="w-full px-1 text-right text-sm text-text-secondary sm:text-base"
+            className="w-full truncate px-1 text-right text-sm text-text-secondary sm:text-base"
           >
             {value || "زمان پرواز"}
           </button>
         )}
       />
 
-      <div className="h-8 w-px bg-border-input/40" />
+      <div className="h-14b w-px shrink-0 bg-border-input/40" />
 
       {/* تاریخ پرواز — date-only picker, Jalali calendar */}
       <DatePicker
@@ -57,20 +57,20 @@ export default function DateTimePickerField({
         onChange={onDateChange}
         calendar={persian}
         locale={persian_fa}
-        containerClassName="flex-1"
+        containerClassName="min-w-0 flex-1"
         render={(value, openCalendar) => (
           <button
             type="button"
             onClick={openCalendar}
             dir="rtl"
-            className="w-full px-1 text-right text-sm text-text-secondary sm:text-base"
+            className="w-full truncate px-1 text-right text-sm text-text-secondary sm:text-base"
           >
             {value || "تاریخ پرواز"}
           </button>
         )}
       />
 
-      {icon}
+      <span className="shrink-0">{icon}</span>
     </div>
   );
 }

@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import Image from "next/image";
+import Link from "next/link";
 import { User, ArrowDown2, Menu, CloseSquare } from "iconsax-react";
 
 export default function Header() {
@@ -12,20 +13,22 @@ export default function Header() {
       <div className="flex h-[72px] items-center justify-between px-4 sm:px-6">
         {/* Brand wordmark + logomark + nav links */}
         <div className="flex items-center gap-2 sm:gap-3">
-          <Image
-            src="/logo/logo-mark.svg"
-            alt="Mehrabad CIP Lounge Logo"
-            width={40}
-            height={40}
-            className="object-contain"
-          />
-          <Image
-            src="/cip-lounge-text-header.svg"
-            alt="Mehrabad CIP Lounge"
-            width={104}
-            height={24}
-            className="h-[16px] sm:h-[24px] w-auto"
-          />
+          <Link href="/" className="flex items-center gap-2 sm:gap-3">
+            <Image
+              src="/logo/logo-mark.svg"
+              alt="Mehrabad CIP Lounge Logo"
+              width={40}
+              height={40}
+              className="object-contain"
+            />
+            <Image
+              src="/cip-lounge-text-header.svg"
+              alt="Mehrabad CIP Lounge"
+              width={104}
+              height={24}
+              className="h-[16px] sm:h-[24px] w-auto"
+            />
+          </Link>
           <div className="hidden md:block h-6 w-px bg-border-input/30 ml-2" />
           <nav className="hidden md:flex items-center gap-6 ml-2">
             <div className="flex items-center gap-1">

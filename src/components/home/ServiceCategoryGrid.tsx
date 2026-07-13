@@ -1,14 +1,5 @@
 import ServiceCard from "./ServiceCard";
-
-const services = [
-  { title: "لانژ اضافه مسافران", price: "۲۳,۱۰۰,۰۰۰", imageUrl: "/images/home/service-lounge-extra-passengers.jpg" },
-  { title: "صندلی چرخدار و بالابر", price: "۲۳,۱۰۰,۰۰۰", imageUrl: "/images/home/service-wheelchair-lift.jpg" },
-  { title: "خدمات تشریفات", price: "۲۳,۱۰۰,۰۰۰", imageUrl: "/images/home/service-vip-services.jpg" },
-  { title: "مشایعت کننده", price: "۲۳,۱۰۰,۰۰۰", imageUrl: "/images/home/service-farewell-companion.jpg" },
-  { title: "پارکینگ مسقف اختصاصی", price: "۲۳,۱۰۰,۰۰۰", imageUrl: "/images/home/service-covered-parking.jpg" },
-  { title: "لانژ ویژه کادر پرواز", price: "۲۳,۱۰۰,۰۰۰", imageUrl: "/images/home/service-crew-lounge.jpg" },
-  { title: "سوئیت اختصاصی", price: "۲۳,۱۰۰,۰۰۰", imageUrl: "/images/home/service-exclusive-suite.jpg" },
-];
+import { getServiceCards } from "@/data/services";
 
 function TitleDecoration() {
   return (
@@ -21,6 +12,7 @@ function TitleDecoration() {
 }
 
 export default function ServiceCategoryGrid() {
+  const services = getServiceCards();
   // Only meaningful when the final row has exactly 1 leftover card at a given
   // breakpoint's column count. With 7 items this is true at both sm (2 cols,
   // remainder 1) and lg (3 cols, remainder 1).
@@ -45,7 +37,7 @@ export default function ServiceCategoryGrid() {
 
               return (
                 <div
-                  key={service.title}
+                  key={service.id}
                   className={
                     centerAlone
                       ? "flex justify-center sm:col-span-2 lg:col-span-3"
@@ -54,9 +46,11 @@ export default function ServiceCategoryGrid() {
                 >
                   <div className={centerAlone ? "w-full lg:max-w-[416px]" : "w-full"}>
                     <ServiceCard
+                      id={service.id}
                       title={service.title}
                       price={service.price}
                       imageUrl={service.imageUrl}
+                      imagePosition={service.imagePosition}
                     />
                   </div>
                 </div>

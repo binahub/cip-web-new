@@ -1,5 +1,5 @@
 import Image from "next/image";
-import { Profile2User, Calendar, Location, ArrowDown } from "iconsax-react";
+import SearchBar from "./SearchBar";
 
 export default function Hero() {
   return (
@@ -39,40 +39,7 @@ export default function Hero() {
           </p>
         </div>
 
-        {/* Search bar */}
-        <div className="relative mt-4 sm:mt-6">
-          <div className="flex flex-col sm:flex-row items-stretch gap-3 sm:gap-6 rounded-3xl bg-search-card-bg p-3 sm:p-4">
-            {/* مسافران field */}
-            <div className="flex flex-1 items-center gap-2 rounded-2xl border border-border-input px-4 h-12 sm:h-14">
-              <span className="text-sm sm:text-base text-text-secondary">مسافران</span>
-              <Profile2User size={20} color="#969696" variant="Linear" className="mr-auto" />
-            </div>
-
-            {/* زمان پرواز | تاریخ پرواز field */}
-            <div className="flex flex-1 items-center gap-0 rounded-2xl border border-border-input h-12 sm:h-14">
-              <span className="flex-1 px-3 sm:px-4 text-sm sm:text-base text-text-secondary">
-                زمان پرواز
-              </span>
-              <div className="h-8 w-px bg-border-input/30" />
-              <span className="flex-1 px-3 sm:px-4 text-sm sm:text-base text-text-secondary">
-                تاریخ پرواز
-              </span>
-              <Calendar size={20} color="#969696" variant="Linear" className="ml-2" />
-            </div>
-
-            {/* فرودگاه field */}
-            <div className="flex flex-1 items-center gap-2 rounded-2xl border border-border-input px-4 h-12 sm:h-14">
-              <ArrowDown size={18} color="#969696" variant="Linear" />
-              <span className="text-sm sm:text-base text-text-secondary">فرودگاه</span>
-              <Location size={20} color="#969696" variant="Linear" className="mr-auto" />
-            </div>
-          </div>
-
-          {/* Accent promo tile */}
-          <div className="absolute -left-2 -top-3 sm:-left-4 sm:-top-4 flex h-[60px] sm:h-[88px] w-[120px] sm:w-[173px] items-center justify-center rounded-xl sm:rounded-2xl bg-accent">
-            <span className="text-xs sm:text-base font-extrabold text-black">بررسی خدمات</span>
-          </div>
-        </div>
+        <SearchBar />
       </div>
     </section>
   );

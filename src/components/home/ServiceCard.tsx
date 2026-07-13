@@ -71,8 +71,8 @@ export default function ServiceCard({
       </div>
 
       <button className="absolute left-1/2 top-[161px] z-10 flex h-8 -translate-x-1/2 items-center justify-center rounded-lg bg-cta-pill-bg px-2 py-1 transition-colors hover:opacity-80">
-        <ArrowLeft size={20} color="#c9ada7" variant="Linear" />
         <span className="px-2 text-xs font-normal leading-[22px] text-accent">مشاهده جزئیات</span>
+        <ArrowLeft size={20} color="#c9ada7" variant="Linear" />
       </button>
     </div>
   );

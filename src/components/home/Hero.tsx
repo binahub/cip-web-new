@@ -39,11 +39,6 @@ export default function Hero() {
           </p>
         </div>
 
-        {/* Section title */}
-        <h2 className="mt-6 sm:mt-10 text-center text-lg sm:text-2xl font-bold text-white">
-          خدمات جایگاه تشریفات
-        </h2>
-
         {/* Search bar */}
         <div className="relative mt-4 sm:mt-6">
           <div className="flex flex-col sm:flex-row items-stretch gap-3 sm:gap-6 rounded-3xl bg-search-card-bg p-3 sm:p-4">
@@ -55,9 +50,13 @@ export default function Hero() {
 
             {/* زمان پرواز | تاریخ پرواز field */}
             <div className="flex flex-1 items-center gap-0 rounded-2xl border border-border-input h-12 sm:h-14">
-              <span className="flex-1 px-3 sm:px-4 text-sm sm:text-base text-text-secondary">زمان پرواز</span>
+              <span className="flex-1 px-3 sm:px-4 text-sm sm:text-base text-text-secondary">
+                زمان پرواز
+              </span>
               <div className="h-8 w-px bg-border-input/30" />
-              <span className="flex-1 px-3 sm:px-4 text-sm sm:text-base text-text-secondary">تاریخ پرواز</span>
+              <span className="flex-1 px-3 sm:px-4 text-sm sm:text-base text-text-secondary">
+                تاریخ پرواز
+              </span>
               <Calendar size={20} color="#969696" variant="Linear" className="ml-2" />
             </div>
 

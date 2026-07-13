@@ -25,7 +25,7 @@ export default function DateTimePickerField({
   return (
     <div
       dir="ltr"
-      className="flex h-12 flex-1 items-center gap-2 self-stretch rounded-2xl border border-border-input bg-transparent px-4 sm:h-14"
+      className="relative z-50 flex h-12 flex-1 items-center gap-2 rounded-2xl border border-border-input bg-transparent px-4 sm:h-14"
     >
       {/* زمان پرواز — time-only picker */}
       <DatePicker

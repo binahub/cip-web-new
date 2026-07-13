@@ -44,11 +44,11 @@ export default function ServiceCard({
       </div>
 
       {/* Content — Figma absolute Y positions */}
-      <h3 className="absolute left-1/2 top-8 z-10 -translate-x-1/2 whitespace-nowrap text-center text-2xl font-bold leading-normal text-white">
+      <h3 className="absolute left-1/2 top-8 -translate-x-1/2 whitespace-nowrap text-center text-2xl font-bold leading-normal text-white">
         {title}
       </h3>
 
-      <div className="absolute left-1/2 top-[81px] z-10 flex -translate-x-1/2 flex-row-reverse gap-2.5">
+      <div className="absolute left-1/2 top-[81px] flex -translate-x-1/2 flex-row-reverse gap-2.5">
         <Badge
           icon={<Image src="/icons/crown.svg" alt="" width={18} height={18} />}
           label="VIP Services"

@@ -10,18 +10,16 @@ export default function SearchBar() {
   const [flightDate, setFlightDate] = useState<DateObject | null>(null);
   const [flightTime, setFlightTime] = useState<DateObject | null>(null);
 
-  return (
-    <div
-      dir="ltr"
-      className="mt-4 flex flex-col items-center justify-center gap-3 rounded-3xl bg-search-card-bg p-3 sm:mt-6 sm:h-[104px] sm:flex-row sm:gap-6 sm:p-0 sm:px-4"
-    >
-      {/* Accent promo tile — first in physical (left-to-right) order */}
-      <div className="flex h-20 w-44 shrink-0 items-center justify-center rounded-xl bg-accent sm:h-[88px] sm:w-[173px] sm:rounded-2xl">
-        <span dir="rtl" className="text-xs font-extrabold text-black sm:text-base">
-          بررسی خدمات
-        </span>
-      </div>
+  const handleSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    // TODO: wire up search logic
+  };
 
+  return (
+    <form
+      onSubmit={handleSubmit}
+      className="mt-4 flex flex-col items-center justify-center gap-3 rounded-3xl bg-search-card-bg p-3 sm:mt-6 sm:h-[104px] sm:flex-row sm:items-center sm:gap-6 sm:p-0 sm:px-4"
+    >
       <SearchField
         label="مسافران"
         icon={<Profile2User size={20} color="#969696" variant="Linear" />}
@@ -40,6 +38,16 @@ export default function SearchBar() {
         leadingIcon={<ArrowDown size={16} color="#969696" variant="Linear" />}
         icon={<Location size={20} color="#969696" variant="Linear" />}
       />
-    </div>
+
+      {/* Submit button */}
+      <button
+        type="submit"
+        className="flex h-20 w-44 shrink-0 items-center justify-center rounded-xl bg-accent sm:h-[88px] sm:w-[173px] sm:rounded-2xl"
+      >
+        <span dir="rtl" className="text-xs font-extrabold text-black sm:text-base">
+          بررسی خدمات
+        </span>
+      </button>
+    </form>
   );
 }

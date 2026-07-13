@@ -3,9 +3,9 @@ import SearchBar from "./SearchBar";
 
 export default function Hero() {
   return (
-    <section className="relative overflow-hidden px-4 sm:px-6 pt-6 sm:pt-8 pb-10 sm:pb-16">
+    <section className="relative px-4 sm:px-6 pt-6 sm:pt-8 pb-10 sm:pb-16">
       {/* Decorative background glows */}
-      <div className="pointer-events-none absolute inset-0">
+      <div className="pointer-events-none absolute inset-0 overflow-hidden">
         <Image
           src="/images/home/hero-glow-primary.png"
           alt=""

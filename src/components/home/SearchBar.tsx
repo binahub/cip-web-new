@@ -1,14 +1,21 @@
 "use client";
 
 import { useState } from "react";
-import { Profile2User, Calendar, Location, ArrowDown2 } from "iconsax-react";
+import { Profile2User, Calendar, Location } from "iconsax-react";
 import { DateObject } from "react-multi-date-picker";
 import SearchField from "@/components/ui/SearchField";
 import DateTimePickerField from "@/components/ui/DateTimePickerField";
+import Select from "@/components/ui/Select";
+
+const airports = [
+  { value: "mehrabad", label: "فرودگاه مهرآباد تهران" },
+  { value: "alaaqia", label: "العراقیه" },
+];
 
 export default function SearchBar() {
   const [flightDate, setFlightDate] = useState<DateObject | null>(null);
   const [flightTime, setFlightTime] = useState<DateObject | null>(null);
+  const [selectedAirport, setSelectedAirport] = useState<{ value: string; label: string } | null>(null);
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -20,10 +27,12 @@ export default function SearchBar() {
       onSubmit={handleSubmit}
       className="mt-4 flex flex-col items-center justify-center gap-3 rounded-3xl bg-search-card-bg p-3 sm:mt-6 sm:h-[104px] sm:flex-row sm:items-center sm:gap-6 sm:p-0 sm:px-4"
     >
-      <SearchField
-        label="فرودگاه"
-        leadingIcon={<ArrowDown2 size={16} color="#969696" variant="Linear" />}
-        icon={<Location size={20} color="#969696" variant="Linear" />}
+      <Select
+        options={airports}
+        value={selectedAirport}
+        onChange={setSelectedAirport}
+        placeholder="فرودگاه"
+        leadingIcon={<Location size={20} color="#969696" variant="Linear" />}
       />
 
       <DateTimePickerField

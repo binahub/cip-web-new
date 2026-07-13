@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import Image from "next/image";
-import { User, ArrowDown, Menu, CloseSquare } from "iconsax-react";
+import { User, ArrowDown2, Menu, CloseSquare } from "iconsax-react";
 
 export default function Header() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
@@ -10,7 +10,7 @@ export default function Header() {
   return (
     <header className="sticky top-0 z-50 mx-auto w-full max-w-[1296px] rounded-2xl bg-header-bg backdrop-blur-md">
       <div className="flex h-[72px] items-center justify-between px-4 sm:px-6">
-        {/* Brand wordmark + logomark */}
+        {/* Brand wordmark + logomark + nav links */}
         <div className="flex items-center gap-2 sm:gap-3">
           <Image
             src="/logo/logo-mark.svg"
@@ -26,23 +26,27 @@ export default function Header() {
             height={24}
             className="h-[16px] sm:h-[24px] w-auto"
           />
+          <div className="hidden md:block h-6 w-px bg-border-input/30 ml-2" />
+          <nav className="hidden md:flex items-center gap-6 ml-2">
+            <div className="flex items-center gap-1">
+              <a
+                href="#"
+                className="text-base font-normal text-text-nav hover:text-white transition-colors"
+              >
+                خدمات
+              </a>
+              <ArrowDown2 size={16} color="#979dac" variant="Linear" />
+            </div>
+            <a
+              href="#"
+              className="text-base font-normal text-text-nav hover:text-white transition-colors"
+            >
+              وبلاگ
+            </a>
+          </nav>
         </div>
 
-        {/* Nav links - hidden on mobile */}
-        <nav className="hidden md:flex items-center gap-6">
-          <a href="#" className="text-base font-normal text-text-nav hover:text-white transition-colors">
-            وبلاگ
-          </a>
-          <div className="flex items-center gap-1">
-            <a href="#" className="text-base font-normal text-text-nav hover:text-white transition-colors">
-              خدمات
-            </a>
-            <ArrowDown size={16} color="#979dac" variant="Linear" />
-          </div>
-          <div className="h-6 w-px bg-border-input/30" />
-        </nav>
-
-        {/* Right side: Login pill + mobile menu toggle */}
+        {/* left side: Login pill + mobile menu toggle */}
         <div className="flex items-center gap-2 sm:gap-4">
           <button className="hidden sm:flex items-center gap-2 rounded-xl bg-login-pill-bg px-4 py-2 text-sm font-semibold text-accent transition-colors hover:opacity-80">
             <User size={18} color="#c9ada7" variant="Bulk" />
@@ -70,10 +74,16 @@ export default function Header() {
       {mobileMenuOpen && (
         <div className="md:hidden border-t border-border-input/20 px-4 py-4">
           <nav className="flex flex-col gap-4">
-            <a href="#" className="text-base font-normal text-text-nav hover:text-white transition-colors">
+            <a
+              href="#"
+              className="text-base font-normal text-text-nav hover:text-white transition-colors"
+            >
               وبلاگ
             </a>
-            <a href="#" className="text-base font-normal text-text-nav hover:text-white transition-colors">
+            <a
+              href="#"
+              className="text-base font-normal text-text-nav hover:text-white transition-colors"
+            >
               خدمات
             </a>
           </nav>

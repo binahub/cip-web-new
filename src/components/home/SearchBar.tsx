@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { Profile2User, Calendar, Location, ArrowDown } from "iconsax-react";
+import { Profile2User, Calendar, Location, ArrowDown2 } from "iconsax-react";
 import { DateObject } from "react-multi-date-picker";
 import SearchField from "@/components/ui/SearchField";
 import DateTimePickerField from "@/components/ui/DateTimePickerField";
@@ -21,8 +21,9 @@ export default function SearchBar() {
       className="mt-4 flex flex-col items-center justify-center gap-3 rounded-3xl bg-search-card-bg p-3 sm:mt-6 sm:h-[104px] sm:flex-row sm:items-center sm:gap-6 sm:p-0 sm:px-4"
     >
       <SearchField
-        label="مسافران"
-        icon={<Profile2User size={20} color="#969696" variant="Linear" />}
+        label="فرودگاه"
+        leadingIcon={<ArrowDown2 size={16} color="#969696" variant="Linear" />}
+        icon={<Location size={20} color="#969696" variant="Linear" />}
       />
 
       <DateTimePickerField
@@ -34,9 +35,8 @@ export default function SearchBar() {
       />
 
       <SearchField
-        label="فرودگاه"
-        leadingIcon={<ArrowDown size={16} color="#969696" variant="Linear" />}
-        icon={<Location size={20} color="#969696" variant="Linear" />}
+        label="مسافران"
+        icon={<Profile2User size={20} color="#969696" variant="Linear" />}
       />
 
       {/* Submit button */}

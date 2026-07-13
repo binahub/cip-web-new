@@ -1,11 +1,11 @@
 "use client";
 
 import { useState } from "react";
-import { Profile2User, Calendar, Location } from "iconsax-react";
+import { Calendar, Location } from "iconsax-react";
 import { DateObject } from "react-multi-date-picker";
-import SearchField from "@/components/ui/SearchField";
 import DateTimePickerField from "@/components/ui/DateTimePickerField";
 import Select from "@/components/ui/Select";
+import PassengerSelect from "@/components/ui/PassengerSelect";
 
 const airports = [
   { value: "mehrabad", label: "فرودگاه مهرآباد تهران" },
@@ -16,6 +16,7 @@ export default function SearchBar() {
   const [flightDate, setFlightDate] = useState<DateObject | null>(null);
   const [flightTime, setFlightTime] = useState<DateObject | null>(null);
   const [selectedAirport, setSelectedAirport] = useState<{ value: string; label: string } | null>(null);
+  const [passengers, setPassengers] = useState({ adult: 1, child: 0, infant: 0 });
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -43,9 +44,9 @@ export default function SearchBar() {
         icon={<Calendar size={20} color="#969696" variant="Linear" />}
       />
 
-      <SearchField
-        label="مسافران"
-        icon={<Profile2User size={20} color="#969696" variant="Linear" />}
+      <PassengerSelect
+        value={passengers}
+        onChange={setPassengers}
       />
 
       {/* Submit button */}

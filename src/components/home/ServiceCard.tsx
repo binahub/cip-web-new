@@ -9,6 +9,7 @@ interface ServiceCardData {
   price: string;
   imageUrl: string;
   imagePosition?: string;
+  isMainService?: boolean;
 }
 
 export default function ServiceCard({
@@ -16,7 +17,8 @@ export default function ServiceCard({
   title,
   price,
   imageUrl,
-  imagePosition = "50% 30%",
+  imagePosition = "0% 110%",
+  isMainService = false,
 }: ServiceCardData) {
   return (
     <div className="relative h-[405px] w-full overflow-hidden rounded-[24px] bg-photo-card-bg">
@@ -51,18 +53,20 @@ export default function ServiceCard({
         {title}
       </h3>
 
-      <div className="absolute left-1/2 top-[81px] flex -translate-x-1/2 flex-row-reverse gap-2.5">
-        <Badge
-          icon={<Image src="/icons/crown.svg" alt="" width={18} height={18} />}
-          label="VIP Services"
-          className="font-inter"
-        />
-        <Badge
-          icon={<Image src="/icons/diamond.svg" alt="" width={18} height={18} />}
-          label="CIP Services"
-          className="font-inter"
-        />
-      </div>
+      {isMainService && (
+        <div className="absolute left-1/2 top-[81px] flex -translate-x-1/2 flex-row-reverse gap-2.5">
+          <Badge
+            icon={<Image src="/icons/crown.svg" alt="" width={18} height={18} />}
+            label="VIP Services"
+            className="font-inter"
+          />
+          <Badge
+            icon={<Image src="/icons/diamond.svg" alt="" width={18} height={18} />}
+            label="CIP Services"
+            className="font-inter"
+          />
+        </div>
+      )}
 
       <div
         className="absolute left-1/2 top-[113px] z-10 flex -translate-x-1/2 items-end gap-2"
@@ -70,7 +74,7 @@ export default function ServiceCard({
       >
         <span className="pb-[9px] text-xs leading-[1.808] text-text-price">قیمت از</span>
         <span className="text-xl font-bold leading-[1.808] text-white">{price}</span>
-        <span className="pb-[9px] text-xs leading-[1.808] text-text-price">تومان</span>
+        <span className="pb-[9px] text-xs leading-[1.808] text-text-price">ریال</span>
       </div>
 
       <Link

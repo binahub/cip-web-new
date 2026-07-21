@@ -31,7 +31,10 @@ yarn-error.log*
 .pnpm-debug.log*
 
 # env files (can opt-in for committing if needed)
-.env*
+# Env files — keep examples in git, never commit secrets / local overrides
+.env
+.env.*
+!.env.example
 
 # vercel
 .vercel

@@ -30,6 +30,7 @@ export interface ApiErrorDetail {
   message: string;
   code: number;
   details?: unknown;
+  fieldErrors?: Record<string, string>;
 }
 
 export interface ApiError {

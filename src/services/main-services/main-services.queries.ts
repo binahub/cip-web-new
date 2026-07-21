@@ -1,16 +1,20 @@
 import { useQuery } from "@tanstack/react-query";
 import apiClient from "@/services/api-client";
 import type { CipApiResponse } from "@/types";
+import { mapMainServiceDetail } from "./main-services.mapper";
 import type {
   ActiveMainServiceSummaryItem,
   ActiveMainServicesSummaryData,
+  MainServiceDetailData,
   ServiceCardViewModel,
+  ServiceDetailViewModel,
 } from "./main-services.types";
 import { formatPrice } from "@/lib/format";
 
 export const mainServiceKeys = {
   all: ["main-services"] as const,
   activeSummary: () => [...mainServiceKeys.all, "active-summary"] as const,
+  detail: (id: string) => [...mainServiceKeys.all, "detail", id] as const,
 };
 
 const FALLBACK_CARD_IMAGE = "/images/home/service-vip-services.svg";
@@ -46,9 +50,30 @@ async function fetchActiveMainServicesSummary(): Promise<ServiceCardViewModel[]>
   return mapActiveSummaryToServiceCards(data.data?.list ?? []);
 }
 
+export async function fetchMainServiceDetail(id: string): Promise<ServiceDetailViewModel> {
+  const { data } = await apiClient.get<CipApiResponse<MainServiceDetailData>>(
+    `/main-services/detail/${id}`,
+    { skipAuth: true },
+  );
+
+  if (!data.data) {
+    throw { message: "خدمت یافت نشد.", status: 404 };
+  }
+
+  return mapMainServiceDetail(data.data);
+}
+
 export function useActiveMainServices() {
   return useQuery<ServiceCardViewModel[]>({
     queryKey: mainServiceKeys.activeSummary(),
     queryFn: fetchActiveMainServicesSummary,
+  });
+}
+
+export function useMainServiceDetail(id: string) {
+  return useQuery<ServiceDetailViewModel>({
+    queryKey: mainServiceKeys.detail(id),
+    queryFn: () => fetchMainServiceDetail(id),
+    enabled: Boolean(id),
   });
 }

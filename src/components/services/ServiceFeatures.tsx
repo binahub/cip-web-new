@@ -1,8 +1,8 @@
-import type { ServiceFeature } from "@/data/services";
+import type { ServiceDetailFeatureView } from "@/services/main-services/main-services.types";
 
 interface ServiceFeaturesProps {
   address: string;
-  features: ServiceFeature[];
+  features: ServiceDetailFeatureView[];
 }
 
 function FeatureChip({ label, icon }: { label: string; icon: string }) {
@@ -31,13 +31,15 @@ export default function ServiceFeatures({ address, features }: ServiceFeaturesPr
       </h2>
 
       <div className="flex flex-col gap-4">
-        <FeatureChip label={address} icon="/icons/features/location.svg" />
+        {address ? <FeatureChip label={address} icon="/icons/features/location.svg" /> : null}
 
-        <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
-          {features.map((feature) => (
-            <FeatureChip key={feature.id} label={feature.label} icon={feature.icon} />
-          ))}
-        </div>
+        {features.length > 0 ? (
+          <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
+            {features.map((feature) => (
+              <FeatureChip key={feature.id} label={feature.label} icon={feature.icon} />
+            ))}
+          </div>
+        ) : null}
       </div>
     </section>
   );

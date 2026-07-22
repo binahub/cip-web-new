@@ -7,17 +7,25 @@ import {
   useEffect,
   useMemo,
   useState,
+  useSyncExternalStore,
   type ReactNode,
 } from "react";
+import { useQueryClient } from "@tanstack/react-query";
 import AuthModal from "@/components/auth/AuthModal";
+import { setUnauthorizedHandler } from "@/lib/auth-events";
 import {
   clearAuthSession,
   getAccessToken,
-  getStoredUser,
+  getAuthSnapshot,
+  getServerAuthSnapshot,
   persistAuthSession,
+  subscribeAuthStore,
   type StoredAuthUser,
 } from "@/lib/auth-storage";
 import { toastSuccess } from "@/lib/toast";
+import { logoutRequest } from "@/services/auth/auth.api";
+import { authKeys } from "@/services/auth/auth.queries";
+import { customerKeys } from "@/services/customer/customer.queries";
 import type { AuthModalView, AuthSessionData } from "@/services/auth/auth.types";
 
 type AuthSuccessCallback = () => void;
@@ -29,7 +37,7 @@ interface AuthContextValue {
   closeAuthModal: () => void;
   requireAuth: (onAuthenticated: AuthSuccessCallback) => void;
   applySession: (session: AuthSessionData, options?: { successMessage?: string }) => void;
-  logout: () => void;
+  logout: () => Promise<void>;
 }
 
 const AuthContext = createContext<AuthContextValue | null>(null);
@@ -43,20 +51,18 @@ function sessionToUser(session: AuthSessionData): StoredAuthUser {
 }
 
 export function AuthProvider({ children }: { children: ReactNode }) {
-  const [user, setUser] = useState<StoredAuthUser | null>(null);
-  const [isAuthenticated, setIsAuthenticated] = useState(false);
-  const [hydrated, setHydrated] = useState(false);
+  const queryClient = useQueryClient();
+  const authSnapshot = useSyncExternalStore(
+    subscribeAuthStore,
+    getAuthSnapshot,
+    getServerAuthSnapshot,
+  );
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [modalView, setModalView] = useState<AuthModalView>("login");
   const [pendingAction, setPendingAction] = useState<AuthSuccessCallback | null>(null);
 
-  useEffect(() => {
-    const token = getAccessToken();
-    const storedUser = getStoredUser();
-    setIsAuthenticated(Boolean(token));
-    setUser(storedUser);
-    setHydrated(true);
-  }, []);
+  const isAuthenticated = Boolean(authSnapshot.token);
+  const user = authSnapshot.user;
 
   const closeAuthModal = useCallback(() => {
     setIsModalOpen(false);
@@ -68,16 +74,24 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     setIsModalOpen(true);
   }, []);
 
+  useEffect(() => {
+    setUnauthorizedHandler(() => {
+      void queryClient.removeQueries({ queryKey: authKeys.all });
+      void queryClient.removeQueries({ queryKey: customerKeys.all });
+      setModalView("login");
+      setIsModalOpen(true);
+    });
+
+    return () => setUnauthorizedHandler(null);
+  }, [queryClient]);
+
   const applySession = useCallback(
     (session: AuthSessionData, options?: { successMessage?: string }) => {
-      const nextUser = sessionToUser(session);
       persistAuthSession({
         accessToken: session.accessTokenObject.token,
         refreshToken: session.refreshTokenObject.token,
-        user: nextUser,
+        user: sessionToUser(session),
       });
-      setUser(nextUser);
-      setIsAuthenticated(true);
       setIsModalOpen(false);
 
       if (options?.successMessage) {
@@ -91,37 +105,36 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     [pendingAction],
   );
 
-  const logout = useCallback(() => {
+  const clearLocalSession = useCallback(() => {
     clearAuthSession();
-    setUser(null);
-    setIsAuthenticated(false);
-  }, []);
+    void queryClient.removeQueries({ queryKey: authKeys.all });
+  }, [queryClient]);
 
-  const requireAuth = useCallback(
-    (onAuthenticated: AuthSuccessCallback) => {
+  const logout = useCallback(async () => {
+    try {
       if (getAccessToken()) {
-        onAuthenticated();
-        return;
+        await logoutRequest();
       }
-      setPendingAction(() => onAuthenticated);
-      setModalView("login");
-      setIsModalOpen(true);
-    },
-    [],
-  );
+    } catch {
+      // Always clear local session even if the API call fails.
+    } finally {
+      clearLocalSession();
+      toastSuccess("با موفقیت خارج شدید.");
+    }
+  }, [clearLocalSession]);
+
+  const requireAuth = useCallback((onAuthenticated: AuthSuccessCallback) => {
+    if (getAccessToken()) {
+      onAuthenticated();
+      return;
+    }
+    setPendingAction(() => onAuthenticated);
+    setModalView("login");
+    setIsModalOpen(true);
+  }, []);
 
   const value = useMemo<AuthContextValue>(
     () => ({
-      isAuthenticated: hydrated ? isAuthenticated : false,
-      user,
-      openAuthModal,
-      closeAuthModal,
-      requireAuth,
-      applySession,
-      logout,
-    }),
-    [
-      hydrated,
       isAuthenticated,
       user,
       openAuthModal,
@@ -129,7 +142,8 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       requireAuth,
       applySession,
       logout,
-    ],
+    }),
+    [isAuthenticated, user, openAuthModal, closeAuthModal, requireAuth, applySession, logout],
   );
 
   return (

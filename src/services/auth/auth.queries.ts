@@ -2,6 +2,7 @@ import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import {
   fetchCaptcha,
   loginRequest,
+  logoutRequest,
   signupSendOtpRequest,
   signupVerifyOtpRequest,
 } from "./auth.api";
@@ -50,6 +51,13 @@ export function useSignupSendOtpMutation() {
 export function useSignupVerifyOtpMutation() {
   return useMutation({
     mutationFn: (payload: SignupVerifyOtpPayload) => signupVerifyOtpRequest(payload),
+    meta: { suppressErrorToast: true },
+  });
+}
+
+export function useLogoutMutation() {
+  return useMutation({
+    mutationFn: () => logoutRequest(),
     meta: { suppressErrorToast: true },
   });
 }

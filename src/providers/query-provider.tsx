@@ -4,6 +4,7 @@ import { MutationCache, QueryCache, QueryClient, QueryClientProvider } from "@ta
 import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
 import { useState } from "react";
 import AppToaster from "@/components/ui/AppToaster";
+import { isInvalidAuthTokenError, resolveApiError } from "@/lib/api-error";
 import { toastApiError } from "@/lib/toast";
 
 function makeQueryClient() {
@@ -23,7 +24,11 @@ function makeQueryClient() {
     defaultOptions: {
       queries: {
         staleTime: 30 * 1000,
-        retry: 1,
+        retry: (failureCount, error) => {
+          const apiError = resolveApiError(error);
+          if (isInvalidAuthTokenError(apiError)) return false;
+          return failureCount < 1;
+        },
         refetchOnWindowFocus: false,
       },
     },

@@ -92,12 +92,21 @@ export default function Header() {
                   <div className="px-4 py-2 text-right text-xs text-text-secondary sm:hidden">
                     {displayName}
                   </div>
+                  <Link
+                    href="/profile"
+                    dir="rtl"
+                    onClick={() => setAccountOpen(false)}
+                    className="flex w-full items-center justify-end gap-2 px-4 py-3 text-sm text-text-secondary transition-colors hover:bg-cta-pill-bg hover:text-accent"
+                  >
+                    <span>پروفایل من</span>
+                    <User size={18} color="#c9ada7" variant="Linear" />
+                  </Link>
                   <button
                     type="button"
                     dir="rtl"
                     onClick={() => {
                       setAccountOpen(false);
-                      logout();
+                      void logout();
                     }}
                     className="flex w-full items-center justify-end gap-2 px-4 py-3 text-sm text-text-secondary transition-colors hover:bg-cta-pill-bg hover:text-accent"
                   >

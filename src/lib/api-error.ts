@@ -4,7 +4,7 @@ import { CipErrorCode } from "@/types";
 export const API_ERROR_MESSAGES = {
   default: "خطایی رخ داده است. لطفا دوباره تلاش کنید.",
   badRequest: "خطا در ارسال اطلاعات! لطفا دوباره تلاش کنید.",
-  unauthorized: "نشست شما منقضی شده است. لطفا دوباره وارد شوید.",
+  unauthorized: "توکن احراز هویت نامعتبر است.",
   network: "خطا در ارتباط با سرور، لطفا دوباره تلاش کنید.",
   timeout: "زمان انتظار درخواست به پایان رسید. لطفا دوباره تلاش کنید.",
   connectionRefused: "ارتباط با سرور برقرار نشد.",
@@ -45,6 +45,11 @@ export function resolveApiErrorMessage(
 
 export function isInvalidAuthTokenError(error: Pick<ApiError, "code" | "status">): boolean {
   return error.code === CipErrorCode.INVALID_AUTH_TOKEN || error.status === 401;
+}
+
+/** Prefer API `errorDetail.message` for auth failures (code 89 / HTTP 401). */
+export function resolveUnauthorizedMessage(errorDetail: unknown): string {
+  return resolveApiErrorMessage(errorDetail, API_ERROR_MESSAGES.unauthorized);
 }
 
 /** Map axios network / timeout codes to Persian user-facing messages. */

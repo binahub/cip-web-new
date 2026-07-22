@@ -1,5 +1,6 @@
 import axios, { type AxiosError, type InternalAxiosRequestConfig } from "axios";
 import { config } from "@/config";
+import { notifyUnauthorized } from "@/lib/auth-events";
 import { clearAuthSession } from "@/lib/auth-storage";
 import {
   API_ERROR_MESSAGES,
@@ -7,6 +8,7 @@ import {
   normalizeErrorCode,
   resolveApiErrorMessage,
   resolveNetworkErrorMessage,
+  resolveUnauthorizedMessage,
 } from "@/lib/api-error";
 import type { ApiError, ApiErrorDetail, CipApiResponse } from "@/types";
 
@@ -41,9 +43,17 @@ function toApiError(args: {
   };
 }
 
+/**
+ * CIP invalid/missing token:
+ * HTTP 401 + { success: false, errorDetail: { message, code: 89 } }
+ */
 function handleAuthFailure(apiError: ApiError) {
-  if (isInvalidAuthTokenError(apiError)) {
-    clearAuthSession();
+  if (!isInvalidAuthTokenError(apiError)) return;
+
+  clearAuthSession();
+
+  if (typeof window !== "undefined") {
+    notifyUnauthorized(apiError.message || API_ERROR_MESSAGES.unauthorized);
   }
 }
 
@@ -53,16 +63,16 @@ function resolveHttpErrorMessage(
   body: unknown,
   axiosError: AxiosError,
 ): string {
+  if (status === 401 || normalizeErrorCode(errorDetail?.code) === 89) {
+    return resolveUnauthorizedMessage(errorDetail);
+  }
+
   if (errorDetail) {
     return resolveApiErrorMessage(errorDetail);
   }
 
   if (status === 400) {
     return API_ERROR_MESSAGES.badRequest;
-  }
-
-  if (status === 401) {
-    return API_ERROR_MESSAGES.unauthorized;
   }
 
   if (
@@ -79,7 +89,6 @@ function resolveHttpErrorMessage(
 
 apiClient.interceptors.request.use(
   (request: InternalAxiosRequestConfig) => {
-    // Let axios set multipart boundary for FormData uploads.
     if (typeof FormData !== "undefined" && request.data instanceof FormData) {
       delete request.headers["Content-Type"];
     }
@@ -89,7 +98,6 @@ apiClient.interceptors.request.use(
       return request;
     }
 
-    // Protected endpoints get Bearer when present; public ones should set skipAuth.
     const token = typeof window !== "undefined" ? localStorage.getItem("token") : null;
     if (token) {
       request.headers.Authorization = `Bearer ${token}`;
@@ -104,12 +112,15 @@ apiClient.interceptors.response.use(
   (response) => {
     const body = response.data as CipApiResponse<unknown> | undefined;
 
-    // CIP business failures often still return HTTP 2xx with success: false
     if (body && typeof body === "object" && "success" in body && body.success === false) {
       const errorDetail = body.errorDetail;
+      const code = normalizeErrorCode(errorDetail?.code);
+      const isAuthError = code === 89 || response.status === 401;
       const apiError = toApiError({
-        message: resolveApiErrorMessage(errorDetail),
-        status: response.status,
+        message: isAuthError
+          ? resolveUnauthorizedMessage(errorDetail)
+          : resolveApiErrorMessage(errorDetail),
+        status: response.status === 200 && isAuthError ? 401 : response.status,
         errorDetail,
         trackingId: body.trackingId,
       });

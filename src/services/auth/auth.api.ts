@@ -66,3 +66,8 @@ export async function signupVerifyOtpRequest(
 
   return data.data;
 }
+
+/** Invalidates the current access token on the server. Requires Bearer auth. */
+export async function logoutRequest(): Promise<void> {
+  await apiClient.post<CipApiResponse<unknown>>("/auth/logout", null);
+}

@@ -1,6 +1,8 @@
-/**
- * Format a date string to a human-readable format.
- */
+import { DateObject } from "react-multi-date-picker";
+import gregorian from "react-date-object/calendars/gregorian";
+import persian from "react-date-object/calendars/persian";
+
+/** Format a date string to a human-readable format. */
 export function formatDate(dateString: string): string {
   return new Date(dateString).toLocaleDateString("en-US", {
     year: "numeric",
@@ -56,6 +58,68 @@ export function toEnglishDigits(value: string): string {
   return value
     .replace(/[۰-۹]/g, (digit) => String("۰۱۲۳۴۵۶۷۸۹".indexOf(digit)))
     .replace(/[٠-٩]/g, (digit) => String("٠١٢٣٤٥٦٧٨٩".indexOf(digit)));
+}
+
+/**
+ * Live mask for birth dates: `YYYY/MM/DD` (Jalali or Gregorian digits).
+ * Strips time, dashes, and non-digits while typing.
+ */
+export function maskBirthDateInput(raw: string): string {
+  const digits = toEnglishDigits(raw).replace(/\D/g, "").slice(0, 8);
+  const year = digits.slice(0, 4);
+  const month = digits.slice(4, 6);
+  const day = digits.slice(6, 8);
+  if (digits.length <= 4) return year;
+  if (digits.length <= 6) return `${year}/${month}`;
+  return `${year}/${month}/${day}`;
+}
+
+/** Normalize stored birth dates to `YYYY/MM/DD` for form inputs. */
+export function normalizeBirthDateInput(value: string | null | undefined): string {
+  if (!value) return "";
+  const english = toEnglishDigits(value).trim();
+  if (/^\d{4}\/\d{2}\/\d{2}/.test(english)) return english.slice(0, 10);
+  if (/^\d{4}-\d{2}-\d{2}/.test(english)) return english.slice(0, 10).replace(/-/g, "/");
+  if (english.includes("T")) {
+    const date = new Date(english);
+    if (!Number.isNaN(date.getTime())) {
+      return date.toISOString().slice(0, 10).replace(/-/g, "/");
+    }
+  }
+  return maskBirthDateInput(english);
+}
+
+/**
+ * Convert masked birth date (`YYYY/MM/DD`, Jalali or Gregorian) to API ISO
+ * with zeroed time: `YYYY-MM-DDT00:00:00.000Z`.
+ * Years below 1800 are treated as Jalali.
+ */
+export function birthDateInputToIso(dateInput: string): string {
+  const english = toEnglishDigits(dateInput).trim();
+  const match = /^(\d{4})\/(\d{2})\/(\d{2})$/.exec(english);
+  if (!match) return "";
+
+  const year = Number(match[1]);
+  const month = Number(match[2]);
+  const day = Number(match[3]);
+
+  let gYear = year;
+  let gMonth = month;
+  let gDay = day;
+
+  if (year < 1800) {
+    const converted = new DateObject({
+      year,
+      month,
+      day,
+      calendar: persian,
+    }).convert(gregorian);
+    gYear = converted.year;
+    gMonth = converted.month.number;
+    gDay = converted.day;
+  }
+
+  return new Date(Date.UTC(gYear, gMonth - 1, gDay, 0, 0, 0, 0)).toISOString();
 }
 
 /**

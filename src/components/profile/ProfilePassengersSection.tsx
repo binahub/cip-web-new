@@ -7,10 +7,16 @@ import { Add, CloseSquare, Edit2, Trash } from "iconsax-react";
 import ProfileSectionCard from "@/components/profile/ProfileSectionCard";
 import { getFormErrorMessage } from "@/components/auth/auth-form-utils";
 import AppDialog from "@/components/ui/AppDialog";
+import ConfirmDialog from "@/components/ui/ConfirmDialog";
 import DataTable, { type DataTableColumn } from "@/components/ui/DataTable";
 import SelectField from "@/components/ui/SelectField";
 import TextField from "@/components/ui/TextField";
-import { dateInputToIso, formatDateFa, isoToDateInput } from "@/lib/format";
+import {
+  birthDateInputToIso,
+  formatDateFa,
+  maskBirthDateInput,
+  normalizeBirthDateInput,
+} from "@/lib/format";
 import { toastSuccess } from "@/lib/toast";
 import { passengerFormSchema, type PassengerFormValues } from "@/schemas/customer";
 import {
@@ -48,6 +54,7 @@ export default function ProfilePassengersSection() {
   const [draftSearch, setDraftSearch] = useState(search);
   const [editorOpen, setEditorOpen] = useState(false);
   const [editing, setEditing] = useState<CustomerPassenger | null>(null);
+  const [pendingDelete, setPendingDelete] = useState<CustomerPassenger | null>(null);
 
   const params = useMemo(
     () => ({
@@ -79,6 +86,8 @@ export default function ProfilePassengersSection() {
     defaultValues: defaultFormValues,
   });
 
+  const birthDateField = register("birthDate");
+
   function openCreate() {
     setEditing(null);
     reset(defaultFormValues);
@@ -93,7 +102,7 @@ export default function ProfilePassengersSection() {
       nationalCode: row.nationalCode,
       passportNumber: row.passportNumber ?? "",
       gender: row.gender === "FEMALE" ? "FEMALE" : "MALE",
-      birthDate: isoToDateInput(row.birthDate),
+      birthDate: normalizeBirthDateInput(row.birthDate),
       ageCategoryId: String(row.ageCategoryId || 1),
       nationalityId: String(row.nationalityId || 1),
       needsWheelchair: row.needsWheelchair,
@@ -112,7 +121,7 @@ export default function ProfilePassengersSection() {
       nationalCode: values.nationalCode,
       passportNumber: values.passportNumber || undefined,
       gender: values.gender,
-      birthDate: dateInputToIso(values.birthDate),
+      birthDate: birthDateInputToIso(values.birthDate),
       ageCategoryId: Number(values.ageCategoryId),
       nationalityId: Number(values.nationalityId),
       needsWheelchair: values.needsWheelchair,
@@ -132,13 +141,11 @@ export default function ProfilePassengersSection() {
     setEditorOpen(false);
   });
 
-  async function handleDelete(row: CustomerPassenger) {
-    const confirmed = window.confirm(
-      `مسافر «${row.firstName} ${row.lastName}» حذف شود؟`,
-    );
-    if (!confirmed) return;
-    await deleteMutation.mutateAsync(row.id);
+  async function confirmDelete() {
+    if (!pendingDelete) return;
+    await deleteMutation.mutateAsync(pendingDelete.id);
     toastSuccess("مسافر حذف شد.");
+    setPendingDelete(null);
   }
 
   const columns: DataTableColumn<CustomerPassenger>[] = [
@@ -191,7 +198,7 @@ export default function ProfilePassengersSection() {
           </button>
           <button
             type="button"
-            onClick={() => void handleDelete(row)}
+            onClick={() => setPendingDelete(row)}
             className="rounded-lg border border-danger/40 p-2 text-danger hover:bg-danger/10"
             aria-label="حذف"
           >
@@ -271,6 +278,21 @@ export default function ProfilePassengersSection() {
         />
       )}
 
+      <ConfirmDialog
+        open={pendingDelete !== null}
+        onClose={() => setPendingDelete(null)}
+        onConfirm={() => void confirmDelete()}
+        title="حذف مسافر"
+        description={
+          pendingDelete
+            ? `آیا از حذف مسافر «${pendingDelete.firstName} ${pendingDelete.lastName}» اطمینان دارید؟ این عمل قابل بازگشت نیست.`
+            : ""
+        }
+        confirmLabel="حذف"
+        tone="danger"
+        isConfirming={deleteMutation.isPending}
+      />
+
       <AppDialog
         open={editorOpen}
         onClose={() => setEditorOpen(false)}
@@ -332,9 +354,20 @@ export default function ProfilePassengersSection() {
               />
               <TextField
                 label="تاریخ تولد"
-                type="date"
+                placeholder="1366/06/18"
+                inputMode="numeric"
+                autoComplete="bday"
+                maxLength={10}
+                dir="ltr"
+                className="[&_input]:text-left [&_input]:placeholder:text-left"
                 error={errors.birthDate?.message}
-                {...register("birthDate")}
+                name={birthDateField.name}
+                ref={birthDateField.ref}
+                onBlur={birthDateField.onBlur}
+                onChange={(event) => {
+                  event.target.value = maskBirthDateInput(event.target.value);
+                  void birthDateField.onChange(event);
+                }}
               />
             </div>
             <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">

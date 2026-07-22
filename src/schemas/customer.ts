@@ -1,4 +1,5 @@
 import { z } from "zod";
+import { toEnglishDigits } from "@/lib/format";
 import { fieldSchemas, validationMessages } from "@/lib/validation";
 
 const positiveIntString = (message: string) =>
@@ -7,6 +8,15 @@ const positiveIntString = (message: string) =>
     .trim()
     .min(1, message)
     .refine((value) => /^\d+$/.test(value) && Number(value) > 0, message);
+
+const birthDateSchema = z
+  .string()
+  .trim()
+  .min(1, "تاریخ تولد را وارد کنید.")
+  .transform((value) => toEnglishDigits(value))
+  .refine((value) => /^\d{4}\/\d{2}\/\d{2}$/.test(value), {
+    message: "تاریخ تولد را به صورت ۱۳۶۶/۰۶/۱۸ یا 1986/06/18 وارد کنید.",
+  });
 
 export const updateCustomerInfoSchema = z.object({
   firstName: fieldSchemas.firstName,
@@ -34,7 +44,7 @@ export const passengerFormSchema = z.object({
   nationalCode: fieldSchemas.nationalCode,
   passportNumber: z.string().trim().optional(),
   gender: z.enum(["MALE", "FEMALE"], { message: "جنسیت را انتخاب کنید." }),
-  birthDate: z.string().trim().min(1, validationMessages.required),
+  birthDate: birthDateSchema,
   ageCategoryId: positiveIntString("رده سنی را وارد کنید."),
   nationalityId: positiveIntString("ملیت را وارد کنید."),
   needsWheelchair: z.boolean(),

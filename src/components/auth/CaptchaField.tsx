@@ -1,7 +1,6 @@
 "use client";
 
 import { Refresh } from "iconsax-react";
-import TextField from "@/components/ui/TextField";
 import Spinner from "@/components/ui/Spinner";
 import type { CaptchaData } from "@/services/auth/auth.types";
 
@@ -12,6 +11,7 @@ interface CaptchaFieldProps {
   onChange: (value: string) => void;
   onRefresh: () => void;
   error?: string;
+  id?: string;
 }
 
 export default function CaptchaField({
@@ -21,6 +21,7 @@ export default function CaptchaField({
   onChange,
   onRefresh,
   error,
+  id = "captcha-answer",
 }: CaptchaFieldProps) {
   const imageSrc = captcha?.captcha
     ? captcha.captcha.startsWith("data:")
@@ -29,41 +30,71 @@ export default function CaptchaField({
     : null;
 
   return (
-    <div className="flex w-full flex-col gap-3" dir="rtl">
-      <div className="flex h-14 items-center justify-between gap-3 rounded-2xl border border-border-input bg-transparent px-3">
-        <div className="relative flex h-10 min-w-0 flex-1 items-center justify-center overflow-hidden rounded-xl bg-white/95">
-          {isLoading || !imageSrc ? (
-            <Spinner className="py-0 [&_svg]:h-5 [&_svg]:w-5" />
-          ) : (
-            // eslint-disable-next-line @next/next/no-img-element
-            <img
-              src={imageSrc}
-              alt="کد امنیتی"
-              className="h-10 w-auto max-w-full object-contain"
-            />
-          )}
+    <div className="flex w-full flex-col gap-1.5" dir="rtl">
+      <label htmlFor={id} className="text-sm font-medium text-text-secondary">
+        کد امنیتی
+      </label>
+
+      <div className="flex h-14 w-full items-stretch gap-2">
+        <div
+          className={`flex min-w-0 flex-1 items-center rounded-2xl border bg-transparent px-4 transition-colors ${
+            error ? "border-danger" : "border-border-input focus-within:border-accent/60"
+          }`}
+        >
+          <input
+            id={id}
+            type="text"
+            value={value}
+            onChange={(event) => onChange(event.target.value)}
+            placeholder="کد تصویر"
+            autoComplete="off"
+            autoCapitalize="off"
+            autoCorrect="off"
+            spellCheck={false}
+            inputMode="text"
+            aria-invalid={Boolean(error)}
+            aria-describedby={error ? `${id}-error` : undefined}
+            className="min-w-0 flex-1 bg-transparent text-right text-sm tracking-widest text-white outline-none placeholder:tracking-normal placeholder:text-text-secondary sm:text-base"
+          />
         </div>
 
-        <button
-          type="button"
-          onClick={onRefresh}
-          disabled={isLoading}
-          aria-label="دریافت مجدد کد امنیتی"
-          className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-cta-pill-bg text-accent transition-opacity hover:opacity-80 disabled:opacity-50"
-        >
-          <Refresh size={18} color="#c9ada7" variant="Linear" />
-        </button>
+        <div className="flex shrink-0 items-stretch gap-1.5">
+          <div
+            className="flex w-28 items-center justify-center overflow-hidden rounded-2xl border border-border-input bg-white sm:w-32"
+            aria-busy={isLoading}
+          >
+            {isLoading || !imageSrc ? (
+              <Spinner className="py-0 [&_svg]:h-5 [&_svg]:w-5" />
+            ) : (
+              // eslint-disable-next-line @next/next/no-img-element
+              <img
+                src={imageSrc}
+                alt="کد امنیتی"
+                className="h-full w-full object-contain p-1.5"
+              />
+            )}
+          </div>
+
+          <button
+            type="button"
+            onClick={onRefresh}
+            disabled={isLoading}
+            aria-label="دریافت مجدد کد امنیتی"
+            title="دریافت مجدد"
+            className="flex w-12 items-center justify-center rounded-2xl border border-border-input bg-cta-pill-bg text-accent transition-opacity hover:opacity-80 disabled:cursor-not-allowed disabled:opacity-50"
+          >
+            <span className={isLoading ? "inline-flex animate-spin" : "inline-flex"}>
+              <Refresh size={18} color="#c9ada7" variant="Linear" />
+            </span>
+          </button>
+        </div>
       </div>
 
-      <TextField
-        label="کد امنیتی"
-        value={value}
-        onChange={(event) => onChange(event.target.value)}
-        placeholder="کد تصویر را وارد کنید"
-        autoComplete="off"
-        inputMode="text"
-        error={error}
-      />
+      {error ? (
+        <p id={`${id}-error`} className="text-xs text-danger" role="alert">
+          {error}
+        </p>
+      ) : null}
     </div>
   );
 }

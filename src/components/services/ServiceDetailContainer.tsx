@@ -1,8 +1,8 @@
 "use client";
 
 import { notFound } from "next/navigation";
+import ServiceDetailSkeleton from "./ServiceDetailSkeleton";
 import ServiceDetailView from "./ServiceDetailView";
-import Spinner from "@/components/ui/Spinner";
 import { useMainServiceDetail } from "@/services/main-services/main-services.queries";
 
 interface ServiceDetailContainerProps {
@@ -13,7 +13,7 @@ export default function ServiceDetailContainer({ id }: ServiceDetailContainerPro
   const { data: service, isPending, error } = useMainServiceDetail(id);
 
   if (isPending) {
-    return <Spinner className="py-24" />;
+    return <ServiceDetailSkeleton />;
   }
 
   if (error) {

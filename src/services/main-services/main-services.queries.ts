@@ -70,6 +70,25 @@ export function useActiveMainServices() {
   });
 }
 
+/** Raw ACTIVE main services for reservation service picker cards. */
+export function useActiveMainServiceItems(enabled = true) {
+  return useQuery({
+    queryKey: [...mainServiceKeys.activeSummary(), "raw"] as const,
+    queryFn: async () => {
+      const { data } = await apiClient.get<CipApiResponse<ActiveMainServicesSummaryData>>(
+        "/main-services/active-summary",
+        { skipAuth: true },
+      );
+      return (data.data?.list ?? []).filter(
+        (item) =>
+          item.mainService.status === "ACTIVE" && item.mainService.isMainService === true,
+      );
+    },
+    enabled,
+    staleTime: 60 * 1000,
+  });
+}
+
 export function useMainServiceDetail(id: string) {
   return useQuery<ServiceDetailViewModel>({
     queryKey: mainServiceKeys.detail(id),

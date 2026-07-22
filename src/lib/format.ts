@@ -50,3 +50,25 @@ export function isoToDateInput(value: string | null | undefined): string {
   if (Number.isNaN(date.getTime())) return value.slice(0, 10);
   return date.toISOString().slice(0, 10);
 }
+
+/** Convert Persian/Arabic digits to Latin digits. */
+export function toEnglishDigits(value: string): string {
+  return value
+    .replace(/[۰-۹]/g, (digit) => String("۰۱۲۳۴۵۶۷۸۹".indexOf(digit)))
+    .replace(/[٠-٩]/g, (digit) => String("٠١٢٣٤٥٦٧٨٩".indexOf(digit)));
+}
+
+/**
+ * Build CIP flight datetime: `1404/12/06 14:30:00`
+ * from separate Jalali date + time DateObject values.
+ */
+export function formatJalaliDateTime(
+  date: { format: (pattern: string) => string } | null | undefined,
+  time: { format: (pattern: string) => string } | null | undefined,
+): string | null {
+  if (!date || !time) return null;
+  const datePart = toEnglishDigits(date.format("YYYY/MM/DD"));
+  const timePart = toEnglishDigits(time.format("HH:mm:ss"));
+  if (!datePart || !timePart) return null;
+  return `${datePart} ${timePart}`;
+}

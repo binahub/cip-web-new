@@ -30,6 +30,7 @@ export default function ServiceDetailView({ service }: ServiceDetailViewProps) {
           <ServiceFeatures address={service.address} features={service.features} />
 
           <ServicePricingSection
+            mainServiceId={service.id}
             iranian={service.pricing.iranian}
             foreign={service.pricing.foreign}
           />

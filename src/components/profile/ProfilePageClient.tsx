@@ -2,7 +2,7 @@
 
 import { useEffect, useState, useSyncExternalStore } from "react";
 import Link from "next/link";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import {
   Card,
   Profile2User,
@@ -39,9 +39,21 @@ function useIsClient() {
 
 export default function ProfilePageClient() {
   const router = useRouter();
+  const searchParams = useSearchParams();
   const isClient = useIsClient();
   const { isAuthenticated, openAuthModal, user } = useAuth();
-  const [activeTab, setActiveTab] = useState<ProfileTabId>("info");
+  const tabParam = searchParams.get("tab");
+  const initialTab =
+    tabParam && tabs.some((tab) => tab.id === tabParam)
+      ? (tabParam as ProfileTabId)
+      : "info";
+  const [activeTab, setActiveTab] = useState<ProfileTabId>(initialTab);
+
+  useEffect(() => {
+    if (tabParam && tabs.some((tab) => tab.id === tabParam)) {
+      setActiveTab(tabParam as ProfileTabId);
+    }
+  }, [tabParam]);
 
   useEffect(() => {
     if (!isClient) return;

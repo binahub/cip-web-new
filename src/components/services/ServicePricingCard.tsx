@@ -1,12 +1,13 @@
 "use client";
 
+import { useRouter } from "next/navigation";
 import Button from "@/components/ui/Button";
-import { toastInfo } from "@/lib/toast";
 import { useAuth } from "@/providers/auth-provider";
 import type { ServiceDetailPriceCardView } from "@/services/main-services/main-services.types";
 
 interface ServicePricingCardProps {
   tier: ServiceDetailPriceCardView;
+  mainServiceId: string;
 }
 
 function BreakdownRow({ label, value }: { label: string; value: string }) {
@@ -24,13 +25,17 @@ function BreakdownRow({ label, value }: { label: string; value: string }) {
   );
 }
 
-export default function ServicePricingCard({ tier }: ServicePricingCardProps) {
+export default function ServicePricingCard({
+  tier,
+  mainServiceId,
+}: ServicePricingCardProps) {
+  const router = useRouter();
   const { requireAuth } = useAuth();
 
   function handleStartOrder() {
     requireAuth(() => {
-      // Order flow will be wired in a later step
-      toastInfo("به‌زودی امکان ثبت سفارش فعال می‌شود.");
+      const query = mainServiceId ? `?serviceId=${encodeURIComponent(mainServiceId)}` : "";
+      router.push(`/reservation${query}`);
     });
   }
 

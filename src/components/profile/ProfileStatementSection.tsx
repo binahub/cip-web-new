@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useMemo, useState } from "react";
+import { useMemo, useState } from "react";
 import ProfileSectionCard from "@/components/profile/ProfileSectionCard";
 import DataTable, { type DataTableColumn } from "@/components/ui/DataTable";
 import SelectField from "@/components/ui/SelectField";
@@ -10,7 +10,7 @@ import {
   useCustomerWallet,
   useWalletStatement,
 } from "@/services/customer/customer.queries";
-import type { WalletStatementItem } from "@/services/customer/customer.types";
+import type { WalletAccount, WalletStatementItem } from "@/services/customer/customer.types";
 
 const columns: DataTableColumn<WalletStatementItem>[] = [
   {
@@ -45,21 +45,24 @@ export default function ProfileStatementSection() {
   const [accountId, setAccountId] = useState<string>("");
   const [page, setPage] = useState(0);
 
-  const accounts = wallet?.walletAccounts ?? [];
+  const accounts = useMemo<WalletAccount[]>(
+    () => wallet?.walletAccounts ?? [],
+    [wallet?.walletAccounts],
+  );
+  const selectedAccountId =
+    accountId || (accounts[0] != null ? String(accounts[0].id) : "");
 
-  useEffect(() => {
-    if (!accountId && accounts.length > 0) {
-      setAccountId(String(accounts[0].id));
-    }
-  }, [accounts, accountId]);
-
-  const { data, isPending, error } = useWalletStatement(accountId || null, page, 20);
+  const { data, isPending, error } = useWalletStatement(
+    selectedAccountId || null,
+    page,
+    20,
+  );
 
   const accountOptions = useMemo(
     () =>
       accounts.map((account) => ({
         value: String(account.id),
-        label: `${account.accountNumber} — ${account.walletAccountCurrencyObject?.description ?? ""}`,
+        label: `کیف پول — ${account.walletAccountCurrencyObject?.description ?? ""}`,
       })),
     [accounts],
   );
@@ -72,10 +75,10 @@ export default function ProfileStatementSection() {
       description="تراکنش‌های حساب کیف پول خود را مشاهده کنید."
       action={
         accountOptions.length > 0 ? (
-          <div className="w-full min-w-[220px] sm:w-[280px]">
+          <div className="w-full min-w-55 sm:w-70">
             <SelectField
               options={accountOptions}
-              value={accountId}
+              value={selectedAccountId}
               onChange={(event) => {
                 setAccountId(event.target.value);
                 setPage(0);
@@ -86,7 +89,7 @@ export default function ProfileStatementSection() {
         ) : null
       }
     >
-      {!accountId ? (
+      {!selectedAccountId ? (
         <p className="py-8 text-center text-text-secondary">حسابی برای نمایش وجود ندارد.</p>
       ) : error ? (
         <p className="py-8 text-center text-white/70">امکان نمایش گردش حساب وجود ندارد.</p>

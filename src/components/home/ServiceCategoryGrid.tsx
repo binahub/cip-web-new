@@ -1,7 +1,7 @@
 "use client";
 
 import ServiceCard from "./ServiceCard";
-import Spinner from "@/components/ui/Spinner";
+import ServiceCategoryGridSkeleton from "./ServiceCategoryGridSkeleton";
 import { useActiveMainServices } from "@/services/main-services/main-services.queries";
 import type { ServiceCardViewModel } from "@/services/main-services/main-services.types";
 
@@ -36,7 +36,7 @@ export default function ServiceCategoryGrid() {
       <section className="mt-10 px-4 sm:px-6 pb-12">
         <div className="mx-auto max-w-[1296px]">
           {isPending ? (
-            <Spinner className="py-16" />
+            <ServiceCategoryGridSkeleton />
           ) : error ? (
             <p className="py-12 text-center text-white/70" dir="rtl">
               امکان نمایش خدمات وجود ندارد.

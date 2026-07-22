@@ -1,14 +1,14 @@
 import type { Metadata } from "next";
 import { Suspense } from "react";
-import ProfilePageClient from "@/components/profile/ProfilePageClient";
+import ReservationWizard from "@/components/reservation/ReservationWizard";
 import Spinner from "@/components/ui/Spinner";
 
 export const metadata: Metadata = {
-  title: "پروفایل | Mehrabad CIP Lounge",
-  description: "مدیریت حساب کاربری، کیف پول، رزروها و مسافران",
+  title: "رزرو CIP | Mehrabad CIP Lounge",
+  description: "ثبت سفارش و رزرو خدمات سی‌آی‌پی فرودگاه مهرآباد",
 };
 
-export default function ProfilePage() {
+export default function ReservationPage() {
   return (
     <Suspense
       fallback={
@@ -17,7 +17,7 @@ export default function ProfilePage() {
         </div>
       }
     >
-      <ProfilePageClient />
+      <ReservationWizard />
     </Suspense>
   );
 }

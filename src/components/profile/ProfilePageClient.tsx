@@ -128,7 +128,7 @@ export default function ProfilePageClient() {
               </button>
             </div>
 
-            <div className="mb-6 flex gap-2 overflow-x-auto pb-1">
+            <div className="app-scroll mb-6 flex gap-2 overflow-x-auto overscroll-x-contain pb-1.5">
               {tabs.map((tab) => {
                 const Icon = tab.icon;
                 const active = activeTab === tab.id;

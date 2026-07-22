@@ -53,7 +53,7 @@ export default function Select({
       </button>
 
       {isOpen && (
-        <div className="absolute inset-x-0 top-full z-[100] mt-2 overflow-hidden rounded-2xl border border-border-input bg-dropdown-bg py-2 shadow-2xl">
+        <div className="app-scroll absolute inset-x-0 top-full z-[100] mt-2 max-h-60 overflow-y-auto overflow-x-hidden overscroll-contain rounded-2xl border border-border-input bg-dropdown-bg py-2 shadow-2xl">
           {options.map((option) => (
             <button
               key={option.value}

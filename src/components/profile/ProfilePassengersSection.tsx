@@ -3,9 +3,10 @@
 import { useMemo, useState } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { Add, Edit2, Trash } from "iconsax-react";
+import { Add, CloseSquare, Edit2, Trash } from "iconsax-react";
 import ProfileSectionCard from "@/components/profile/ProfileSectionCard";
 import { getFormErrorMessage } from "@/components/auth/auth-form-utils";
+import AppDialog from "@/components/ui/AppDialog";
 import DataTable, { type DataTableColumn } from "@/components/ui/DataTable";
 import SelectField from "@/components/ui/SelectField";
 import TextField from "@/components/ui/TextField";
@@ -270,127 +271,137 @@ export default function ProfilePassengersSection() {
         />
       )}
 
-      {editorOpen ? (
-        <div className="fixed inset-0 z-[210] flex items-end justify-center p-0 sm:items-center sm:p-4">
-          <button
-            type="button"
-            className="absolute inset-0 bg-black/70 backdrop-blur-sm"
-            aria-label="بستن"
-            onClick={() => setEditorOpen(false)}
-          />
-          <form
-            onSubmit={onSubmit}
-            className="relative z-10 flex max-h-[min(92dvh,760px)] w-full max-w-lg flex-col overflow-hidden rounded-t-3xl border border-border-input/40 bg-dropdown-bg sm:rounded-3xl"
-            dir="rtl"
-            noValidate
-          >
-            <div className="shrink-0 border-b border-border-input/20 px-5 py-4">
-              <h3 className="text-lg font-bold text-white">
-                {editing ? "ویرایش مسافر" : "افزودن مسافر"}
-              </h3>
-            </div>
-            <div className="modal-scroll min-h-0 flex-1 space-y-4 px-5 py-4">
-              <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
-                <TextField
-                  label="نام"
-                  error={errors.firstName?.message}
-                  {...register("firstName")}
-                />
-                <TextField
-                  label="نام خانوادگی"
-                  error={errors.lastName?.message}
-                  {...register("lastName")}
-                />
-              </div>
+      <AppDialog
+        open={editorOpen}
+        onClose={() => setEditorOpen(false)}
+        aria-labelledby="passenger-editor-title"
+      >
+        <form
+          onSubmit={onSubmit}
+          className="flex min-h-0 max-h-full flex-1 flex-col overflow-hidden"
+          dir="rtl"
+          noValidate
+        >
+          <div className="relative flex shrink-0 items-center justify-between gap-3 border-b border-border-input/20 px-5 pb-3 pt-5">
+            <div
+              className="absolute left-1/2 top-2 h-1 w-10 -translate-x-1/2 rounded-full bg-white/15 sm:hidden"
+              aria-hidden="true"
+            />
+            <h3 id="passenger-editor-title" className="text-lg font-bold text-white">
+              {editing ? "ویرایش مسافر" : "افزودن مسافر"}
+            </h3>
+            <button
+              type="button"
+              onClick={() => setEditorOpen(false)}
+              aria-label="بستن"
+              className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-cta-pill-bg transition-opacity hover:opacity-80"
+            >
+              <CloseSquare size={20} color="#c9ada7" variant="Linear" />
+            </button>
+          </div>
+
+          <div className="modal-scroll min-h-0 flex-1 space-y-4 px-5 py-4">
+            <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
               <TextField
-                label="کد ملی"
-                error={errors.nationalCode?.message}
-                {...register("nationalCode")}
+                label="نام"
+                error={errors.firstName?.message}
+                {...register("firstName")}
               />
               <TextField
-                label="شماره پاسپورت"
-                error={errors.passportNumber?.message}
-                {...register("passportNumber")}
+                label="نام خانوادگی"
+                error={errors.lastName?.message}
+                {...register("lastName")}
               />
-              <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
-                <SelectField
-                  label="جنسیت"
-                  options={genderOptions}
-                  error={errors.gender?.message}
-                  {...register("gender")}
-                />
-                <TextField
-                  label="تاریخ تولد"
-                  type="date"
-                  error={errors.birthDate?.message}
-                  {...register("birthDate")}
-                />
-              </div>
-              <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
-                <TextField
-                  label="شناسه رده سنی"
-                  type="number"
-                  error={errors.ageCategoryId?.message}
-                  {...register("ageCategoryId")}
-                />
-                <TextField
-                  label="شناسه ملیت"
-                  type="number"
-                  error={errors.nationalityId?.message}
-                  {...register("nationalityId")}
-                />
-              </div>
-              <TextField label="وعده غذایی ویژه" {...register("specialMeal")} />
-              <TextField label="شرایط پزشکی" {...register("medicalConditions")} />
-              <TextField label="یادداشت" {...register("notes")} />
-
-              <label className="flex items-center justify-between gap-3 rounded-2xl border border-border-input px-4 py-3 text-sm text-white">
-                <span>نیاز به ویلچر</span>
-                <input
-                  type="checkbox"
-                  checked={watch("needsWheelchair")}
-                  onChange={(event) => setValue("needsWheelchair", event.target.checked)}
-                  className="size-4 accent-[#c9ada7]"
-                />
-              </label>
-              <label className="flex items-center justify-between gap-3 rounded-2xl border border-border-input px-4 py-3 text-sm text-white">
-                <span>مسافر پیش‌فرض</span>
-                <input
-                  type="checkbox"
-                  checked={watch("setAsDefault")}
-                  onChange={(event) => setValue("setAsDefault", event.target.checked)}
-                  className="size-4 accent-[#c9ada7]"
-                />
-              </label>
-
-              {(createMutation.isError || updateMutation.isError) && (
-                <p className="text-sm text-danger">
-                  {getFormErrorMessage(
-                    createMutation.error || updateMutation.error,
-                    "ذخیره مسافر ناموفق بود.",
-                  )}
-                </p>
-              )}
             </div>
-            <div className="flex shrink-0 gap-3 border-t border-border-input/20 px-5 py-4">
-              <button
-                type="submit"
-                disabled={saving}
-                className="flex h-12 flex-1 items-center justify-center rounded-2xl bg-accent font-extrabold text-black disabled:opacity-50"
-              >
-                {saving ? "در حال ذخیره..." : "ذخیره"}
-              </button>
-              <button
-                type="button"
-                onClick={() => setEditorOpen(false)}
-                className="flex h-12 flex-1 items-center justify-center rounded-2xl border border-border-input text-text-secondary"
-              >
-                انصراف
-              </button>
+            <TextField
+              label="کد ملی"
+              error={errors.nationalCode?.message}
+              {...register("nationalCode")}
+            />
+            <TextField
+              label="شماره پاسپورت"
+              error={errors.passportNumber?.message}
+              {...register("passportNumber")}
+            />
+            <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
+              <SelectField
+                label="جنسیت"
+                options={genderOptions}
+                error={errors.gender?.message}
+                {...register("gender")}
+              />
+              <TextField
+                label="تاریخ تولد"
+                type="date"
+                error={errors.birthDate?.message}
+                {...register("birthDate")}
+              />
             </div>
-          </form>
-        </div>
-      ) : null}
+            <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
+              <TextField
+                label="شناسه رده سنی"
+                type="number"
+                error={errors.ageCategoryId?.message}
+                {...register("ageCategoryId")}
+              />
+              <TextField
+                label="شناسه ملیت"
+                type="number"
+                error={errors.nationalityId?.message}
+                {...register("nationalityId")}
+              />
+            </div>
+            <TextField label="وعده غذایی ویژه" {...register("specialMeal")} />
+            <TextField label="شرایط پزشکی" {...register("medicalConditions")} />
+            <TextField label="یادداشت" {...register("notes")} />
+
+            <label className="flex items-center justify-between gap-3 rounded-2xl border border-border-input px-4 py-3 text-sm text-white">
+              <span>نیاز به ویلچر</span>
+              <input
+                type="checkbox"
+                checked={watch("needsWheelchair")}
+                onChange={(event) => setValue("needsWheelchair", event.target.checked)}
+                className="size-4 accent-[#c9ada7]"
+              />
+            </label>
+            <label className="flex items-center justify-between gap-3 rounded-2xl border border-border-input px-4 py-3 text-sm text-white">
+              <span>مسافر پیش‌فرض</span>
+              <input
+                type="checkbox"
+                checked={watch("setAsDefault")}
+                onChange={(event) => setValue("setAsDefault", event.target.checked)}
+                className="size-4 accent-[#c9ada7]"
+              />
+            </label>
+
+            {(createMutation.isError || updateMutation.isError) && (
+              <p className="text-sm text-danger">
+                {getFormErrorMessage(
+                  createMutation.error || updateMutation.error,
+                  "ذخیره مسافر ناموفق بود.",
+                )}
+              </p>
+            )}
+          </div>
+
+          <div className="flex shrink-0 gap-3 border-t border-border-input/20 px-5 py-4 pb-[max(1rem,env(safe-area-inset-bottom))]">
+            <button
+              type="submit"
+              disabled={saving}
+              className="flex h-12 flex-1 items-center justify-center rounded-2xl bg-accent font-extrabold text-black disabled:opacity-50"
+            >
+              {saving ? "در حال ذخیره..." : "ذخیره"}
+            </button>
+            <button
+              type="button"
+              onClick={() => setEditorOpen(false)}
+              className="flex h-12 flex-1 items-center justify-center rounded-2xl border border-border-input text-text-secondary"
+            >
+              انصراف
+            </button>
+          </div>
+        </form>
+      </AppDialog>
     </ProfileSectionCard>
   );
 }

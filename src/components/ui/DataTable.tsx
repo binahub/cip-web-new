@@ -45,7 +45,7 @@ export default function DataTable<T>({
 
   return (
     <div className="w-full" dir="rtl">
-      <div className="overflow-x-auto rounded-2xl border border-border-input/40 bg-service-chip-bg">
+      <div className="app-scroll overflow-x-auto overscroll-x-contain rounded-2xl border border-border-input/40 bg-service-chip-bg">
         <table className="min-w-full border-collapse text-sm">
           <thead>
             <tr className="border-b border-border-input/30 bg-dropdown-bg/80">

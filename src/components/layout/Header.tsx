@@ -96,10 +96,10 @@ export default function Header() {
                     href="/profile"
                     dir="rtl"
                     onClick={() => setAccountOpen(false)}
-                    className="flex w-full items-center justify-end gap-2 px-4 py-3 text-sm text-text-secondary transition-colors hover:bg-cta-pill-bg hover:text-accent"
+                    className="flex w-full items-center justify-start gap-2 px-4 py-3 text-sm text-text-secondary transition-colors hover:bg-cta-pill-bg hover:text-accent"
                   >
-                    <span>پروفایل من</span>
                     <User size={18} color="#c9ada7" variant="Linear" />
+                    <span>پروفایل من</span>
                   </Link>
                   <button
                     type="button"
@@ -108,10 +108,11 @@ export default function Header() {
                       setAccountOpen(false);
                       void logout();
                     }}
-                    className="flex w-full items-center justify-end gap-2 px-4 py-3 text-sm text-text-secondary transition-colors hover:bg-cta-pill-bg hover:text-accent"
+                    className="flex w-full items-center justify-start gap-2 px-4 py-3 text-sm text-text-secondary transition-colors hover:bg-cta-pill-bg hover:text-accent"
                   >
-                    <span>خروج</span>
+                    
                     <LogoutCurve size={18} color="#c9ada7" variant="Linear" />
+                    <span>خروج</span>
                   </button>
                 </div>
               ) : null}

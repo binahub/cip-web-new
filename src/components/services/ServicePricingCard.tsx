@@ -1,4 +1,8 @@
+"use client";
+
 import Button from "@/components/ui/Button";
+import { toastInfo } from "@/lib/toast";
+import { useAuth } from "@/providers/auth-provider";
 import type { ServiceDetailPriceCardView } from "@/services/main-services/main-services.types";
 
 interface ServicePricingCardProps {
@@ -21,6 +25,15 @@ function BreakdownRow({ label, value }: { label: string; value: string }) {
 }
 
 export default function ServicePricingCard({ tier }: ServicePricingCardProps) {
+  const { requireAuth } = useAuth();
+
+  function handleStartOrder() {
+    requireAuth(() => {
+      // Order flow will be wired in a later step
+      toastInfo("به‌زودی امکان ثبت سفارش فعال می‌شود.");
+    });
+  }
+
   return (
     <div className="relative w-full overflow-hidden rounded-2xl bg-service-chip-bg px-4 pb-8 pt-[160px] sm:px-8 sm:pt-[185px]">
       <div className="pointer-events-none absolute inset-x-0 top-0 h-[174px] overflow-hidden rounded-t-2xl">
@@ -53,8 +66,10 @@ export default function ServicePricingCard({ tier }: ServicePricingCardProps) {
         <p className="w-full text-right text-sm tracking-[0.1px] text-[#535353]">{tier.note}</p>
 
         <Button
+          type="button"
           variant="accent-outline"
           className="h-12 w-full rounded-lg border-[1.5px] text-base font-medium"
+          onClick={handleStartOrder}
         >
           {tier.ctaLabel}
         </Button>

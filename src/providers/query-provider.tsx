@@ -9,22 +9,21 @@ import { toastApiError } from "@/lib/toast";
 function makeQueryClient() {
   return new QueryClient({
     queryCache: new QueryCache({
-      onError: (error) => {
+      onError: (error, query) => {
+        if (query.meta?.suppressErrorToast) return;
         if (typeof window !== "undefined") toastApiError(error);
       },
     }),
     mutationCache: new MutationCache({
-      onError: (error) => {
+      onError: (error, _variables, _context, mutation) => {
+        if (mutation.meta?.suppressErrorToast) return;
         if (typeof window !== "undefined") toastApiError(error);
       },
     }),
     defaultOptions: {
       queries: {
-        // Stale after 30s — balances freshness with reduced flicker on refocus
         staleTime: 30 * 1000,
-        // Retry failed requests once by default
         retry: 1,
-        // Avoid refetching on window focus in most cases
         refetchOnWindowFocus: false,
       },
     },

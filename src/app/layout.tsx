@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import localFont from "next/font/local";
+import { AuthProvider } from "@/providers/auth-provider";
 import QueryProvider from "@/providers/query-provider";
 import "./globals.css";
 
@@ -43,7 +44,9 @@ export default function RootLayout({
     >
       <body className="min-h-full flex flex-col overflow-x-hidden">
         <QueryProvider>
-          <main className="flex-1 overflow-x-hidden">{children}</main>
+          <AuthProvider>
+            <main className="flex-1 overflow-x-hidden">{children}</main>
+          </AuthProvider>
         </QueryProvider>
       </body>
     </html>

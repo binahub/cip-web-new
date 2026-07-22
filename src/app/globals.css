@@ -49,6 +49,29 @@ body {
   font-family: var(--font-yekan-bakh);
 }
 
+/* Modal internal scroll — thin accent scrollbar, no scroll chaining to page */
+.modal-scroll {
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  -webkit-overflow-scrolling: touch;
+  scrollbar-gutter: stable;
+  scrollbar-width: thin;
+  scrollbar-color: rgba(201, 173, 167, 0.4) transparent;
+}
+
+.modal-scroll::-webkit-scrollbar {
+  width: 6px;
+}
+
+.modal-scroll::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.modal-scroll::-webkit-scrollbar-thumb {
+  background-color: rgba(201, 173, 167, 0.35);
+  border-radius: 999px;
+}
+
 /* react-multi-date-picker dark theme styling */
 .rmdp-container .rmdp-wrapper {
   background-color: #17181b;

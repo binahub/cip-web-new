@@ -1,9 +1,12 @@
-import axios, { type InternalAxiosRequestConfig } from "axios";
+import axios, { type AxiosError, type InternalAxiosRequestConfig } from "axios";
 import { config } from "@/config";
+import { clearAuthSession } from "@/lib/auth-storage";
 import {
+  API_ERROR_MESSAGES,
   isInvalidAuthTokenError,
   normalizeErrorCode,
   resolveApiErrorMessage,
+  resolveNetworkErrorMessage,
 } from "@/lib/api-error";
 import type { ApiError, ApiErrorDetail, CipApiResponse } from "@/types";
 
@@ -16,17 +19,12 @@ declare module "axios" {
 
 const apiClient = axios.create({
   baseURL: config.apiBaseUrl,
+  timeout: 100_000,
   headers: {
     "Content-Type": "application/json",
     Accept: "application/json",
   },
 });
-
-function clearAuthToken() {
-  if (typeof window !== "undefined") {
-    localStorage.removeItem("token");
-  }
-}
 
 function toApiError(args: {
   message: string;
@@ -45,12 +43,47 @@ function toApiError(args: {
 
 function handleAuthFailure(apiError: ApiError) {
   if (isInvalidAuthTokenError(apiError)) {
-    clearAuthToken();
+    clearAuthSession();
   }
+}
+
+function resolveHttpErrorMessage(
+  status: number,
+  errorDetail: ApiErrorDetail | null,
+  body: unknown,
+  axiosError: AxiosError,
+): string {
+  if (errorDetail) {
+    return resolveApiErrorMessage(errorDetail);
+  }
+
+  if (status === 400) {
+    return API_ERROR_MESSAGES.badRequest;
+  }
+
+  if (status === 401) {
+    return API_ERROR_MESSAGES.unauthorized;
+  }
+
+  if (
+    body &&
+    typeof body === "object" &&
+    "message" in body &&
+    typeof (body as { message?: unknown }).message === "string"
+  ) {
+    return (body as { message: string }).message;
+  }
+
+  return axiosError.message || API_ERROR_MESSAGES.default;
 }
 
 apiClient.interceptors.request.use(
   (request: InternalAxiosRequestConfig) => {
+    // Let axios set multipart boundary for FormData uploads.
+    if (typeof FormData !== "undefined" && request.data instanceof FormData) {
+      delete request.headers["Content-Type"];
+    }
+
     if (request.skipAuth) {
       delete request.headers.Authorization;
       return request;
@@ -61,6 +94,7 @@ apiClient.interceptors.request.use(
     if (token) {
       request.headers.Authorization = `Bearer ${token}`;
     }
+
     return request;
   },
   (error) => Promise.reject(error),
@@ -85,20 +119,24 @@ apiClient.interceptors.response.use(
 
     return response;
   },
-  (error) => {
-    const status = (error.response?.status as number | undefined) ?? 0;
-    const body = error.response?.data as CipApiResponse<unknown> | undefined;
+  (error: AxiosError) => {
+    const networkMessage = resolveNetworkErrorMessage(error);
+    if (networkMessage) {
+      return Promise.reject(
+        toApiError({
+          message: networkMessage,
+          status: 0,
+        }),
+      );
+    }
 
+    const status = error.response?.status ?? 0;
+    const body = error.response?.data as CipApiResponse<unknown> | undefined;
     const errorDetail =
       body?.errorDetail && typeof body.errorDetail === "object" ? body.errorDetail : null;
 
     const apiError = toApiError({
-      message: resolveApiErrorMessage(
-        errorDetail,
-        typeof body === "object" && body && "message" in body && typeof (body as { message?: string }).message === "string"
-          ? (body as { message: string }).message
-          : (error.message ?? "خطایی رخ داده است. لطفا دوباره تلاش کنید."),
-      ),
+      message: resolveHttpErrorMessage(status, errorDetail, body, error),
       status,
       errorDetail,
       trackingId: body?.trackingId,

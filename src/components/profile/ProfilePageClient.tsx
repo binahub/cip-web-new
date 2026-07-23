@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState, useSyncExternalStore } from "react";
+import { useEffect, useSyncExternalStore } from "react";
 import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
 import {
@@ -29,6 +29,10 @@ const tabs = [
 
 type ProfileTabId = (typeof tabs)[number]["id"];
 
+function isProfileTabId(value: string | null): value is ProfileTabId {
+  return tabs.some((tab) => tab.id === value);
+}
+
 function useIsClient() {
   return useSyncExternalStore(
     () => () => {},
@@ -43,17 +47,18 @@ export default function ProfilePageClient() {
   const isClient = useIsClient();
   const { isAuthenticated, openAuthModal, user } = useAuth();
   const tabParam = searchParams.get("tab");
-  const initialTab =
-    tabParam && tabs.some((tab) => tab.id === tabParam)
-      ? (tabParam as ProfileTabId)
-      : "info";
-  const [activeTab, setActiveTab] = useState<ProfileTabId>(initialTab);
+  const activeTab: ProfileTabId = isProfileTabId(tabParam) ? tabParam : "info";
 
-  useEffect(() => {
-    if (tabParam && tabs.some((tab) => tab.id === tabParam)) {
-      setActiveTab(tabParam as ProfileTabId);
+  function selectTab(tabId: ProfileTabId) {
+    const params = new URLSearchParams(searchParams.toString());
+    if (tabId === "info") {
+      params.delete("tab");
+    } else {
+      params.set("tab", tabId);
     }
-  }, [tabParam]);
+    const query = params.toString();
+    router.replace(query ? `/profile?${query}` : "/profile", { scroll: false });
+  }
 
   useEffect(() => {
     if (!isClient) return;
@@ -148,7 +153,7 @@ export default function ProfilePageClient() {
                   <button
                     key={tab.id}
                     type="button"
-                    onClick={() => setActiveTab(tab.id)}
+                    onClick={() => selectTab(tab.id)}
                     className={`inline-flex shrink-0 items-center gap-2 rounded-2xl border px-4 py-2.5 text-sm transition-colors ${
                       active
                         ? "border-accent/50 bg-cta-pill-bg text-accent"

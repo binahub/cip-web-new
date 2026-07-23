@@ -9,7 +9,7 @@ import { getFormErrorMessage } from "@/components/auth/auth-form-utils";
 import Select from "@/components/ui/Select";
 import TextField from "@/components/ui/TextField";
 import { toastSuccess } from "@/lib/toast";
-import { maskBirthDateInput, toEnglishDigits } from "@/lib/format";
+import { maskBirthDateInput, nullIfEmpty, toEnglishDigits } from "@/lib/format";
 import {
   draftPassengerSchema,
   type DraftPassengerFormValues,
@@ -202,17 +202,17 @@ export default function StepPassengers({ draft, onBack, onSuccess }: StepPasseng
           payload: {
             firstName: values.firstName,
             lastName: values.lastName,
-            nationalCode: values.nationalCode,
-            mobileNumber: values.mobileNumber || undefined,
-            passportNumber: values.passportNumber || undefined,
+            nationalCode: nullIfEmpty(values.nationalCode),
+            mobileNumber: values.mobileNumber,
+            passportNumber: nullIfEmpty(values.passportNumber),
             gender: values.gender,
             birthDate: toEnglishDigits(values.birthDate),
             ageCategoryId: Number(values.ageCategoryId),
             nationalityId: Number(values.nationalityId),
             needsWheelchair: values.needsWheelchair,
-            specialMeal: values.specialMeal || undefined,
-            medicalConditions: values.medicalConditions || undefined,
-            notes: values.notes || undefined,
+            specialMeal: nullIfEmpty(values.specialMeal),
+            medicalConditions: nullIfEmpty(values.medicalConditions),
+            notes: nullIfEmpty(values.notes),
           },
           setAsDefault: values.setAsDefault,
         });
@@ -251,20 +251,20 @@ export default function StepPassengers({ draft, onBack, onSuccess }: StepPasseng
         passengers: selectedPassengers.map((passenger) => ({
           customerPassengerId: passenger.customerPassengerId
             ? Number(passenger.customerPassengerId)
-            : undefined,
+            : null,
           firstName: passenger.firstName,
           lastName: passenger.lastName,
-          nationalCode: passenger.nationalCode,
-          mobileNumber: passenger.mobileNumber || undefined,
-          passportNumber: passenger.passportNumber || undefined,
+          nationalCode: nullIfEmpty(passenger.nationalCode),
+          mobileNumber: passenger.mobileNumber,
+          passportNumber: nullIfEmpty(passenger.passportNumber),
           gender: passenger.gender,
           birthDate: toEnglishDigits(passenger.birthDate),
           ageCategoryId: Number(passenger.ageCategoryId),
           nationalityId: Number(passenger.nationalityId),
           needsWheelchair: passenger.needsWheelchair,
-          specialMeal: passenger.specialMeal || undefined,
-          medicalConditions: passenger.medicalConditions || undefined,
-          notes: passenger.notes || undefined,
+          specialMeal: nullIfEmpty(passenger.specialMeal),
+          medicalConditions: nullIfEmpty(passenger.medicalConditions),
+          notes: nullIfEmpty(passenger.notes),
         })),
       });
       onSuccess(next);

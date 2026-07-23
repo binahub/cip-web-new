@@ -48,12 +48,8 @@ export const draftPassengerSchema = z.object({
   customerPassengerId: z.string().optional(),
   firstName: fieldSchemas.firstNameEnglish,
   lastName: fieldSchemas.lastNameEnglish,
-  nationalCode: fieldSchemas.nationalCode,
-  mobileNumber: z
-    .string()
-    .trim()
-    .optional()
-    .refine((value) => !value || /^09\d{9}$/.test(value), validationMessages.mobile),
+  nationalCode: fieldSchemas.nationalCodeOptional,
+  mobileNumber: fieldSchemas.mobileNumber,
   passportNumber: z.string().trim().optional(),
   gender: z.string().trim().min(1, "جنسیت را انتخاب کنید."),
   birthDate: fieldSchemas.birthDate,

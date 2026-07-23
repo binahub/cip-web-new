@@ -69,6 +69,15 @@ export const fieldSchemas = {
     .regex(/^\d{10}$/, validationMessages.nationalCode)
     .refine(isValidIranianNationalCode, validationMessages.nationalCode),
 
+  /** Empty allowed; if filled must be a valid Iranian national code. */
+  nationalCodeOptional: z
+    .string()
+    .trim()
+    .refine(
+      (value) => !value || (/^\d{10}$/.test(value) && isValidIranianNationalCode(value)),
+      validationMessages.nationalCode,
+    ),
+
   firstName: z.string().trim().min(1, validationMessages.firstName).max(50),
 
   lastName: z.string().trim().min(1, validationMessages.lastName).max(50),

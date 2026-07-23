@@ -60,6 +60,13 @@ export function toEnglishDigits(value: string): string {
     .replace(/[٠-٩]/g, (digit) => String("٠١٢٣٤٥٦٧٨٩".indexOf(digit)));
 }
 
+/** Empty / whitespace-only strings become `null` for CIP API payloads. */
+export function nullIfEmpty(value: string | null | undefined): string | null {
+  if (value == null) return null;
+  const trimmed = value.trim();
+  return trimmed.length > 0 ? trimmed : null;
+}
+
 /**
  * True when `YYYY/MM/DD` is a real calendar date.
  * Years below 1800 are treated as Jalali; otherwise Gregorian.

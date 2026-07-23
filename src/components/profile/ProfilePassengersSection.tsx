@@ -13,9 +13,9 @@ import Select from "@/components/ui/Select";
 import TextField from "@/components/ui/TextField";
 import {
   birthDateInputToIso,
-  formatDateFa,
   maskBirthDateInput,
   normalizeBirthDateInput,
+  nullIfEmpty,
 } from "@/lib/format";
 import { toastSuccess } from "@/lib/toast";
 import { passengerFormSchema, type PassengerFormValues } from "@/schemas/customer";
@@ -34,6 +34,7 @@ const defaultFormValues: PassengerFormValues = {
   firstName: "",
   lastName: "",
   nationalCode: "",
+  mobileNumber: "",
   passportNumber: "",
   gender: "",
   birthDate: "",
@@ -105,38 +106,45 @@ export default function ProfilePassengersSection() {
 
   function openEdit(row: CustomerPassenger) {
     setEditing(row);
+    setEditorOpen(true);
     reset({
-      firstName: row.firstName,
-      lastName: row.lastName,
-      nationalCode: row.nationalCode,
+      firstName: row.firstName ?? "",
+      lastName: row.lastName ?? "",
+      nationalCode: row.nationalCode ?? "",
+      mobileNumber: row.mobileNumber ?? "",
       passportNumber: row.passportNumber ?? "",
-      gender: row.gender || "",
+      gender: row.gender ?? "",
       birthDate: normalizeBirthDateInput(row.birthDate),
-      ageCategoryId: row.ageCategoryId ? String(row.ageCategoryId) : "",
-      nationalityId: row.nationalityId ? String(row.nationalityId) : "",
-      needsWheelchair: row.needsWheelchair,
+      ageCategoryId: row.ageCategoryId != null ? String(row.ageCategoryId) : "",
+      nationalityId: row.nationalityId != null ? String(row.nationalityId) : "",
+      needsWheelchair: Boolean(row.needsWheelchair),
       specialMeal: row.specialMeal ?? "",
       medicalConditions: "",
       notes: "",
-      setAsDefault: row.isDefault,
+      setAsDefault: Boolean(row.isDefault),
     });
-    setEditorOpen(true);
   }
+
+  const genderValue = watch("gender");
+  const ageCategoryValue = watch("ageCategoryId");
+  const nationalityValue = watch("nationalityId");
+  const birthDateValue = watch("birthDate");
 
   const onSubmit = handleSubmit(async (values) => {
     const payload = {
       firstName: values.firstName,
       lastName: values.lastName,
-      nationalCode: values.nationalCode,
-      passportNumber: values.passportNumber || undefined,
+      nationalCode: nullIfEmpty(values.nationalCode),
+      mobileNumber: values.mobileNumber,
+      passportNumber: nullIfEmpty(values.passportNumber),
       gender: values.gender,
       birthDate: birthDateInputToIso(values.birthDate),
       ageCategoryId: Number(values.ageCategoryId),
       nationalityId: Number(values.nationalityId),
       needsWheelchair: values.needsWheelchair,
-      specialMeal: values.specialMeal || undefined,
-      medicalConditions: values.medicalConditions || undefined,
-      notes: values.notes || undefined,
+      specialMeal: nullIfEmpty(values.specialMeal),
+      medicalConditions: nullIfEmpty(values.medicalConditions),
+      notes: nullIfEmpty(values.notes),
       setAsDefault: values.setAsDefault,
     };
 
@@ -188,7 +196,7 @@ export default function ProfilePassengersSection() {
     {
       key: "birthDate",
       header: "تاریخ تولد",
-      render: (row) => formatDateFa(row.birthDate),
+      render: (row) => (row.birthDate),
     },
     {
       key: "ageCategoryName",
@@ -337,21 +345,38 @@ export default function ProfilePassengersSection() {
           <div className="modal-scroll min-h-0 flex-1 space-y-4 px-5 py-4">
             <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
               <TextField
-                label="نام"
+                label="نام (انگلیسی)"
+                dir="ltr"
+                className="[&_input]:text-left [&_input]:placeholder:text-left"
+                placeholder="Ali"
                 error={errors.firstName?.message}
                 {...register("firstName")}
               />
               <TextField
-                label="نام خانوادگی"
+                label="نام خانوادگی (انگلیسی)"
+                dir="ltr"
+                className="[&_input]:text-left [&_input]:placeholder:text-left"
+                placeholder="Rezaei"
                 error={errors.lastName?.message}
                 {...register("lastName")}
               />
             </div>
-            <TextField
-              label="کد ملی"
-              error={errors.nationalCode?.message}
-              {...register("nationalCode")}
-            />
+            <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
+              <TextField
+                label="کد ملی"
+                error={errors.nationalCode?.message}
+                {...register("nationalCode")}
+              />
+              <TextField
+                label="موبایل"
+                inputMode="tel"
+                dir="ltr"
+                className="[&_input]:text-left [&_input]:placeholder:text-left"
+                placeholder="09123456789"
+                error={errors.mobileNumber?.message}
+                {...register("mobileNumber")}
+              />
+            </div>
             <TextField
               label="شماره پاسپورت"
               error={errors.passportNumber?.message}
@@ -365,6 +390,7 @@ export default function ProfilePassengersSection() {
                 isLoading={gendersLoading}
                 error={errors.gender?.message}
                 {...register("gender")}
+                value={genderValue}
               />
               <TextField
                 label="تاریخ تولد"
@@ -378,6 +404,7 @@ export default function ProfilePassengersSection() {
                 name={birthDateField.name}
                 ref={birthDateField.ref}
                 onBlur={birthDateField.onBlur}
+                value={birthDateValue}
                 onChange={(event) => {
                   event.target.value = maskBirthDateInput(
                     event.target.value,
@@ -395,6 +422,7 @@ export default function ProfilePassengersSection() {
                 isLoading={ageCategoriesLoading}
                 error={errors.ageCategoryId?.message}
                 {...register("ageCategoryId")}
+                value={ageCategoryValue}
               />
               <Select
                 label="ملیت"
@@ -404,6 +432,7 @@ export default function ProfilePassengersSection() {
                 searchable
                 error={errors.nationalityId?.message}
                 {...register("nationalityId")}
+                value={nationalityValue}
               />
             </div>
             <TextField label="وعده غذایی ویژه" {...register("specialMeal")} />

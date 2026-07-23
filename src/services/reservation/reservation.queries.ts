@@ -31,7 +31,8 @@ export const reservationKeys = {
   all: ["reservation"] as const,
   tripTypes: () => [...reservationKeys.all, "trip-types"] as const,
   airlines: () => [...reservationKeys.all, "airlines"] as const,
-  airports: () => [...reservationKeys.all, "airports"] as const,
+  airports: (status: "ACTIVE" | "ALL" = "ACTIVE") =>
+    [...reservationKeys.all, "airports", status] as const,
   walletInfo: () => [...reservationKeys.all, "wallet-info"] as const,
   myPassengers: (page = 0, size = 20) =>
     [...reservationKeys.all, "my-passengers", page, size] as const,
@@ -55,10 +56,10 @@ export function useAirlines(enabled = true) {
   });
 }
 
-export function useAirports(enabled = true) {
+export function useAirports(status: "ACTIVE" | "ALL" = "ACTIVE", enabled = true) {
   return useQuery({
-    queryKey: reservationKeys.airports(),
-    queryFn: fetchAirports,
+    queryKey: reservationKeys.airports(status),
+    queryFn: () => fetchAirports(status),
     enabled,
     staleTime: 5 * 60 * 1000,
   });

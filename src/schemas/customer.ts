@@ -29,9 +29,10 @@ export const cancelReservationSchema = z.object({
 export type CancelReservationFormValues = z.infer<typeof cancelReservationSchema>;
 
 export const passengerFormSchema = z.object({
-  firstName: fieldSchemas.firstName,
-  lastName: fieldSchemas.lastName,
-  nationalCode: fieldSchemas.nationalCode,
+  firstName: fieldSchemas.firstNameEnglish,
+  lastName: fieldSchemas.lastNameEnglish,
+  nationalCode: fieldSchemas.nationalCodeOptional,
+  mobileNumber: fieldSchemas.mobileNumber,
   passportNumber: z.string().trim().optional(),
   gender: z.string().trim().min(1, "جنسیت را انتخاب کنید."),
   birthDate: fieldSchemas.birthDate,

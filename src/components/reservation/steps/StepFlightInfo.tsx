@@ -31,15 +31,27 @@ import type {
   TripTypeItem,
 } from "@/services/reservation/reservation.types";
 
+/** Trip-type ids from /trip-type/list */
+const TRIP_TYPE_ARRIVAL = "1"; // پرواز ورودی
+const TRIP_TYPE_DEPARTURE = "2"; // پرواز خروجی
+
 interface StepFlightInfoProps {
   initialServiceId?: string;
   onSuccess: (draft: ReservationDraft, primaryServiceId: string) => void;
 }
 
+function toAirportOptions(airports: AirportItem[] | undefined) {
+  return (airports ?? []).map((item) => ({
+    value: item.id,
+    label: item.persianName,
+  }));
+}
+
 export default function StepFlightInfo({ initialServiceId, onSuccess }: StepFlightInfoProps) {
   const { data: tripTypes, isPending: tripLoading } = useTripTypes();
   const { data: airlines, isPending: airlineLoading } = useAirlines();
-  const { data: airports, isPending: airportLoading } = useAirports();
+  const { data: activeAirports, isPending: activeAirportLoading } = useAirports("ACTIVE");
+  const { data: allAirports, isPending: allAirportLoading } = useAirports("ALL");
   const { data: mainServices, isPending: servicesLoading } = useActiveMainServiceItems();
   const createMutation = useCreateReservationDraft();
 
@@ -51,6 +63,7 @@ export default function StepFlightInfo({ initialServiceId, onSuccess }: StepFlig
     control,
     handleSubmit,
     setValue,
+    watch,
     formState: { errors },
   } = useForm<CreateDraftFormValues>({
     resolver: zodResolver(createDraftFormSchema),
@@ -71,6 +84,10 @@ export default function StepFlightInfo({ initialServiceId, onSuccess }: StepFlig
     },
   });
 
+  const tripTypeId = watch("tripTypeId");
+  const airportId = watch("airportId");
+  const destinationAirportId = watch("destinationAirportId");
+
   useEffect(() => {
     if (initialServiceId) {
       setValue("primaryServiceId", initialServiceId);
@@ -81,6 +98,8 @@ export default function StepFlightInfo({ initialServiceId, onSuccess }: StepFlig
     const formatted = formatJalaliDateTime(flightDate, flightTime);
     setValue("flightDate", formatted ?? "", { shouldValidate: Boolean(formatted) });
   }, [flightDate, flightTime, setValue]);
+
+  const tripTypeField = register("tripTypeId");
 
   const tripOptions = useMemo(
     () =>
@@ -98,14 +117,25 @@ export default function StepFlightInfo({ initialServiceId, onSuccess }: StepFlig
       })),
     [airlines],
   );
-  const airportOptions = useMemo(
-    () =>
-      (airports ?? []).map((item: AirportItem) => ({
-        value: item.id,
-        label: item.persianName,
-      })),
-    [airports],
-  );
+
+  /**
+   * Departure (خروجی / id=2): origin = ACTIVE CIP airports, destination = all.
+   * Arrival (ورودی / id=1): origin = all, destination = ACTIVE CIP airports.
+   */
+  const originAirportOptions = useMemo(() => {
+    if (tripTypeId === TRIP_TYPE_DEPARTURE) return toAirportOptions(activeAirports);
+    if (tripTypeId === TRIP_TYPE_ARRIVAL) return toAirportOptions(allAirports);
+    return [];
+  }, [tripTypeId, activeAirports, allAirports]);
+
+  const destinationAirportOptions = useMemo(() => {
+    if (tripTypeId === TRIP_TYPE_DEPARTURE) return toAirportOptions(allAirports);
+    if (tripTypeId === TRIP_TYPE_ARRIVAL) return toAirportOptions(activeAirports);
+    return [];
+  }, [tripTypeId, activeAirports, allAirports]);
+
+  const airportLoading = activeAirportLoading || allAirportLoading;
+  const airportsDisabled = !tripTypeId;
 
   const onSubmit = handleSubmit(async (values) => {
     const draft = await createMutation.mutateAsync({
@@ -148,7 +178,15 @@ export default function StepFlightInfo({ initialServiceId, onSuccess }: StepFlig
           placeholder="انتخاب کنید"
           isLoading={tripLoading}
           error={errors.tripTypeId?.message}
-          {...register("tripTypeId")}
+          name={tripTypeField.name}
+          ref={tripTypeField.ref}
+          onBlur={tripTypeField.onBlur}
+          value={tripTypeId}
+          onChange={(event) => {
+            void tripTypeField.onChange(event);
+            setValue("airportId", "");
+            setValue("destinationAirportId", "");
+          }}
         />
         <Select
           label="ایرلاین"
@@ -160,19 +198,25 @@ export default function StepFlightInfo({ initialServiceId, onSuccess }: StepFlig
         />
         <Select
           label="فرودگاه مبدا / محل CIP"
-          options={airportOptions}
-          placeholder="انتخاب کنید"
-          isLoading={airportLoading}
+          options={originAirportOptions}
+          placeholder={airportsDisabled ? "ابتدا نوع سفر را انتخاب کنید" : "انتخاب کنید"}
+          isLoading={Boolean(tripTypeId) && airportLoading}
+          disabled={airportsDisabled}
+          searchable
           error={errors.airportId?.message}
           {...register("airportId")}
+          value={airportId}
         />
         <Select
           label="فرودگاه مقصد"
-          options={airportOptions}
-          placeholder="انتخاب کنید"
-          isLoading={airportLoading}
+          options={destinationAirportOptions}
+          placeholder={airportsDisabled ? "ابتدا نوع سفر را انتخاب کنید" : "انتخاب کنید"}
+          isLoading={Boolean(tripTypeId) && airportLoading}
+          disabled={airportsDisabled}
+          searchable
           error={errors.destinationAirportId?.message}
           {...register("destinationAirportId")}
+          value={destinationAirportId}
         />
         <TextField
           label="شماره پرواز"

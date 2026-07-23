@@ -57,10 +57,15 @@ export async function fetchAirlines(): Promise<AirlineItem[]> {
   return unwrapData(data, "دریافت ایرلاین‌ها ناموفق بود.").list ?? [];
 }
 
-export async function fetchAirports(): Promise<AirportItem[]> {
+export async function fetchAirports(status: "ACTIVE" | "ALL" = "ACTIVE"): Promise<AirportItem[]> {
   const { data } = await apiClient.post<CipApiResponse<CipPage<AirportItem>>>(
     "/airport/list",
-    defaultLookupParams({ iata: "", icao: "", status: "ACTIVE" }),
+    defaultLookupParams({
+      iata: "",
+      icao: "",
+      // Empty status returns all airports; ACTIVE returns CIP/local airports only.
+      status: status === "ALL" ? "" : status,
+    }),
   );
   return unwrapData(data, "دریافت فرودگاه‌ها ناموفق بود.").list ?? [];
 }

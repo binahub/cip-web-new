@@ -61,20 +61,20 @@ export interface UpdatePassengerCountsPayload {
 }
 
 export interface DraftPassengerInput {
-  customerPassengerId?: number | null;
+  customerPassengerId: number | null;
   firstName: string;
   lastName: string;
-  nationalCode: string;
-  mobileNumber?: string;
-  passportNumber?: string;
+  nationalCode: string | null;
+  mobileNumber: string;
+  passportNumber: string | null;
   gender: string;
   birthDate: string;
   ageCategoryId: number;
   nationalityId: number;
   needsWheelchair: boolean;
-  specialMeal?: string;
-  medicalConditions?: string;
-  notes?: string;
+  specialMeal: string | null;
+  medicalConditions: string | null;
+  notes: string | null;
 }
 
 /** Saved passenger from GET /reservation-draft/my-passengers */
@@ -99,17 +99,17 @@ export interface SaveDraftMyPassengerPayload {
   customerPassengerId?: number | null;
   firstName: string;
   lastName: string;
-  nationalCode: string;
-  mobileNumber?: string;
-  passportNumber?: string;
+  nationalCode: string | null;
+  mobileNumber: string;
+  passportNumber: string | null;
   gender: string;
   birthDate: string;
   ageCategoryId: number;
   nationalityId: number;
   needsWheelchair: boolean;
-  specialMeal?: string;
-  medicalConditions?: string;
-  notes?: string;
+  specialMeal: string | null;
+  medicalConditions: string | null;
+  notes: string | null;
 }
 
 export interface AddPassengersPayload {

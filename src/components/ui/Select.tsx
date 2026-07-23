@@ -87,7 +87,51 @@ const Select = forwardRef<HTMLSelectElement, SelectProps>(
       hiddenRef.current = node;
       if (typeof ref === "function") ref(node);
       else if (ref) ref.current = node;
+
+      // After RHF attaches the ref (and applies form values / reset), sync display.
+      if (node && !isControlled) {
+        setInternalValue(node.value);
+      }
     }
+
+    useEffect(() => {
+      if (isControlled) {
+        return;
+      }
+      if (defaultValue !== undefined) {
+        setInternalValue(String(defaultValue ?? ""));
+      }
+    }, [defaultValue, isControlled]);
+
+    // Keep display in sync when RHF writes `.value` on reset (uncontrolled mode).
+    useEffect(() => {
+      const select = hiddenRef.current;
+      if (!select || isControlled) return;
+
+      const proto = Object.getOwnPropertyDescriptor(HTMLSelectElement.prototype, "value");
+      if (!proto?.get || !proto?.set) return;
+
+      Object.defineProperty(select, "value", {
+        configurable: true,
+        enumerable: true,
+        get() {
+          return proto.get!.call(this);
+        },
+        set(next: string) {
+          proto.set!.call(this, next);
+          setInternalValue(String(next ?? ""));
+        },
+      });
+
+      return () => {
+        Object.defineProperty(select, "value", {
+          configurable: true,
+          enumerable: proto.enumerable,
+          get: proto.get,
+          set: proto.set,
+        });
+      };
+    }, [isControlled, name, isLoading]);
 
     useEffect(() => {
       function handleClickOutside(event: MouseEvent) {

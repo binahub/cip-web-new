@@ -90,6 +90,7 @@ export interface CustomerPassenger {
   firstName: string;
   lastName: string;
   nationalCode: string;
+  mobileNumber?: string | null;
   passportNumber: string | null;
   gender: string;
   birthDate: string;
@@ -105,15 +106,16 @@ export interface CustomerPassenger {
 export interface PassengerPayload {
   firstName: string;
   lastName: string;
-  nationalCode: string;
-  passportNumber?: string;
+  nationalCode: string | null;
+  mobileNumber: string;
+  passportNumber: string | null;
   gender: string;
   birthDate: string;
   ageCategoryId: number;
   nationalityId: number;
   needsWheelchair: boolean;
-  specialMeal?: string;
-  medicalConditions?: string;
-  notes?: string;
+  specialMeal: string | null;
+  medicalConditions: string | null;
+  notes: string | null;
   setAsDefault: boolean;
 }

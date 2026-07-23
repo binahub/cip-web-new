@@ -137,6 +137,18 @@ export default function StepFlightInfo({ initialServiceId, onSuccess }: StepFlig
   const airportLoading = activeAirportLoading || allAirportLoading;
   const airportsDisabled = !tripTypeId;
 
+  const originAirportLabel =
+    tripTypeId === TRIP_TYPE_DEPARTURE
+      ? "فرودگاه مبدا / محل CIP"
+      : tripTypeId === TRIP_TYPE_ARRIVAL
+        ? "فرودگاه مبدا"
+        : "فرودگاه مبدا";
+
+  const destinationAirportLabel =
+    tripTypeId === TRIP_TYPE_ARRIVAL
+      ? "فرودگاه مقصد / محل CIP"
+      : "فرودگاه مقصد";
+
   const onSubmit = handleSubmit(async (values) => {
     const draft = await createMutation.mutateAsync({
       tripTypeId: Number(values.tripTypeId),
@@ -197,7 +209,7 @@ export default function StepFlightInfo({ initialServiceId, onSuccess }: StepFlig
           {...register("airlineId")}
         />
         <Select
-          label="فرودگاه مبدا / محل CIP"
+          label={originAirportLabel}
           options={originAirportOptions}
           placeholder={airportsDisabled ? "ابتدا نوع سفر را انتخاب کنید" : "انتخاب کنید"}
           isLoading={Boolean(tripTypeId) && airportLoading}
@@ -208,7 +220,7 @@ export default function StepFlightInfo({ initialServiceId, onSuccess }: StepFlig
           value={airportId}
         />
         <Select
-          label="فرودگاه مقصد"
+          label={destinationAirportLabel}
           options={destinationAirportOptions}
           placeholder={airportsDisabled ? "ابتدا نوع سفر را انتخاب کنید" : "انتخاب کنید"}
           isLoading={Boolean(tripTypeId) && airportLoading}

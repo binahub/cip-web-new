@@ -16,6 +16,7 @@ import {
   createDraftFormSchema,
   type CreateDraftFormValues,
 } from "@/schemas/reservation";
+import { liveFormValidation } from "@/lib/validation";
 import { useActiveMainServiceItems } from "@/services/main-services/main-services.queries";
 import {
   useAirlines,
@@ -53,6 +54,7 @@ export default function StepFlightInfo({ initialServiceId, onSuccess }: StepFlig
     formState: { errors },
   } = useForm<CreateDraftFormValues>({
     resolver: zodResolver(createDraftFormSchema),
+    ...liveFormValidation,
     defaultValues: {
       tripTypeId: "",
       airportId: "",

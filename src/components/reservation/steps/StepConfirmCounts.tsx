@@ -11,6 +11,7 @@ import {
   updateCountsFormSchema,
   type UpdateCountsFormValues,
 } from "@/schemas/reservation";
+import { liveFormValidation } from "@/lib/validation";
 import { useActiveMainServiceItems } from "@/services/main-services/main-services.queries";
 import { updatePassengerCounts } from "@/services/reservation/reservation.api";
 import { useUpdatePassengerCounts } from "@/services/reservation/reservation.queries";
@@ -77,6 +78,7 @@ export default function StepConfirmCounts({
     formState: { errors },
   } = useForm<UpdateCountsFormValues>({
     resolver: zodResolver(updateCountsFormSchema),
+    ...liveFormValidation,
     defaultValues: initialFormValues(draft, primaryServiceId),
   });
 

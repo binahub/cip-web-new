@@ -1,5 +1,4 @@
 import { z } from "zod";
-import { toEnglishDigits } from "@/lib/format";
 import { fieldSchemas, validationMessages } from "@/lib/validation";
 
 const positiveInt = (message: string) =>
@@ -56,17 +55,10 @@ export const draftPassengerSchema = z.object({
     .optional()
     .refine((value) => !value || /^09\d{9}$/.test(value), validationMessages.mobile),
   passportNumber: z.string().trim().optional(),
-  gender: z.enum(["MALE", "FEMALE"], { message: "جنسیت را انتخاب کنید." }),
-  birthDate: z
-    .string()
-    .trim()
-    .min(1, "تاریخ تولد را وارد کنید.")
-    .transform((value) => toEnglishDigits(value))
-    .refine((value) => /^\d{4}\/\d{2}\/\d{2}$/.test(value), {
-      message: "تاریخ تولد را به صورت ۱۴۰۴/۰۱/۰۱ وارد کنید.",
-    }),
-  ageCategoryId: z.string().trim().min(1, "رده سنی را وارد کنید."),
-  nationalityId: z.string().trim().min(1, "ملیت را وارد کنید."),
+  gender: z.string().trim().min(1, "جنسیت را انتخاب کنید."),
+  birthDate: fieldSchemas.birthDate,
+  ageCategoryId: z.string().trim().min(1, "رده سنی را انتخاب کنید."),
+  nationalityId: z.string().trim().min(1, "ملیت را انتخاب کنید."),
   needsWheelchair: z.boolean(),
   specialMeal: z.string().trim().optional(),
   medicalConditions: z.string().trim().optional(),
@@ -85,8 +77,8 @@ export type DraftPassengerFormValues = z.infer<typeof draftPassengerSchema>;
 export const draftServiceRowSchema = z.object({
   mainServiceId: z.string().trim().min(1, "خدمت را انتخاب کنید."),
   quantity: positiveInt("تعداد باید حداقل ۱ باشد."),
-  ageCategoryId: z.string().trim().min(1, "رده سنی را وارد کنید."),
-  nationalityId: z.string().trim().min(1, "ملیت را وارد کنید."),
+  ageCategoryId: z.string().trim().min(1, "رده سنی را انتخاب کنید."),
+  nationalityId: z.string().trim().min(1, "ملیت را انتخاب کنید."),
   description: z.string().trim().optional(),
 });
 

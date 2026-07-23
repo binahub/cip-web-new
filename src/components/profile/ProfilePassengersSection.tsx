@@ -19,6 +19,7 @@ import {
 } from "@/lib/format";
 import { toastSuccess } from "@/lib/toast";
 import { passengerFormSchema, type PassengerFormValues } from "@/schemas/customer";
+import { liveFormValidation } from "@/lib/validation";
 import {
   useCreatePassenger,
   useCustomerPassengers,
@@ -26,21 +27,18 @@ import {
   useUpdatePassenger,
 } from "@/services/customer/customer.queries";
 import type { CustomerPassenger } from "@/services/customer/customer.types";
-
-const genderOptions = [
-  { value: "MALE", label: "مرد" },
-  { value: "FEMALE", label: "زن" },
-];
+import { useLookupSelectOptions } from "@/services/lookups/lookups.queries";
+import type { GenderItem } from "@/services/lookups/lookups.types";
 
 const defaultFormValues: PassengerFormValues = {
   firstName: "",
   lastName: "",
   nationalCode: "",
   passportNumber: "",
-  gender: "MALE",
+  gender: "",
   birthDate: "",
-  ageCategoryId: "1",
-  nationalityId: "1",
+  ageCategoryId: "",
+  nationalityId: "",
   needsWheelchair: false,
   specialMeal: "",
   medicalConditions: "",
@@ -73,6 +71,15 @@ export default function ProfilePassengersSection() {
   const createMutation = useCreatePassenger();
   const updateMutation = useUpdatePassenger();
   const deleteMutation = useDeletePassenger();
+  const {
+    ageCategoryOptions,
+    nationalityOptions,
+    genderOptions,
+    ageCategoriesLoading,
+    nationalitiesLoading,
+    gendersLoading,
+    genders,
+  } = useLookupSelectOptions();
 
   const {
     register,
@@ -84,6 +91,7 @@ export default function ProfilePassengersSection() {
     formState: { errors },
   } = useForm<PassengerFormValues>({
     resolver: zodResolver(passengerFormSchema),
+    ...liveFormValidation,
     defaultValues: defaultFormValues,
   });
 
@@ -102,10 +110,10 @@ export default function ProfilePassengersSection() {
       lastName: row.lastName,
       nationalCode: row.nationalCode,
       passportNumber: row.passportNumber ?? "",
-      gender: row.gender === "FEMALE" ? "FEMALE" : "MALE",
+      gender: row.gender || "",
       birthDate: normalizeBirthDateInput(row.birthDate),
-      ageCategoryId: String(row.ageCategoryId || 1),
-      nationalityId: String(row.nationalityId || 1),
+      ageCategoryId: row.ageCategoryId ? String(row.ageCategoryId) : "",
+      nationalityId: row.nationalityId ? String(row.nationalityId) : "",
       needsWheelchair: row.needsWheelchair,
       specialMeal: row.specialMeal ?? "",
       medicalConditions: "",
@@ -172,7 +180,10 @@ export default function ProfilePassengersSection() {
     {
       key: "gender",
       header: "جنسیت",
-      render: (row) => (row.gender === "FEMALE" ? "زن" : "مرد"),
+      render: (row) =>
+        genders.find((item: GenderItem) => item.code === row.gender)?.persianName ||
+        row.gender ||
+        "—",
     },
     {
       key: "birthDate",
@@ -350,6 +361,8 @@ export default function ProfilePassengersSection() {
               <Select
                 label="جنسیت"
                 options={genderOptions}
+                placeholder="انتخاب کنید"
+                isLoading={gendersLoading}
                 error={errors.gender?.message}
                 {...register("gender")}
               />
@@ -375,15 +388,20 @@ export default function ProfilePassengersSection() {
               />
             </div>
             <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
-              <TextField
-                label="شناسه رده سنی"
-                type="number"
+              <Select
+                label="رده سنی"
+                options={ageCategoryOptions}
+                placeholder="انتخاب کنید"
+                isLoading={ageCategoriesLoading}
                 error={errors.ageCategoryId?.message}
                 {...register("ageCategoryId")}
               />
-              <TextField
-                label="شناسه ملیت"
-                type="number"
+              <Select
+                label="ملیت"
+                options={nationalityOptions}
+                placeholder="انتخاب کنید"
+                isLoading={nationalitiesLoading}
+                searchable
                 error={errors.nationalityId?.message}
                 {...register("nationalityId")}
               />

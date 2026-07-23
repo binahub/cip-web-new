@@ -61,6 +61,41 @@ export function toEnglishDigits(value: string): string {
 }
 
 /**
+ * True when `YYYY/MM/DD` is a real calendar date.
+ * Years below 1800 are treated as Jalali; otherwise Gregorian.
+ * Rejects impossible values like `1355/55/55` or `2024/02/31`.
+ */
+export function isValidCalendarDate(value: string): boolean {
+  const english = toEnglishDigits(value).trim();
+  const match = /^(\d{4})\/(\d{2})\/(\d{2})$/.exec(english);
+  if (!match) return false;
+
+  const year = Number(match[1]);
+  const month = Number(match[2]);
+  const day = Number(match[3]);
+
+  if (month < 1 || month > 12 || day < 1 || day > 31) return false;
+
+  const calendar = year < 1800 ? persian : gregorian;
+  const date = new DateObject({ year, month, day, calendar });
+
+  return (
+    date.isValid &&
+    date.year === year &&
+    date.month.number === month &&
+    date.day === day
+  );
+}
+
+/** True when HTML `type="date"` value `YYYY-MM-DD` is a real Gregorian date. */
+export function isValidIsoDateInput(value: string): boolean {
+  const english = toEnglishDigits(value).trim();
+  const match = /^(\d{4})-(\d{2})-(\d{2})$/.exec(english);
+  if (!match) return false;
+  return isValidCalendarDate(`${match[1]}/${match[2]}/${match[3]}`);
+}
+
+/**
  * Live mask for birth dates: `YYYY/MM/DD`.
  * Inserts `/` as soon as year (4 digits) or month (2 digits) is complete,
  * so newcomers see the structure without typing the slash themselves.
@@ -115,6 +150,8 @@ export function normalizeBirthDateInput(value: string | null | undefined): strin
  * Years below 1800 are treated as Jalali.
  */
 export function birthDateInputToIso(dateInput: string): string {
+  if (!isValidCalendarDate(dateInput)) return "";
+
   const english = toEnglishDigits(dateInput).trim();
   const match = /^(\d{4})\/(\d{2})\/(\d{2})$/.exec(english);
   if (!match) return "";

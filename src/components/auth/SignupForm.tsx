@@ -13,6 +13,7 @@ import {
   type SignupInfoFormValues,
   type SignupVerifyFormValues,
 } from "@/schemas/auth";
+import { liveFormValidation } from "@/lib/validation";
 import {
   useCaptcha,
   useRefreshCaptcha,
@@ -57,8 +58,7 @@ export default function SignupForm({ onSuccess, onGoLogin }: SignupFormProps) {
       mobileNumber: "",
       captchaAnswer: "",
     },
-    mode: "onSubmit",
-    reValidateMode: "onChange",
+    ...liveFormValidation,
   });
 
   const verifyForm = useForm<SignupVerifyFormValues>({
@@ -68,8 +68,7 @@ export default function SignupForm({ onSuccess, onGoLogin }: SignupFormProps) {
       password: "",
       repeatPassword: "",
     },
-    mode: "onSubmit",
-    reValidateMode: "onChange",
+    ...liveFormValidation,
   });
 
   const captchaAnswer = infoForm.watch("captchaAnswer");

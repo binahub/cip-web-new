@@ -15,17 +15,20 @@ import {
   updateCustomerInfoSchema,
   type UpdateCustomerInfoFormValues,
 } from "@/schemas/customer";
+import { liveFormValidation } from "@/lib/validation";
 import { useCustomerInfo, useUpdateCustomerInfo } from "@/services/customer/customer.queries";
-
-const genderOptions = [
-  { value: "MALE", label: "مرد" },
-  { value: "FEMALE", label: "زن" },
-];
+import { useLookupSelectOptions } from "@/services/lookups/lookups.queries";
 
 export default function ProfileInfoSection() {
   const [isEditing, setIsEditing] = useState(false);
   const { data, isPending, error } = useCustomerInfo();
   const updateMutation = useUpdateCustomerInfo();
+  const {
+    nationalityOptions,
+    genderOptions,
+    nationalitiesLoading,
+    gendersLoading,
+  } = useLookupSelectOptions(isEditing);
 
   const {
     register,
@@ -34,15 +37,16 @@ export default function ProfileInfoSection() {
     formState: { errors, isDirty },
   } = useForm<UpdateCustomerInfoFormValues>({
     resolver: zodResolver(updateCustomerInfoSchema),
+    ...liveFormValidation,
     defaultValues: {
       firstName: "",
       lastName: "",
       mobileNumber: "",
       address: "",
       city: "",
-      nationalityId: "1",
+      nationalityId: "",
       birthDate: "",
-      gender: "MALE",
+      gender: "",
     },
   });
 
@@ -54,9 +58,9 @@ export default function ProfileInfoSection() {
       mobileNumber: data.mobileNumber ?? "",
       address: "",
       city: "",
-      nationalityId: "1",
+      nationalityId: "",
       birthDate: "",
-      gender: "MALE",
+      gender: "",
     });
   }, [data, reset]);
 
@@ -68,9 +72,9 @@ export default function ProfileInfoSection() {
       mobileNumber: data.mobileNumber ?? "",
       address: "",
       city: "",
-      nationalityId: "1",
+      nationalityId: "",
       birthDate: "",
-      gender: "MALE",
+      gender: "",
     });
     updateMutation.reset();
     setIsEditing(true);
@@ -86,9 +90,9 @@ export default function ProfileInfoSection() {
         mobileNumber: data.mobileNumber ?? "",
         address: "",
         city: "",
-        nationalityId: "1",
+        nationalityId: "",
         birthDate: "",
-        gender: "MALE",
+        gender: "",
       });
     }
   }
@@ -178,6 +182,8 @@ export default function ProfileInfoSection() {
           <Select
             label="جنسیت"
             options={genderOptions}
+            placeholder="انتخاب کنید"
+            isLoading={gendersLoading}
             error={errors.gender?.message}
             {...register("gender")}
           />
@@ -187,9 +193,12 @@ export default function ProfileInfoSection() {
             error={errors.birthDate?.message}
             {...register("birthDate")}
           />
-          <TextField
-            label="شناسه ملیت"
-            type="number"
+          <Select
+            label="ملیت"
+            options={nationalityOptions}
+            placeholder="انتخاب کنید"
+            isLoading={nationalitiesLoading}
+            searchable
             error={errors.nationalityId?.message}
             {...register("nationalityId")}
           />

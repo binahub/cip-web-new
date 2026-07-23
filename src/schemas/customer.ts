@@ -1,5 +1,4 @@
 import { z } from "zod";
-import { toEnglishDigits } from "@/lib/format";
 import { fieldSchemas, validationMessages } from "@/lib/validation";
 
 const positiveIntString = (message: string) =>
@@ -9,15 +8,6 @@ const positiveIntString = (message: string) =>
     .min(1, message)
     .refine((value) => /^\d+$/.test(value) && Number(value) > 0, message);
 
-const birthDateSchema = z
-  .string()
-  .trim()
-  .min(1, "تاریخ تولد را وارد کنید.")
-  .transform((value) => toEnglishDigits(value))
-  .refine((value) => /^\d{4}\/\d{2}\/\d{2}$/.test(value), {
-    message: "تاریخ تولد را به صورت ۱۳۶۶/۰۶/۱۸ یا 1986/06/18 وارد کنید.",
-  });
-
 export const updateCustomerInfoSchema = z.object({
   firstName: fieldSchemas.firstName,
   lastName: fieldSchemas.lastName,
@@ -25,8 +15,8 @@ export const updateCustomerInfoSchema = z.object({
   address: z.string().trim().min(1, validationMessages.required),
   city: z.string().trim().min(1, validationMessages.required),
   nationalityId: positiveIntString("ملیت را انتخاب کنید."),
-  birthDate: z.string().trim().min(1, validationMessages.required),
-  gender: z.enum(["MALE", "FEMALE"], { message: "جنسیت را انتخاب کنید." }),
+  birthDate: fieldSchemas.birthDateIso,
+  gender: z.string().trim().min(1, "جنسیت را انتخاب کنید."),
 });
 
 export type UpdateCustomerInfoFormValues = z.infer<typeof updateCustomerInfoSchema>;
@@ -43,10 +33,10 @@ export const passengerFormSchema = z.object({
   lastName: fieldSchemas.lastName,
   nationalCode: fieldSchemas.nationalCode,
   passportNumber: z.string().trim().optional(),
-  gender: z.enum(["MALE", "FEMALE"], { message: "جنسیت را انتخاب کنید." }),
-  birthDate: birthDateSchema,
-  ageCategoryId: positiveIntString("رده سنی را وارد کنید."),
-  nationalityId: positiveIntString("ملیت را وارد کنید."),
+  gender: z.string().trim().min(1, "جنسیت را انتخاب کنید."),
+  birthDate: fieldSchemas.birthDate,
+  ageCategoryId: positiveIntString("رده سنی را انتخاب کنید."),
+  nationalityId: positiveIntString("ملیت را انتخاب کنید."),
   needsWheelchair: z.boolean(),
   specialMeal: z.string().trim().optional(),
   medicalConditions: z.string().trim().optional(),

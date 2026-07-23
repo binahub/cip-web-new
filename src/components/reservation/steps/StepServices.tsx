@@ -12,6 +12,8 @@ import {
   addServicesFormSchema,
   type AddServicesFormValues,
 } from "@/schemas/reservation";
+import { liveFormValidation } from "@/lib/validation";
+import { useLookupSelectOptions } from "@/services/lookups/lookups.queries";
 import { useActiveMainServiceItems } from "@/services/main-services/main-services.queries";
 import { useAddDraftServices } from "@/services/reservation/reservation.queries";
 import type { ReservationDraft } from "@/services/reservation/reservation.types";
@@ -25,14 +27,20 @@ interface StepServicesProps {
 const emptyService = {
   mainServiceId: "",
   quantity: 1,
-  ageCategoryId: "1",
-  nationalityId: "1",
+  ageCategoryId: "",
+  nationalityId: "",
   description: "",
 };
 
 export default function StepServices({ draft, onBack, onSuccess }: StepServicesProps) {
   const { data: mainServices, isPending: servicesLoading } = useActiveMainServiceItems();
   const addMutation = useAddDraftServices();
+  const {
+    ageCategoryOptions,
+    nationalityOptions,
+    ageCategoriesLoading,
+    nationalitiesLoading,
+  } = useLookupSelectOptions();
 
   const serviceOptions = (mainServices ?? []).map((item) => ({
     value: item.mainService.id,
@@ -46,6 +54,7 @@ export default function StepServices({ draft, onBack, onSuccess }: StepServicesP
     formState: { errors },
   } = useForm<AddServicesFormValues>({
     resolver: zodResolver(addServicesFormSchema),
+    ...liveFormValidation,
     defaultValues: { services: [] },
   });
 
@@ -134,13 +143,20 @@ export default function StepServices({ draft, onBack, onSuccess }: StepServicesP
                     />
                   )}
                 />
-                <TextField
-                  label="شناسه رده سنی"
+                <Select
+                  label="رده سنی"
+                  options={ageCategoryOptions}
+                  placeholder="انتخاب کنید"
+                  isLoading={ageCategoriesLoading}
                   error={errors.services?.[index]?.ageCategoryId?.message}
                   {...register(`services.${index}.ageCategoryId`)}
                 />
-                <TextField
-                  label="شناسه ملیت"
+                <Select
+                  label="ملیت"
+                  options={nationalityOptions}
+                  placeholder="انتخاب کنید"
+                  isLoading={nationalitiesLoading}
+                  searchable
                   error={errors.services?.[index]?.nationalityId?.message}
                   {...register(`services.${index}.nationalityId`)}
                 />

@@ -13,6 +13,7 @@ import {
   cancelReservationSchema,
   type CancelReservationFormValues,
 } from "@/schemas/customer";
+import { liveFormValidation } from "@/lib/validation";
 import {
   useCancelReservation,
   useCustomerReservations,
@@ -32,6 +33,7 @@ export default function ProfileReservationsSection() {
     formState: { errors },
   } = useForm<CancelReservationFormValues>({
     resolver: zodResolver(cancelReservationSchema),
+    ...liveFormValidation,
     defaultValues: { reservationNumber: "", cancelReason: "" },
   });
 

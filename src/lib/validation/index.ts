@@ -1,4 +1,5 @@
 import { z, type ZodTypeAny } from "zod";
+import { isValidCalendarDate, isValidIsoDateInput, toEnglishDigits } from "@/lib/format";
 
 /** Shared Persian validation messages for forms across the app. */
 export const validationMessages = {
@@ -15,7 +16,17 @@ export const validationMessages = {
   lastName: "نام خانوادگی را وارد کنید.",
   firstNameEnglish: "نام را به انگلیسی بنویسید (کیبورد را انگلیسی کنید).",
   lastNameEnglish: "نام خانوادگی را به انگلیسی بنویسید (کیبورد را انگلیسی کنید).",
+  birthDateRequired: "تاریخ تولد را وارد کنید.",
+  birthDateFormat: "تاریخ تولد را به صورت ۱۳۶۶/۰۶/۱۸ یا 1986/06/18 وارد کنید.",
+  birthDateInvalid: "ماه یا روز تاریخ تولد معتبر نیست.",
+  birthDateIsoFormat: "تاریخ تولد را انتخاب کنید.",
 } as const;
+
+/** Shared RHF options: validate after first interaction, then live on change. */
+export const liveFormValidation = {
+  mode: "onTouched" as const,
+  reValidateMode: "onChange" as const,
+};
 
 /** Latin letters only; spaces / hyphen / apostrophe allowed between parts. */
 const ENGLISH_NAME_PATTERN = /^[A-Za-z]+(?:[ '\-][A-Za-z]+)*$/;
@@ -82,6 +93,35 @@ export const fieldSchemas = {
     .string()
     .trim()
     .regex(/^\d{4,8}$/, validationMessages.otp),
+
+  /** Masked birth date `YYYY/MM/DD` (Jalali if year < 1800). */
+  birthDate: z
+    .string()
+    .trim()
+    .min(1, validationMessages.birthDateRequired)
+    .transform((value) => toEnglishDigits(value))
+    .superRefine((value, ctx) => {
+      if (!/^\d{4}\/\d{2}\/\d{2}$/.test(value)) {
+        ctx.addIssue({
+          code: "custom",
+          message: validationMessages.birthDateFormat,
+        });
+        return;
+      }
+      if (!isValidCalendarDate(value)) {
+        ctx.addIssue({
+          code: "custom",
+          message: validationMessages.birthDateInvalid,
+        });
+      }
+    }),
+
+  /** HTML `type="date"` value `YYYY-MM-DD`. */
+  birthDateIso: z
+    .string()
+    .trim()
+    .min(1, validationMessages.birthDateRequired)
+    .refine(isValidIsoDateInput, validationMessages.birthDateIsoFormat),
 } as const;
 
 export type FieldErrors = Record<string, string>;

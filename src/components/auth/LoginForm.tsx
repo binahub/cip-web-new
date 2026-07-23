@@ -8,6 +8,7 @@ import CaptchaField from "@/components/auth/CaptchaField";
 import { getFieldErrors, getFormErrorMessage } from "@/components/auth/auth-form-utils";
 import TextField from "@/components/ui/TextField";
 import { loginSchema, type LoginFormValues } from "@/schemas/auth";
+import { liveFormValidation } from "@/lib/validation";
 import {
   useCaptcha,
   useLoginMutation,
@@ -41,8 +42,7 @@ export default function LoginForm({ onSuccess, onGoSignup }: LoginFormProps) {
       password: "",
       captchaAnswer: "",
     },
-    mode: "onSubmit",
-    reValidateMode: "onChange",
+    ...liveFormValidation,
   });
 
   const captchaAnswer = watch("captchaAnswer");

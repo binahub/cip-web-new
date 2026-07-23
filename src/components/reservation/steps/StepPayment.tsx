@@ -9,6 +9,7 @@ import Select from "@/components/ui/Select";
 import TextField from "@/components/ui/TextField";
 import { formatPrice } from "@/lib/format";
 import { paymentFormSchema, type PaymentFormValues } from "@/schemas/reservation";
+import { liveFormValidation } from "@/lib/validation";
 import {
   useCalculateCoupon,
   useFinalizePostpaid,
@@ -49,6 +50,7 @@ export default function StepPayment({
     formState: { errors },
   } = useForm<PaymentFormValues>({
     resolver: zodResolver(paymentFormSchema),
+    ...liveFormValidation,
     defaultValues: {
       paymentMethod: "postpaid",
       walletAccountId: "",

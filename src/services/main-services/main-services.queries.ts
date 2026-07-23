@@ -74,7 +74,7 @@ export function useActiveMainServices() {
 export function useActiveMainServiceItems(enabled = true) {
   return useQuery({
     queryKey: [...mainServiceKeys.activeSummary(), "raw"] as const,
-    queryFn: async () => {
+    queryFn: async (): Promise<ActiveMainServiceSummaryItem[]> => {
       const { data } = await apiClient.get<CipApiResponse<ActiveMainServicesSummaryData>>(
         "/main-services/active-summary",
         { skipAuth: true },

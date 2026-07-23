@@ -14,6 +14,7 @@ import {
   draftPassengerSchema,
   type DraftPassengerFormValues,
 } from "@/schemas/reservation";
+import { liveFormValidation } from "@/lib/validation";
 import {
   useAddDraftPassengers,
   useDraftMyPassengers,
@@ -23,17 +24,13 @@ import type {
   DraftMyPassenger,
   ReservationDraft,
 } from "@/services/reservation/reservation.types";
+import { useLookupSelectOptions } from "@/services/lookups/lookups.queries";
 
 interface StepPassengersProps {
   draft: ReservationDraft;
   onBack: () => void;
   onSuccess: (draft: ReservationDraft) => void;
 }
-
-const genderOptions = [
-  { value: "MALE", label: "مرد" },
-  { value: "FEMALE", label: "زن" },
-];
 
 function emptyPassenger(): DraftPassengerFormValues {
   return {
@@ -43,10 +40,10 @@ function emptyPassenger(): DraftPassengerFormValues {
     nationalCode: "",
     mobileNumber: "",
     passportNumber: "",
-    gender: "MALE",
+    gender: "",
     birthDate: "",
-    ageCategoryId: "1",
-    nationalityId: "1",
+    ageCategoryId: "",
+    nationalityId: "",
     needsWheelchair: false,
     specialMeal: "",
     medicalConditions: "",
@@ -71,10 +68,10 @@ function passengerFromSaved(passenger: DraftMyPassenger): DraftPassengerFormValu
     nationalCode: passenger.nationalCode,
     mobileNumber: "",
     passportNumber: passenger.passportNumber ?? "",
-    gender: passenger.gender === "FEMALE" ? "FEMALE" : "MALE",
+    gender: passenger.gender || "",
     birthDate: normalizeBirthDate(passenger.birthDate),
-    ageCategoryId: String(passenger.ageCategoryId),
-    nationalityId: String(passenger.nationalityId),
+    ageCategoryId: passenger.ageCategoryId ? String(passenger.ageCategoryId) : "",
+    nationalityId: passenger.nationalityId ? String(passenger.nationalityId) : "",
     needsWheelchair: passenger.needsWheelchair,
     specialMeal: passenger.specialMeal ?? "",
     medicalConditions: "",
@@ -95,6 +92,14 @@ export default function StepPassengers({ draft, onBack, onSuccess }: StepPasseng
   const { data: savedPage, isPending: savedLoading } = useDraftMyPassengers(0, 20);
   const savePassengerMutation = useSaveDraftMyPassenger();
   const addMutation = useAddDraftPassengers();
+  const {
+    ageCategoryOptions,
+    nationalityOptions,
+    genderOptions,
+    ageCategoriesLoading,
+    nationalitiesLoading,
+    gendersLoading,
+  } = useLookupSelectOptions();
 
   const [selectedPassengers, setSelectedPassengers] = useState<DraftPassengerFormValues[]>([]);
   const [isAddingNew, setIsAddingNew] = useState(false);
@@ -117,9 +122,8 @@ export default function StepPassengers({ draft, onBack, onSuccess }: StepPasseng
     formState: { errors },
   } = useForm<DraftPassengerFormValues>({
     resolver: zodResolver(draftPassengerSchema),
+    ...liveFormValidation,
     defaultValues: emptyPassenger(),
-    mode: "onChange",
-    reValidateMode: "onChange",
   });
 
   const birthDateField = register("birthDate");
@@ -464,6 +468,8 @@ export default function StepPassengers({ draft, onBack, onSuccess }: StepPasseng
               <Select
                 label="جنسیت"
                 options={genderOptions}
+                placeholder="انتخاب کنید"
+                isLoading={gendersLoading}
                 error={errors.gender?.message}
                 {...register("gender")}
               />
@@ -487,13 +493,20 @@ export default function StepPassengers({ draft, onBack, onSuccess }: StepPasseng
                   void birthDateField.onChange(event);
                 }}
               />
-              <TextField
-                label="شناسه رده سنی"
+              <Select
+                label="رده سنی"
+                options={ageCategoryOptions}
+                placeholder="انتخاب کنید"
+                isLoading={ageCategoriesLoading}
                 error={errors.ageCategoryId?.message}
                 {...register("ageCategoryId")}
               />
-              <TextField
-                label="شناسه ملیت"
+              <Select
+                label="ملیت"
+                options={nationalityOptions}
+                placeholder="انتخاب کنید"
+                isLoading={nationalitiesLoading}
+                searchable
                 error={errors.nationalityId?.message}
                 {...register("nationalityId")}
               />

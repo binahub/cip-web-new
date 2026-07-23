@@ -37,8 +37,8 @@ export default function ServicePickCards({
       <p className="text-sm font-medium text-text-secondary">انتخاب خدمت اصلی</p>
       <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-3">
         {items.map((item) => {
-          const id = item.mainService.id;
-          const selected = value === id;
+          const id = String(item.mainService.id);
+          const selected = String(value) === id;
           return (
             <button
               key={id}

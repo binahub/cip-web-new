@@ -6,7 +6,7 @@ import { Add, Trash } from "iconsax-react";
 import CountField from "@/components/reservation/CountField";
 import PriceSummaryCard from "@/components/reservation/PriceSummaryCard";
 import { getFormErrorMessage } from "@/components/auth/auth-form-utils";
-import SelectField from "@/components/ui/SelectField";
+import Select from "@/components/ui/Select";
 import TextField from "@/components/ui/TextField";
 import {
   addServicesFormSchema,
@@ -31,10 +31,10 @@ const emptyService = {
 };
 
 export default function StepServices({ draft, onBack, onSuccess }: StepServicesProps) {
-  const { data: mainServices = [] } = useActiveMainServiceItems();
+  const { data: mainServices, isPending: servicesLoading } = useActiveMainServiceItems();
   const addMutation = useAddDraftServices();
 
-  const serviceOptions = mainServices.map((item) => ({
+  const serviceOptions = (mainServices ?? []).map((item) => ({
     value: item.mainService.id,
     label: item.mainService.name,
   }));
@@ -113,10 +113,11 @@ export default function StepServices({ draft, onBack, onSuccess }: StepServicesP
               </div>
 
               <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
-                <SelectField
+                <Select
                   label="خدمت"
                   options={serviceOptions}
                   placeholder="انتخاب کنید"
+                  isLoading={servicesLoading}
                   error={errors.services?.[index]?.mainServiceId?.message}
                   {...register(`services.${index}.mainServiceId`)}
                 />

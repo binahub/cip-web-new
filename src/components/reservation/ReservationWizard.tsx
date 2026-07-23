@@ -154,9 +154,12 @@ export default function ReservationWizard() {
               {step === 1 ? (
                 <StepFlightInfo
                   initialServiceId={primaryServiceId}
-                  onSuccess={(nextDraft) => {
+                  onSuccess={(nextDraft, selectedServiceId) => {
                     setDraft(nextDraft);
-                    setPrimaryServiceId((prev) => prev || String(nextDraft.services[0]?.mainServiceId ?? ""));
+                    setPrimaryServiceId(
+                      selectedServiceId ||
+                        String(nextDraft.services[0]?.mainServiceId ?? ""),
+                    );
                     setStep(2);
                   }}
                 />

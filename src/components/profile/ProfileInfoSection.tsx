@@ -5,7 +5,7 @@ import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { CloseSquare, Edit2 } from "iconsax-react";
 import ProfileSectionCard from "@/components/profile/ProfileSectionCard";
-import SelectField from "@/components/ui/SelectField";
+import Select from "@/components/ui/Select";
 import Spinner from "@/components/ui/Spinner";
 import TextField from "@/components/ui/TextField";
 import { getFormErrorMessage } from "@/components/auth/auth-form-utils";
@@ -175,7 +175,7 @@ export default function ProfileInfoSection() {
             error={errors.mobileNumber?.message}
             {...register("mobileNumber")}
           />
-          <SelectField
+          <Select
             label="جنسیت"
             options={genderOptions}
             error={errors.gender?.message}

@@ -9,7 +9,7 @@ import { getFormErrorMessage } from "@/components/auth/auth-form-utils";
 import AppDialog from "@/components/ui/AppDialog";
 import ConfirmDialog from "@/components/ui/ConfirmDialog";
 import DataTable, { type DataTableColumn } from "@/components/ui/DataTable";
-import SelectField from "@/components/ui/SelectField";
+import Select from "@/components/ui/Select";
 import TextField from "@/components/ui/TextField";
 import {
   birthDateInputToIso,
@@ -346,7 +346,7 @@ export default function ProfilePassengersSection() {
               {...register("passportNumber")}
             />
             <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
-              <SelectField
+              <Select
                 label="جنسیت"
                 options={genderOptions}
                 error={errors.gender?.message}

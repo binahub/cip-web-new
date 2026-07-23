@@ -3,7 +3,7 @@
 import { useMemo, useState } from "react";
 import ProfileSectionCard from "@/components/profile/ProfileSectionCard";
 import DataTable, { type DataTableColumn } from "@/components/ui/DataTable";
-import SelectField from "@/components/ui/SelectField";
+import Select from "@/components/ui/Select";
 import Spinner from "@/components/ui/Spinner";
 import { formatDateFa, formatPrice } from "@/lib/format";
 import {
@@ -76,7 +76,7 @@ export default function ProfileStatementSection() {
       action={
         accountOptions.length > 0 ? (
           <div className="w-full min-w-55 sm:w-70">
-            <SelectField
+            <Select
               options={accountOptions}
               value={selectedAccountId}
               onChange={(event) => {

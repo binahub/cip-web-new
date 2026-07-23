@@ -8,7 +8,7 @@ import { DateObject } from "react-multi-date-picker";
 import CountField from "@/components/reservation/CountField";
 import ServicePickCards from "@/components/reservation/ServicePickCards";
 import DateTimePickerField from "@/components/ui/DateTimePickerField";
-import SelectField from "@/components/ui/SelectField";
+import Select from "@/components/ui/Select";
 import TextField from "@/components/ui/TextField";
 import { getFormErrorMessage } from "@/components/auth/auth-form-utils";
 import { formatJalaliDateTime } from "@/lib/format";
@@ -24,17 +24,22 @@ import {
   useTripTypes,
 } from "@/services/reservation/reservation.queries";
 import type { ReservationDraft } from "@/services/reservation/reservation.types";
+import type {
+  AirlineItem,
+  AirportItem,
+  TripTypeItem,
+} from "@/services/reservation/reservation.types";
 
 interface StepFlightInfoProps {
   initialServiceId?: string;
-  onSuccess: (draft: ReservationDraft) => void;
+  onSuccess: (draft: ReservationDraft, primaryServiceId: string) => void;
 }
 
 export default function StepFlightInfo({ initialServiceId, onSuccess }: StepFlightInfoProps) {
-  const { data: tripTypes = [], isPending: tripLoading } = useTripTypes();
-  const { data: airlines = [], isPending: airlineLoading } = useAirlines();
-  const { data: airports = [], isPending: airportLoading } = useAirports();
-  const { data: mainServices = [], isPending: servicesLoading } = useActiveMainServiceItems();
+  const { data: tripTypes, isPending: tripLoading } = useTripTypes();
+  const { data: airlines, isPending: airlineLoading } = useAirlines();
+  const { data: airports, isPending: airportLoading } = useAirports();
+  const { data: mainServices, isPending: servicesLoading } = useActiveMainServiceItems();
   const createMutation = useCreateReservationDraft();
 
   const [flightDate, setFlightDate] = useState<DateObject | null>(null);
@@ -76,15 +81,27 @@ export default function StepFlightInfo({ initialServiceId, onSuccess }: StepFlig
   }, [flightDate, flightTime, setValue]);
 
   const tripOptions = useMemo(
-    () => tripTypes.map((item) => ({ value: item.id, label: item.persianName })),
+    () =>
+      (tripTypes ?? []).map((item: TripTypeItem) => ({
+        value: item.id,
+        label: item.persianName,
+      })),
     [tripTypes],
   );
   const airlineOptions = useMemo(
-    () => airlines.map((item) => ({ value: item.id, label: item.persianName })),
+    () =>
+      (airlines ?? []).map((item: AirlineItem) => ({
+        value: item.id,
+        label: item.persianName,
+      })),
     [airlines],
   );
   const airportOptions = useMemo(
-    () => airports.map((item) => ({ value: item.id, label: item.persianName })),
+    () =>
+      (airports ?? []).map((item: AirportItem) => ({
+        value: item.id,
+        label: item.persianName,
+      })),
     [airports],
   );
 
@@ -103,7 +120,7 @@ export default function StepFlightInfo({ initialServiceId, onSuccess }: StepFlig
       infantCount: values.infantCount,
       luggageCount: values.luggageCount,
     });
-    onSuccess(draft);
+    onSuccess(draft, values.primaryServiceId);
   });
 
   return (
@@ -113,7 +130,7 @@ export default function StepFlightInfo({ initialServiceId, onSuccess }: StepFlig
         control={control}
         render={({ field }) => (
           <ServicePickCards
-            items={mainServices}
+            items={mainServices ?? []}
             value={field.value}
             onChange={field.onChange}
             isLoading={servicesLoading}
@@ -123,43 +140,45 @@ export default function StepFlightInfo({ initialServiceId, onSuccess }: StepFlig
       />
 
       <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
-        <SelectField
+        <Select
           label="نوع سفر"
           options={tripOptions}
-          placeholder={tripLoading ? "در حال بارگذاری..." : "انتخاب کنید"}
+          placeholder="انتخاب کنید"
+          isLoading={tripLoading}
           error={errors.tripTypeId?.message}
           {...register("tripTypeId")}
         />
-        <SelectField
+        <Select
           label="ایرلاین"
           options={airlineOptions}
-          placeholder={airlineLoading ? "در حال بارگذاری..." : "انتخاب کنید"}
+          placeholder="انتخاب کنید"
+          isLoading={airlineLoading}
           error={errors.airlineId?.message}
           {...register("airlineId")}
         />
-        <SelectField
+        <Select
           label="فرودگاه مبدا / محل CIP"
           options={airportOptions}
-          placeholder={airportLoading ? "در حال بارگذاری..." : "انتخاب کنید"}
+          placeholder="انتخاب کنید"
+          isLoading={airportLoading}
           error={errors.airportId?.message}
           {...register("airportId")}
         />
-        <SelectField
+        <Select
           label="فرودگاه مقصد"
           options={airportOptions}
-          placeholder={airportLoading ? "در حال بارگذاری..." : "انتخاب کنید"}
+          placeholder="انتخاب کنید"
+          isLoading={airportLoading}
           error={errors.destinationAirportId?.message}
           {...register("destinationAirportId")}
         />
         <TextField
           label="شماره پرواز"
-          placeholder="مثال: W51234"
           error={errors.flightNumber?.message}
           {...register("flightNumber")}
         />
         <TextField
           label="ترمینال"
-          placeholder="مثال: T1"
           error={errors.terminal?.message}
           {...register("terminal")}
         />

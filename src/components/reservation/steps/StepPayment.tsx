@@ -5,7 +5,7 @@ import { Controller, useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import PriceSummaryCard from "@/components/reservation/PriceSummaryCard";
 import { getFormErrorMessage } from "@/components/auth/auth-form-utils";
-import SelectField from "@/components/ui/SelectField";
+import Select from "@/components/ui/Select";
 import TextField from "@/components/ui/TextField";
 import { formatPrice } from "@/lib/format";
 import { paymentFormSchema, type PaymentFormValues } from "@/schemas/reservation";
@@ -187,10 +187,11 @@ export default function StepPayment({
         </div>
 
         {paymentMethod === "wallet" ? (
-          <SelectField
+          <Select
             label="حساب کیف پول"
             options={walletOptions}
-            placeholder={walletLoading ? "در حال بارگذاری..." : "انتخاب حساب"}
+            placeholder="انتخاب حساب"
+            isLoading={walletLoading}
             error={errors.walletAccountId?.message}
             {...register("walletAccountId")}
           />

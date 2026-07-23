@@ -1,24 +1,29 @@
 "use client";
 
-import { useState } from "react";
+import { useMemo, useState } from "react";
 import { Calendar, Location } from "iconsax-react";
 import { DateObject } from "react-multi-date-picker";
 import DateTimePickerField from "@/components/ui/DateTimePickerField";
 import Select from "@/components/ui/Select";
 import PassengerSelect from "@/components/ui/PassengerSelect";
-
-const airports = [
-  { value: "mehrabad", label: "فرودگاه مهرآباد تهران" },
-  { value: "alaaqia", label: "العراقیه" },
-];
+import { useAirports } from "@/services/reservation/reservation.queries";
+import type { AirportItem } from "@/services/reservation/reservation.types";
 
 export default function SearchBar() {
+  const { data: airports, isPending: airportLoading } = useAirports();
   const [flightDate, setFlightDate] = useState<DateObject | null>(null);
   const [flightTime, setFlightTime] = useState<DateObject | null>(null);
-  const [selectedAirport, setSelectedAirport] = useState<{ value: string; label: string } | null>(
-    null,
-  );
+  const [selectedAirport, setSelectedAirport] = useState("");
   const [passengers, setPassengers] = useState({ adult: 0, child: 0, infant: 0 });
+
+  const airportOptions = useMemo(
+    () =>
+      (airports ?? []).map((item: AirportItem) => ({
+        value: item.id,
+        label: item.persianName,
+      })),
+    [airports],
+  );
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -32,10 +37,12 @@ export default function SearchBar() {
     >
       <div className="flex w-full min-w-0 flex-col gap-3 sm:flex-1 sm:flex-row sm:items-center sm:gap-3 lg:gap-4">
         <Select
-          options={airports}
+          options={airportOptions}
           value={selectedAirport}
-          onChange={setSelectedAirport}
+          onChange={(event) => setSelectedAirport(event.target.value)}
           placeholder="فرودگاه"
+          isLoading={airportLoading}
+          className="min-w-0 flex-1"
           leadingIcon={<Location size={20} color="#969696" variant="Linear" />}
         />
 

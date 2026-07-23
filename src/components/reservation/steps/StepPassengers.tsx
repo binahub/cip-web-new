@@ -6,7 +6,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { Add, Trash } from "iconsax-react";
 import PriceSummaryCard from "@/components/reservation/PriceSummaryCard";
 import { getFormErrorMessage } from "@/components/auth/auth-form-utils";
-import SelectField from "@/components/ui/SelectField";
+import Select from "@/components/ui/Select";
 import TextField from "@/components/ui/TextField";
 import { toastSuccess } from "@/lib/toast";
 import { toEnglishDigits } from "@/lib/format";
@@ -100,6 +100,7 @@ export default function StepPassengers({ draft, onBack, onSuccess }: StepPasseng
   const addMutation = useAddDraftPassengers();
   const [formError, setFormError] = useState<string | null>(null);
   const [savingIndex, setSavingIndex] = useState<number | null>(null);
+  const [savedPickValue, setSavedPickValue] = useState("");
 
   const defaultPassengers = useMemo(
     () => Array.from({ length: requiredCount }, () => emptyPassenger()),
@@ -129,7 +130,7 @@ export default function StepPassengers({ draft, onBack, onSuccess }: StepPasseng
     reset({ passengers: defaultPassengers });
   }, [defaultPassengers, reset]);
 
-  const savedPassengers = savedPage?.list ?? [];
+  const savedPassengers: DraftMyPassenger[] = savedPage?.list ?? [];
 
   function applySavedPassenger(index: number, passengerId: string) {
     if (!passengerId) {
@@ -269,6 +270,14 @@ export default function StepPassengers({ draft, onBack, onSuccess }: StepPasseng
     value: String(passenger.id),
     label: `${passenger.firstName} ${passenger.lastName}${passenger.isDefault ? " (پیش‌فرض)" : ""}`,
   }));
+  const useSavedDropdown = savedPassengers.length > 5;
+
+  function handleSavedPick(passengerId: string) {
+    setSavedPickValue("");
+    if (!passengerId) return;
+    const passenger = savedPassengers.find((item) => String(item.id) === passengerId);
+    if (passenger) addSavedToList(passenger);
+  }
 
   return (
     <div className="grid grid-cols-1 gap-6 lg:grid-cols-[1fr_320px]" dir="rtl">
@@ -306,6 +315,16 @@ export default function StepPassengers({ draft, onBack, onSuccess }: StepPasseng
             <p className="text-sm text-text-secondary">
               هنوز مسافر ذخیره‌شده‌ای ندارید. پس از تکمیل فرم می‌توانید هر مسافر را ذخیره کنید.
             </p>
+          ) : useSavedDropdown ? (
+            <Select
+              options={savedOptions}
+              value={savedPickValue}
+              onChange={(event) => handleSavedPick(event.target.value)}
+              placeholder="انتخاب مسافر ذخیره‌شده"
+              searchPlaceholder="جستجوی نام مسافر..."
+              searchable
+              isLoading={savedLoading}
+            />
           ) : (
             <div className="app-scroll flex gap-2 overflow-x-auto pb-1">
               {savedPassengers.map((passenger) => (
@@ -340,10 +359,12 @@ export default function StepPassengers({ draft, onBack, onSuccess }: StepPasseng
               <div className="flex flex-wrap items-center gap-2">
                 {savedOptions.length > 0 ? (
                   <div className="w-full min-w-55 sm:w-64">
-                    <SelectField
+                    <Select
                       label="انتخاب سریع"
                       options={savedOptions}
                       placeholder="از مسافران من"
+                      searchPlaceholder="جستجوی نام مسافر..."
+                      searchable={savedOptions.length > 5}
                       value={watch(`passengers.${index}.customerPassengerId`) ?? ""}
                       onChange={(event) => applySavedPassenger(index, event.target.value)}
                     />
@@ -388,7 +409,7 @@ export default function StepPassengers({ draft, onBack, onSuccess }: StepPasseng
                 error={errors.passengers?.[index]?.passportNumber?.message}
                 {...register(`passengers.${index}.passportNumber`)}
               />
-              <SelectField
+              <Select
                 label="جنسیت"
                 options={genderOptions}
                 error={errors.passengers?.[index]?.gender?.message}

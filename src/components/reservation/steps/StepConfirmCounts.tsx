@@ -35,17 +35,22 @@ function buildSyncKey(values: UpdateCountsFormValues, draftNumber: string) {
   ].join(":");
 }
 
+function resolvePrimaryServiceId(draft: ReservationDraft, primaryServiceId: string) {
+  if (primaryServiceId) return String(primaryServiceId);
+  const fromDraft = draft.services[0]?.mainServiceId;
+  return fromDraft != null ? String(fromDraft) : "";
+}
+
 function initialFormValues(
   draft: ReservationDraft,
   primaryServiceId: string,
 ): UpdateCountsFormValues {
   return {
-    adultCount: draft.passengerCounts.adultCount,
-    childCount: draft.passengerCounts.childCount,
-    infantCount: draft.passengerCounts.infantCount,
-    luggageCount: draft.passengerCounts.luggageCount,
-    primaryServiceId:
-      primaryServiceId || String(draft.services[0]?.mainServiceId ?? ""),
+    adultCount: Number(draft.passengerCounts.adultCount) || 0,
+    childCount: Number(draft.passengerCounts.childCount) || 0,
+    infantCount: Number(draft.passengerCounts.infantCount) || 0,
+    luggageCount: Number(draft.passengerCounts.luggageCount) || 0,
+    primaryServiceId: resolvePrimaryServiceId(draft, primaryServiceId),
   };
 }
 
@@ -81,8 +86,9 @@ export default function StepConfirmCounts({
     const values = initialFormValues(draft, primaryServiceId);
     reset(values);
     lastSyncedKey.current = buildSyncKey(values, draft.draftNumber);
-    // Only re-seed when entering a new draft — not on live price previews.
-  }, [draft.draftNumber, reset]);
+    // Re-seed when entering this step with a draft / service from step 1.
+    // Do not depend on live draft price-preview updates.
+  }, [draft.draftNumber, primaryServiceId, reset]);
 
   useEffect(() => {
     const values: UpdateCountsFormValues = {

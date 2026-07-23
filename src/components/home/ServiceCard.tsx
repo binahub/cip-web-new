@@ -9,6 +9,7 @@ interface ServiceCardData {
   price: string;
   imageUrl: string;
   imagePosition?: string;
+  isMainService?: boolean;
 }
 
 export default function ServiceCard({
@@ -16,7 +17,8 @@ export default function ServiceCard({
   title,
   price,
   imageUrl,
-  imagePosition = "50% 30%",
+  imagePosition = "0% 110%",
+  isMainService = false,
 }: ServiceCardData) {
   return (
     <div className="relative h-[405px] w-full overflow-hidden rounded-[24px] bg-photo-card-bg">
@@ -46,40 +48,41 @@ export default function ServiceCard({
         />
       </div>
 
-      {/* Content — Figma absolute Y positions */}
-      <h3 className="absolute left-1/2 top-8 w-[90%] -translate-x-1/2 text-center text-xl font-bold leading-normal text-white sm:text-2xl">
-        {title}
-      </h3>
+      {/* Content stack — flows with title height so badges never collide on wrap */}
+      <div className="relative z-5 flex flex-col items-center gap-3 px-3 pt-8 sm:px-4">
+        <h3 className="w-full text-center text-xl font-bold leading-snug text-white sm:text-2xl sm:leading-normal">
+          {title}
+        </h3>
 
-      <div className="absolute left-1/2 top-[81px] flex -translate-x-1/2 flex-row-reverse gap-2.5">
-        <Badge
-          icon={<Image src="/icons/crown.svg" alt="" width={18} height={18} />}
-          label="VIP Services"
-          className="font-inter"
-        />
-        <Badge
-          icon={<Image src="/icons/diamond.svg" alt="" width={18} height={18} />}
-          label="CIP Services"
-          className="font-inter"
-        />
+        {isMainService && (
+          <div className="flex max-w-full flex-row-reverse flex-wrap items-center justify-center gap-1.5 sm:gap-2.5">
+            <Badge
+              icon={<Image src="/icons/crown.svg" alt="" width={18} height={18} />}
+              label="VIP Services"
+              className="font-inter"
+            />
+            <Badge
+              icon={<Image src="/icons/diamond.svg" alt="" width={18} height={18} />}
+              label="CIP Services"
+              className="font-inter"
+            />
+          </div>
+        )}
+
+        <div className="flex items-end gap-2" dir="rtl">
+          <span className="pb-[9px] text-xs leading-[1.808] text-text-price">قیمت از</span>
+          <span className="text-xl font-bold leading-[1.808] text-white">{price}</span>
+          <span className="pb-[9px] text-xs leading-[1.808] text-text-price">ریال</span>
+        </div>
+
+        <Link
+          href={`/services/${id}`}
+          className="flex h-8 items-center justify-center rounded-lg bg-cta-pill-bg px-2 py-1 transition-colors hover:opacity-80"
+        >
+          <span className="px-2 text-xs font-normal leading-[22px] text-accent">مشاهده جزئیات</span>
+          <ArrowLeft size={20} color="#c9ada7" variant="Linear" />
+        </Link>
       </div>
-
-      <div
-        className="absolute left-1/2 top-[113px] z-10 flex -translate-x-1/2 items-end gap-2"
-        dir="rtl"
-      >
-        <span className="pb-[9px] text-xs leading-[1.808] text-text-price">قیمت از</span>
-        <span className="text-xl font-bold leading-[1.808] text-white">{price}</span>
-        <span className="pb-[9px] text-xs leading-[1.808] text-text-price">تومان</span>
-      </div>
-
-      <Link
-        href={`/services/${id}`}
-        className="absolute left-1/2 top-[161px] z-10 flex h-8 -translate-x-1/2 items-center justify-center rounded-lg bg-cta-pill-bg px-2 py-1 transition-colors hover:opacity-80"
-      >
-        <span className="px-2 text-xs font-normal leading-[22px] text-accent">مشاهده جزئیات</span>
-        <ArrowLeft size={20} color="#c9ada7" variant="Linear" />
-      </Link>
     </div>
   );
 }

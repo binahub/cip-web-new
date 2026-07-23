@@ -1,8 +1,13 @@
+"use client";
+
+import { useRouter } from "next/navigation";
 import Button from "@/components/ui/Button";
-import type { ServicePricingTier } from "@/data/services";
+import { useAuth } from "@/providers/auth-provider";
+import type { ServiceDetailPriceCardView } from "@/services/main-services/main-services.types";
 
 interface ServicePricingCardProps {
-  tier: ServicePricingTier;
+  tier: ServiceDetailPriceCardView;
+  mainServiceId: string;
 }
 
 function BreakdownRow({ label, value }: { label: string; value: string }) {
@@ -20,10 +25,22 @@ function BreakdownRow({ label, value }: { label: string; value: string }) {
   );
 }
 
-export default function ServicePricingCard({ tier }: ServicePricingCardProps) {
+export default function ServicePricingCard({
+  tier,
+  mainServiceId,
+}: ServicePricingCardProps) {
+  const router = useRouter();
+  const { requireAuth } = useAuth();
+
+  function handleStartOrder() {
+    requireAuth(() => {
+      const query = mainServiceId ? `?serviceId=${encodeURIComponent(mainServiceId)}` : "";
+      router.push(`/reservation${query}`);
+    });
+  }
+
   return (
     <div className="relative w-full overflow-hidden rounded-2xl bg-service-chip-bg px-4 pb-8 pt-[160px] sm:px-8 sm:pt-[185px]">
-      {/* Map decoration */}
       <div className="pointer-events-none absolute inset-x-0 top-0 h-[174px] overflow-hidden rounded-t-2xl">
         <div className="absolute inset-x-0 top-[13px] flex justify-center">
           {/* eslint-disable-next-line @next/next/no-img-element */}
@@ -54,8 +71,10 @@ export default function ServicePricingCard({ tier }: ServicePricingCardProps) {
         <p className="w-full text-right text-sm tracking-[0.1px] text-[#535353]">{tier.note}</p>
 
         <Button
+          type="button"
           variant="accent-outline"
           className="h-12 w-full rounded-lg border-[1.5px] text-base font-medium"
+          onClick={handleStartOrder}
         >
           {tier.ctaLabel}
         </Button>

@@ -7,7 +7,8 @@ interface IconButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
 
 const IconButton = forwardRef<HTMLButtonElement, IconButtonProps>(
   ({ icon, variant = "default", className = "", ...props }, ref) => {
-    const base = "inline-flex items-center justify-center rounded-xl transition-colors";
+    const base =
+      "inline-flex cursor-pointer items-center justify-center rounded-xl transition-colors disabled:cursor-not-allowed";
     const variants = {
       default: "text-text-nav hover:text-white",
       accent: "bg-login-pill-bg text-accent hover:opacity-80",

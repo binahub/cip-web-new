@@ -88,7 +88,7 @@ export default function LoginForm({ onSuccess, onGoSignup }: LoginFormProps) {
 
       <TextField
         label="نام کاربری"
-        placeholder="شماره موبایل یا نام کاربری"
+        placeholder="نام کاربری خود را وارد کنید"
         autoComplete="username"
         leadingIcon={<User size={20} color="#969696" variant="Linear" />}
         error={errors.username?.message || apiFieldErrors.username}

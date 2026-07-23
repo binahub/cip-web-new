@@ -80,6 +80,7 @@ export default function ProfilePassengersSection() {
     reset,
     watch,
     setValue,
+    getValues,
     formState: { errors },
   } = useForm<PassengerFormValues>({
     resolver: zodResolver(passengerFormSchema),
@@ -354,18 +355,21 @@ export default function ProfilePassengersSection() {
               />
               <TextField
                 label="تاریخ تولد"
-                placeholder="1366/06/18"
+                placeholder="..../../.."
                 inputMode="numeric"
                 autoComplete="bday"
                 maxLength={10}
                 dir="ltr"
-                className="[&_input]:text-left [&_input]:placeholder:text-left"
+                className="[&_input]:text-left [&_input]:placeholder:text-left [&_input]:tracking-widest [&_input]:placeholder:tracking-widest"
                 error={errors.birthDate?.message}
                 name={birthDateField.name}
                 ref={birthDateField.ref}
                 onBlur={birthDateField.onBlur}
                 onChange={(event) => {
-                  event.target.value = maskBirthDateInput(event.target.value);
+                  event.target.value = maskBirthDateInput(
+                    event.target.value,
+                    getValues("birthDate") ?? "",
+                  );
                   void birthDateField.onChange(event);
                 }}
               />

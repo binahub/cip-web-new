@@ -61,17 +61,37 @@ export function toEnglishDigits(value: string): string {
 }
 
 /**
- * Live mask for birth dates: `YYYY/MM/DD` (Jalali or Gregorian digits).
- * Strips time, dashes, and non-digits while typing.
+ * Live mask for birth dates: `YYYY/MM/DD`.
+ * Inserts `/` as soon as year (4 digits) or month (2 digits) is complete,
+ * so newcomers see the structure without typing the slash themselves.
  */
-export function maskBirthDateInput(raw: string): string {
-  const digits = toEnglishDigits(raw).replace(/\D/g, "").slice(0, 8);
+export function maskBirthDateInput(raw: string, previousValue = ""): string {
+  let digits = toEnglishDigits(raw).replace(/\D/g, "").slice(0, 8);
+  const prevDigits = toEnglishDigits(previousValue).replace(/\D/g, "").slice(0, 8);
+  const rawEnglish = toEnglishDigits(raw);
+
+  // Backspace on an auto-inserted trailing `/` should delete the last digit too.
+  if (
+    previousValue.endsWith("/") &&
+    rawEnglish.length < previousValue.length &&
+    digits.length === prevDigits.length &&
+    digits.length > 0
+  ) {
+    digits = digits.slice(0, -1);
+  }
+
+  if (!digits) return "";
+
   const year = digits.slice(0, 4);
   const month = digits.slice(4, 6);
   const day = digits.slice(6, 8);
-  if (digits.length <= 4) return year;
-  if (digits.length <= 6) return `${year}/${month}`;
-  return `${year}/${month}/${day}`;
+
+  let masked = year;
+  if (digits.length >= 4) masked += "/";
+  if (month) masked += month;
+  if (digits.length >= 6) masked += "/";
+  if (day) masked += day;
+  return masked;
 }
 
 /** Normalize stored birth dates to `YYYY/MM/DD` for form inputs. */

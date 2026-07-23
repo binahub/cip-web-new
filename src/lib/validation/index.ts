@@ -13,7 +13,16 @@ export const validationMessages = {
   username: "نام کاربری را وارد کنید.",
   firstName: "نام را وارد کنید.",
   lastName: "نام خانوادگی را وارد کنید.",
+  firstNameEnglish: "نام را به انگلیسی بنویسید (کیبورد را انگلیسی کنید).",
+  lastNameEnglish: "نام خانوادگی را به انگلیسی بنویسید (کیبورد را انگلیسی کنید).",
 } as const;
+
+/** Latin letters only; spaces / hyphen / apostrophe allowed between parts. */
+const ENGLISH_NAME_PATTERN = /^[A-Za-z]+(?:[ '\-][A-Za-z]+)*$/;
+
+export function isEnglishName(value: string): boolean {
+  return ENGLISH_NAME_PATTERN.test(value.trim());
+}
 
 export function isValidIranianNationalCode(value: string): boolean {
   if (!/^\d{10}$/.test(value)) return false;
@@ -52,6 +61,20 @@ export const fieldSchemas = {
   firstName: z.string().trim().min(1, validationMessages.firstName).max(50),
 
   lastName: z.string().trim().min(1, validationMessages.lastName).max(50),
+
+  firstNameEnglish: z
+    .string()
+    .trim()
+    .min(1, validationMessages.firstName)
+    .max(50)
+    .regex(ENGLISH_NAME_PATTERN, validationMessages.firstNameEnglish),
+
+  lastNameEnglish: z
+    .string()
+    .trim()
+    .min(1, validationMessages.lastName)
+    .max(50)
+    .regex(ENGLISH_NAME_PATTERN, validationMessages.lastNameEnglish),
 
   captchaAnswer: z.string().trim().min(1, validationMessages.captcha),
 

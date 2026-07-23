@@ -47,8 +47,8 @@ export type UpdateCountsFormValues = z.infer<typeof updateCountsFormSchema>;
 
 export const draftPassengerSchema = z.object({
   customerPassengerId: z.string().optional(),
-  firstName: fieldSchemas.firstName,
-  lastName: fieldSchemas.lastName,
+  firstName: fieldSchemas.firstNameEnglish,
+  lastName: fieldSchemas.lastNameEnglish,
   nationalCode: fieldSchemas.nationalCode,
   mobileNumber: z
     .string()

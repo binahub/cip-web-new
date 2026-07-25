@@ -12,7 +12,6 @@ import DataTable, { type DataTableColumn } from "@/components/ui/DataTable";
 import Select from "@/components/ui/Select";
 import TextField from "@/components/ui/TextField";
 import {
-  birthDateInputToIso,
   maskBirthDateInput,
   normalizeBirthDateInput,
   nullIfEmpty,
@@ -138,7 +137,7 @@ export default function ProfilePassengersSection() {
       mobileNumber: values.mobileNumber,
       passportNumber: nullIfEmpty(values.passportNumber),
       gender: values.gender,
-      birthDate: birthDateInputToIso(values.birthDate),
+      birthDate: values.birthDate,
       ageCategoryId: Number(values.ageCategoryId),
       nationalityId: Number(values.nationalityId),
       needsWheelchair: values.needsWheelchair,

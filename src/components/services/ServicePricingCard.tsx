@@ -8,6 +8,7 @@ import type { ServiceDetailPriceCardView } from "@/services/main-services/main-s
 interface ServicePricingCardProps {
   tier: ServiceDetailPriceCardView;
   mainServiceId: string;
+  showStartOrder?: boolean;
 }
 
 function BreakdownRow({ label, value }: { label: string; value: string }) {
@@ -28,6 +29,7 @@ function BreakdownRow({ label, value }: { label: string; value: string }) {
 export default function ServicePricingCard({
   tier,
   mainServiceId,
+  showStartOrder = false,
 }: ServicePricingCardProps) {
   const router = useRouter();
   const { requireAuth } = useAuth();
@@ -70,14 +72,16 @@ export default function ServicePricingCard({
 
         <p className="w-full text-right text-sm tracking-[0.1px] text-[#535353]">{tier.note}</p>
 
-        <Button
-          type="button"
-          variant="accent-outline"
-          className="h-12 w-full rounded-lg border-[1.5px] text-base font-medium"
-          onClick={handleStartOrder}
-        >
-          {tier.ctaLabel}
-        </Button>
+        {showStartOrder ? (
+          <Button
+            type="button"
+            variant="accent-outline"
+            className="h-12 w-full rounded-lg border-[1.5px] text-base font-medium"
+            onClick={handleStartOrder}
+          >
+            {tier.ctaLabel}
+          </Button>
+        ) : null}
 
         <div className="mt-2 w-full">
           {tier.breakdown.map((row) => (

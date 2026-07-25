@@ -34,6 +34,7 @@ function mapPriceCard(
 
   return {
     id: item.id,
+    ageCategoryValue: item.ageCategoryObject.value,
     title: ageLabel,
     subtitle: `قیمت خدمات برای ${nationalityTitle} — ${ageLabel}`,
     totalPrice: formatPrice(item.price),
@@ -95,6 +96,7 @@ export function mapMainServiceDetail(data: MainServiceDetailData): ServiceDetail
     id: mainService.id,
     name: mainService.name,
     status: mainService.status,
+    isMainService: mainService.isMainService === true,
     aboutTitle: `درباره ${mainService.name}`,
     images: sliderImages,
     extraInfo,

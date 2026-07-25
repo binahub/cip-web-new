@@ -146,7 +146,7 @@ export default function StepConfirmCounts({
     onDraftUpdate,
   ]);
 
-  const onSubmit = handleSubmit(async (values) => {
+  async function submitCounts(values: UpdateCountsFormValues) {
     previewRequestId.current += 1;
     setIsPreviewing(false);
 
@@ -166,11 +166,17 @@ export default function StepConfirmCounts({
     });
     lastSyncedKey.current = syncKey;
     onSuccess(next, values.primaryServiceId);
-  });
+  }
 
   return (
     <div className="grid grid-cols-1 gap-6 lg:grid-cols-[1fr_320px]" dir="rtl">
-      <form onSubmit={onSubmit} className="space-y-6" noValidate>
+      <form
+        onSubmit={(event) => {
+          void handleSubmit(submitCounts)(event);
+        }}
+        className="space-y-6"
+        noValidate
+      >
         <div>
           <h2 className="text-xl font-bold text-white">تایید تعداد مسافران</h2>
           <p className="mt-1 text-sm text-text-secondary">

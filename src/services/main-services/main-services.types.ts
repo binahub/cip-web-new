@@ -115,6 +115,7 @@ export interface ServiceDetailFeatureView {
 
 export interface ServiceDetailPriceCardView {
   id: string;
+  ageCategoryValue: string;
   title: string;
   subtitle: string;
   totalPrice: string;
@@ -130,6 +131,7 @@ export interface ServiceDetailViewModel {
   id: string;
   name: string;
   status: string;
+  isMainService: boolean;
   aboutTitle: string;
   images: string[];
   extraInfo: ServiceDetailExtraInfoView[];

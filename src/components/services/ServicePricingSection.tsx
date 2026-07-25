@@ -3,18 +3,25 @@ import type { ServiceDetailPriceCardView } from "@/services/main-services/main-s
 
 interface ServicePricingSectionProps {
   mainServiceId: string;
+  isMainService: boolean;
   iranian: ServiceDetailPriceCardView[];
   foreign: ServiceDetailPriceCardView[];
+}
+
+function adultCardsOnly(cards: ServiceDetailPriceCardView[]) {
+  return cards.filter((card) => card.ageCategoryValue === "Adult");
 }
 
 function NationalityColumn({
   heading,
   cards,
   mainServiceId,
+  isMainService,
 }: {
   heading: string;
   cards: ServiceDetailPriceCardView[];
   mainServiceId: string;
+  isMainService: boolean;
 }) {
   if (cards.length === 0) return null;
 
@@ -22,7 +29,12 @@ function NationalityColumn({
     <div className="flex flex-col gap-6">
       <h3 className="text-center text-lg font-bold text-white">{heading}</h3>
       {cards.map((card) => (
-        <ServicePricingCard key={card.id} tier={card} mainServiceId={mainServiceId} />
+        <ServicePricingCard
+          key={card.id}
+          tier={card}
+          mainServiceId={mainServiceId}
+          showStartOrder={isMainService}
+        />
       ))}
     </div>
   );
@@ -30,10 +42,14 @@ function NationalityColumn({
 
 export default function ServicePricingSection({
   mainServiceId,
+  isMainService,
   iranian,
   foreign,
 }: ServicePricingSectionProps) {
-  if (iranian.length === 0 && foreign.length === 0) return null;
+  const adultIranian = adultCardsOnly(iranian);
+  const adultForeign = adultCardsOnly(foreign);
+
+  if (adultIranian.length === 0 && adultForeign.length === 0) return null;
 
   return (
     <section className="w-full">
@@ -44,13 +60,15 @@ export default function ServicePricingSection({
       <div className="grid grid-cols-1 gap-8 lg:grid-cols-2" dir="ltr">
         <NationalityColumn
           heading="مسافران ایرانی"
-          cards={iranian}
+          cards={adultIranian}
           mainServiceId={mainServiceId}
+          isMainService={isMainService}
         />
         <NationalityColumn
           heading="مسافران غیر ایرانی"
-          cards={foreign}
+          cards={adultForeign}
           mainServiceId={mainServiceId}
+          isMainService={isMainService}
         />
       </div>
     </section>

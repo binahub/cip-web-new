@@ -31,6 +31,7 @@ export default function ServiceDetailView({ service }: ServiceDetailViewProps) {
 
           <ServicePricingSection
             mainServiceId={service.id}
+            isMainService={service.isMainService}
             iranian={service.pricing.iranian}
             foreign={service.pricing.foreign}
           />

@@ -69,7 +69,7 @@ export default function StepPayment({
   const walletOptions =
     walletInfo?.walletAccounts.map((account) => ({
       value: String(account.id),
-      label: `${account.accountNumber} — موجودی ${formatPrice(account.balance)} (${account.walletAccountCurrencyObject.description})`,
+      label: `${account.walletAccountCurrencyObject.description} - (${formatPrice(account.balance) + " ريال"})`,
     })) ?? [];
 
   async function handleApplyCoupon() {
@@ -244,6 +244,13 @@ export default function StepPayment({
         ) : null}
 
         <div className="flex flex-col gap-3 sm:flex-row">
+        <button
+            type="button"
+            onClick={onBack}
+            className="flex h-14 flex-1 items-center justify-center rounded-2xl border border-border-input text-text-secondary"
+          >
+            بازگشت
+          </button>
           <button
             type="submit"
             disabled={isPaying}
@@ -251,13 +258,7 @@ export default function StepPayment({
           >
             {isPaying ? "در حال نهایی‌سازی..." : `پرداخت ${formatPrice(amount)} تومان`}
           </button>
-          <button
-            type="button"
-            onClick={onBack}
-            className="flex h-14 flex-1 items-center justify-center rounded-2xl border border-border-input text-text-secondary"
-          >
-            بازگشت
-          </button>
+          
         </div>
       </form>
 

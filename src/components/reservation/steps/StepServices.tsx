@@ -14,7 +14,7 @@ import {
 } from "@/schemas/reservation";
 import { liveFormValidation } from "@/lib/validation";
 import { useLookupSelectOptions } from "@/services/lookups/lookups.queries";
-import { useActiveMainServiceItems } from "@/services/main-services/main-services.queries";
+import { useActiveSubServiceItems } from "@/services/main-services/main-services.queries";
 import { useAddDraftServices } from "@/services/reservation/reservation.queries";
 import type { ReservationDraft } from "@/services/reservation/reservation.types";
 
@@ -30,10 +30,13 @@ const emptyService = {
   ageCategoryId: "",
   nationalityId: "",
   description: "",
+  escortName: "",
+  escortNationalCode: "",
+  escortMobile: "",
 };
 
 export default function StepServices({ draft, onBack, onSuccess }: StepServicesProps) {
-  const { data: mainServices, isPending: servicesLoading } = useActiveMainServiceItems();
+  const { data: mainServices, isPending: servicesLoading } = useActiveSubServiceItems();
   const addMutation = useAddDraftServices();
   const {
     ageCategoryOptions,
@@ -47,10 +50,16 @@ export default function StepServices({ draft, onBack, onSuccess }: StepServicesP
     label: item.mainService.name,
   }));
 
+  const getSymbolByServiceId = (id: string) =>
+    (mainServices ?? []).find((item) => item.mainService.id === id)?.mainService.symbol;
+
   const {
     register,
     control,
     handleSubmit,
+    trigger,
+    setError,
+    watch,
     formState: { errors },
   } = useForm<AddServicesFormValues>({
     resolver: zodResolver(addServicesFormSchema),
@@ -60,21 +69,73 @@ export default function StepServices({ draft, onBack, onSuccess }: StepServicesP
 
   const { fields, append, remove } = useFieldArray({ control, name: "services" });
 
+  const watchedServices = watch("services");
+
   const onSubmit = handleSubmit(async (values) => {
     if (values.services.length === 0) {
       onSuccess(draft);
       return;
     }
 
+    // Validate escort fields for Escort services
+    let hasEscortError = false;
+    values.services.forEach((service, index) => {
+      const symbol = getSymbolByServiceId(service.mainServiceId);
+      if (symbol === "Escort") {
+        if (!service.escortName?.trim()) {
+          setError(`services.${index}.escortName`, { message: "نام مشایعت کننده الزامی است." });
+          hasEscortError = true;
+        }
+        if (!service.escortNationalCode?.trim()) {
+          setError(`services.${index}.escortNationalCode`, { message: "کد ملی مشایعت کننده الزامی است." });
+          hasEscortError = true;
+        }
+        if (!service.escortMobile?.trim()) {
+          setError(`services.${index}.escortMobile`, { message: "موبایل مشایعت کننده الزامی است." });
+          hasEscortError = true;
+        }
+      }
+    });
+    if (hasEscortError) return;
+
+    // Validate format of filled escort fields
+    const escortFieldPaths: string[] = [];
+    values.services.forEach((service, index) => {
+      const symbol = getSymbolByServiceId(service.mainServiceId);
+      if (symbol === "Escort") {
+        escortFieldPaths.push(`services.${index}.escortName`);
+        escortFieldPaths.push(`services.${index}.escortNationalCode`);
+        escortFieldPaths.push(`services.${index}.escortMobile`);
+      }
+    });
+    if (escortFieldPaths.length > 0) {
+      const valid = await trigger(escortFieldPaths as Parameters<typeof trigger>[0]);
+      if (!valid) return;
+    }
+
     const next = await addMutation.mutateAsync({
       draftNumber: draft.draftNumber,
-      services: values.services.map((service) => ({
-        mainServiceId: Number(service.mainServiceId),
-        quantity: service.quantity,
-        ageCategoryId: Number(service.ageCategoryId),
-        nationalityId: Number(service.nationalityId),
-        description: service.description || undefined,
-      })),
+      services: values.services.map((service) => {
+        const symbol = getSymbolByServiceId(service.mainServiceId);
+        let description = service.description || undefined;
+
+        if (symbol === "Escort") {
+          const parts: string[] = [];
+          if (service.escortName) parts.push(`نام مشایعت کننده: ${service.escortName}`);
+          if (service.escortNationalCode) parts.push(`کد ملی مشایعت کننده: ${service.escortNationalCode}`);
+          if (service.escortMobile) parts.push(`موبایل مشایعت کننده: ${service.escortMobile}`);
+          if (service.description) parts.push(`توضیحات: ${service.description}`);
+          description = parts.length > 0 ? parts.join(" | ") : undefined;
+        }
+
+        return {
+          mainServiceId: Number(service.mainServiceId),
+          quantity: service.quantity,
+          ageCategoryId: Number(service.ageCategoryId),
+          nationalityId: Number(service.nationalityId),
+          description,
+        };
+      }),
     });
     onSuccess(next);
   });
@@ -130,19 +191,8 @@ export default function StepServices({ draft, onBack, onSuccess }: StepServicesP
                   error={errors.services?.[index]?.mainServiceId?.message}
                   {...register(`services.${index}.mainServiceId`)}
                 />
-                <Controller
-                  name={`services.${index}.quantity`}
-                  control={control}
-                  render={({ field: countField }) => (
-                    <CountField
-                      label="تعداد"
-                      value={countField.value}
-                      min={1}
-                      onChange={countField.onChange}
-                      error={errors.services?.[index]?.quantity?.message}
-                    />
-                  )}
-                />
+               
+                
                 <Select
                   label="رده سنی"
                   options={ageCategoryOptions}
@@ -160,12 +210,47 @@ export default function StepServices({ draft, onBack, onSuccess }: StepServicesP
                   error={errors.services?.[index]?.nationalityId?.message}
                   {...register(`services.${index}.nationalityId`)}
                 />
+                 <span className="col-span-2">
+                <Controller
+                  name={`services.${index}.quantity`}
+                  control={control}
+                  render={({ field: countField }) => (
+                    <CountField
+                      label="تعداد"
+                      value={countField.value}
+                      min={1}
+                      onChange={countField.onChange}
+                      error={errors.services?.[index]?.quantity?.message}
+                    />
+                  )}
+                />
+                </span>
+                {getSymbolByServiceId(watchedServices?.[index]?.mainServiceId) === "Escort" && (
+                  <>
+                    <TextField
+                      label="نام مشایعت کننده"
+                      error={errors.services?.[index]?.escortName?.message}
+                      {...register(`services.${index}.escortName`)}
+                    />
+                    <TextField
+                      label="کد ملی مشایعت کننده"
+                      error={errors.services?.[index]?.escortNationalCode?.message}
+                      {...register(`services.${index}.escortNationalCode`)}
+                    />
+                    <TextField
+                      label="موبایل مشایعت کننده"
+                      error={errors.services?.[index]?.escortMobile?.message}
+                      {...register(`services.${index}.escortMobile`)}
+                    />
+                  </>
+                )}
                 <div className="sm:col-span-2">
                   <TextField
                     label="توضیحات"
                     {...register(`services.${index}.description`)}
                   />
                 </div>
+                
               </div>
             </div>
           ))
@@ -178,6 +263,13 @@ export default function StepServices({ draft, onBack, onSuccess }: StepServicesP
         ) : null}
 
         <div className="flex flex-col gap-3 sm:flex-row">
+        <button
+            type="button"
+            onClick={onBack}
+            className="flex h-14 flex-1 items-center justify-center rounded-2xl border border-border-input text-text-secondary"
+          >
+            بازگشت
+          </button>
           <button
             type="submit"
             disabled={addMutation.isPending}
@@ -185,13 +277,7 @@ export default function StepServices({ draft, onBack, onSuccess }: StepServicesP
           >
             {addMutation.isPending ? "در حال ذخیره..." : "ادامه"}
           </button>
-          <button
-            type="button"
-            onClick={onBack}
-            className="flex h-14 flex-1 items-center justify-center rounded-2xl border border-border-input text-text-secondary"
-          >
-            بازگشت
-          </button>
+          
         </div>
       </form>
 

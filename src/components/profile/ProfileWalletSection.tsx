@@ -9,19 +9,14 @@ import type { WalletAccount } from "@/services/customer/customer.types";
 
 const columns: DataTableColumn<WalletAccount>[] = [
   {
-    key: "accountNumber",
-    header: "شماره حساب",
-    render: (row) => <span dir="ltr">{row.accountNumber}</span>,
-  },
-  {
     key: "currency",
-    header: "ارز",
+    header: "نوع",
     render: (row) => row.walletAccountCurrencyObject?.description || row.walletAccountCurrencyObject?.value,
   },
   {
     key: "balance",
     header: "موجودی",
-    render: (row) => formatPrice(row.balance),
+    render: (row) => formatPrice(row.balance) + " ریال",
   },
   {
     key: "status",
@@ -40,7 +35,7 @@ export default function ProfileWalletSection() {
     );
   }
 
-  const totalBalance = data.walletAccounts.reduce((sum, account) => sum + (account.balance || 0), 0);
+  const totalBalance = data.walletAccounts.reduce((sum: number, account: WalletAccount) => sum + (account.balance || 0), 0);
 
   return (
     <ProfileSectionCard

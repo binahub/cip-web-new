@@ -76,6 +76,9 @@ export const draftServiceRowSchema = z.object({
   ageCategoryId: z.string().trim().min(1, "رده سنی را انتخاب کنید."),
   nationalityId: z.string().trim().min(1, "ملیت را انتخاب کنید."),
   description: z.string().trim().optional(),
+  escortName: z.string().trim().min(1, "نام مشایعت کننده الزامی است.").optional().or(z.literal("")),
+  escortNationalCode: fieldSchemas.nationalCodeOptional,
+  escortMobile: z.string().trim().regex(/^09\d{9}$/, "شماره موبایل باید با ۰۹ شروع شود و ۱۱ رقم باشد.").optional().or(z.literal("")),
 });
 
 export const addServicesFormSchema = z.object({

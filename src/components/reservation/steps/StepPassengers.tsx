@@ -583,6 +583,13 @@ export default function StepPassengers({ draft, onBack, onSuccess }: StepPasseng
         ) : null}
 
         <div className="flex flex-col gap-3 sm:flex-row">
+        <button
+            type="button"
+            onClick={onBack}
+            className="flex h-14 flex-1 items-center justify-center rounded-2xl border border-border-input text-text-secondary"
+          >
+            بازگشت
+          </button>
           <button
             type="button"
             onClick={() => void continueReservation()}
@@ -591,13 +598,7 @@ export default function StepPassengers({ draft, onBack, onSuccess }: StepPasseng
           >
             {isSubmitting ? "در حال ذخیره..." : "ادامه"}
           </button>
-          <button
-            type="button"
-            onClick={onBack}
-            className="flex h-14 flex-1 items-center justify-center rounded-2xl border border-border-input text-text-secondary"
-          >
-            بازگشت
-          </button>
+         
         </div>
       </div>
 

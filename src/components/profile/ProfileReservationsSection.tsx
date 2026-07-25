@@ -21,7 +21,7 @@ import {
 import type { CustomerReservation } from "@/services/customer/customer.types";
 
 export default function ProfileReservationsSection() {
-  const [page, setPage] = useState(1);
+  const [page, setPage] = useState(0);
   const [cancelTarget, setCancelTarget] = useState<CustomerReservation | null>(null);
   const { data, isPending, error } = useCustomerReservations(page, 20);
   const cancelMutation = useCancelReservation();

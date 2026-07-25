@@ -89,6 +89,25 @@ export function useActiveMainServiceItems(enabled = true) {
   });
 }
 
+/** Raw ACTIVE non-main services for reservation add-on service picker. */
+export function useActiveSubServiceItems(enabled = true) {
+  return useQuery({
+    queryKey: [...mainServiceKeys.activeSummary(), "sub"] as const,
+    queryFn: async (): Promise<ActiveMainServiceSummaryItem[]> => {
+      const { data } = await apiClient.get<CipApiResponse<ActiveMainServicesSummaryData>>(
+        "/main-services/active-summary",
+        { skipAuth: true },
+      );
+      return (data.data?.list ?? []).filter(
+        (item) =>
+          item.mainService.status === "ACTIVE" && item.mainService.isMainService === false,
+      );
+    },
+    enabled,
+    staleTime: 60 * 1000,
+  });
+}
+
 export function useMainServiceDetail(id: string) {
   return useQuery<ServiceDetailViewModel>({
     queryKey: mainServiceKeys.detail(id),

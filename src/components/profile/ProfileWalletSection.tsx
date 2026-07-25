@@ -40,9 +40,9 @@ export default function ProfileWalletSection() {
   return (
     <ProfileSectionCard
       title="کیف پول"
-      description={data.description || "موجودی و حساب‌های کیف پول شما"}
+      description={ "موجودی و حساب‌های کیف پول شما"}
     >
-      <div className="mb-5 grid grid-cols-1 gap-3 sm:grid-cols-3">
+      {/* <div className="mb-5 grid grid-cols-1 gap-3 sm:grid-cols-3">
         <div className="rounded-2xl border border-accent/30 bg-cta-pill-bg px-4 py-4 sm:col-span-1">
           <p className="text-xs text-text-secondary">موجودی کل</p>
           <p className="mt-2 text-2xl font-extrabold text-white">
@@ -59,7 +59,7 @@ export default function ProfileWalletSection() {
           <p className="text-xs text-text-secondary">وضعیت</p>
           <p className="mt-2 text-lg font-bold text-accent">{data.status}</p>
         </div>
-      </div>
+      </div> */}
 
       <DataTable
         columns={columns}

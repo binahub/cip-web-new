@@ -23,6 +23,7 @@ import type {
   DraftNumberPayload,
   FinalizePostpaidPayload,
   FinalizeWalletPayload,
+  ReservationWalletInfo,
   SaveDraftMyPassengerPayload,
   UpdatePassengerCountsPayload,
 } from "./reservation.types";
@@ -66,7 +67,7 @@ export function useAirports(status: "ACTIVE" | "ALL" = "ACTIVE", enabled = true)
 }
 
 export function useReservationWalletInfo(enabled = true) {
-  return useQuery({
+  return useQuery<ReservationWalletInfo>({
     queryKey: reservationKeys.walletInfo(),
     queryFn: fetchReservationWalletInfo,
     enabled,

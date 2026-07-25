@@ -107,7 +107,7 @@ function Row({
       <span className={strong ? "text-base font-extrabold text-accent" : "text-white"}>
         {value}
         {!strong ? null : (
-          <span className="mr-1 text-xs font-normal text-text-secondary">تومان</span>
+          <span className="mr-1 text-xs font-normal text-text-secondary">ريال</span>
         )}
       </span>
     </div>

@@ -72,7 +72,7 @@ export function useActiveMainServices() {
 
 /** Raw ACTIVE main services for reservation service picker cards. */
 export function useActiveMainServiceItems(enabled = true) {
-  return useQuery({
+  return useQuery<ActiveMainServiceSummaryItem[]>({
     queryKey: [...mainServiceKeys.activeSummary(), "raw"] as const,
     queryFn: async (): Promise<ActiveMainServiceSummaryItem[]> => {
       const { data } = await apiClient.get<CipApiResponse<ActiveMainServicesSummaryData>>(
@@ -91,7 +91,7 @@ export function useActiveMainServiceItems(enabled = true) {
 
 /** Raw ACTIVE non-main services for reservation add-on service picker. */
 export function useActiveSubServiceItems(enabled = true) {
-  return useQuery({
+  return useQuery<ActiveMainServiceSummaryItem[]>({
     queryKey: [...mainServiceKeys.activeSummary(), "sub"] as const,
     queryFn: async (): Promise<ActiveMainServiceSummaryItem[]> => {
       const { data } = await apiClient.get<CipApiResponse<ActiveMainServicesSummaryData>>(

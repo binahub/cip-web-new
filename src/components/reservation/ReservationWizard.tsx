@@ -5,7 +5,6 @@ import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
 import Header from "@/components/layout/Header";
 import ReservationStepper from "@/components/reservation/ReservationStepper";
-import StepConfirmCounts from "@/components/reservation/steps/StepConfirmCounts";
 import StepFlightInfo from "@/components/reservation/steps/StepFlightInfo";
 import StepPassengers from "@/components/reservation/steps/StepPassengers";
 import StepPayment from "@/components/reservation/steps/StepPayment";
@@ -166,21 +165,18 @@ export default function ReservationWizard() {
               ) : null}
 
               {step === 2 && draft ? (
-                <StepConfirmCounts
+                <StepPassengers
                   draft={draft}
-                  primaryServiceId={primaryServiceId}
                   onBack={() => setStep(1)}
-                  onDraftUpdate={setDraft}
-                  onSuccess={(nextDraft, serviceId) => {
+                  onSuccess={(nextDraft) => {
                     setDraft(nextDraft);
-                    setPrimaryServiceId(serviceId);
                     setStep(3);
                   }}
                 />
               ) : null}
 
               {step === 3 && draft ? (
-                <StepPassengers
+                <StepServices
                   draft={draft}
                   onBack={() => setStep(2)}
                   onSuccess={(nextDraft) => {
@@ -191,20 +187,9 @@ export default function ReservationWizard() {
               ) : null}
 
               {step === 4 && draft ? (
-                <StepServices
-                  draft={draft}
-                  onBack={() => setStep(3)}
-                  onSuccess={(nextDraft) => {
-                    setDraft(nextDraft);
-                    setStep(5);
-                  }}
-                />
-              ) : null}
-
-              {step === 5 && draft ? (
                 <StepPayment
                   draft={draft}
-                  onBack={() => setStep(4)}
+                  onBack={() => setStep(3)}
                   onDraftUpdate={setDraft}
                   onSuccess={(reservation) => {
                     toastSuccess("رزرو با موفقیت نهایی شد.");

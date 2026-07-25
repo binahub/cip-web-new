@@ -117,7 +117,6 @@ export default function StepPassengers({ draft, onBack, onSuccess }: StepPasseng
     control,
     handleSubmit,
     reset,
-    watch,
     getValues,
     formState: { errors },
   } = useForm<DraftPassengerFormValues>({
@@ -125,8 +124,6 @@ export default function StepPassengers({ draft, onBack, onSuccess }: StepPasseng
     ...liveFormValidation,
     defaultValues: emptyPassenger(),
   });
-
-  const birthDateField = register("birthDate");
 
   const selectedIds = useMemo(
     () =>
@@ -482,16 +479,14 @@ export default function StepPassengers({ draft, onBack, onSuccess }: StepPasseng
                 dir="ltr"
                 className="[&_input]:text-left [&_input]:placeholder:text-left [&_input]:tracking-widest [&_input]:placeholder:tracking-widest"
                 error={errors.birthDate?.message}
-                name={birthDateField.name}
-                ref={birthDateField.ref}
-                onBlur={birthDateField.onBlur}
-                onChange={(event) => {
-                  event.target.value = maskBirthDateInput(
-                    event.target.value,
-                    getValues("birthDate") ?? "",
-                  );
-                  void birthDateField.onChange(event);
-                }}
+                {...register("birthDate", {
+                  onChange: (event) => {
+                    event.target.value = maskBirthDateInput(
+                      event.target.value,
+                      getValues("birthDate") ?? "",
+                    );
+                  },
+                })}
               />
               <Select
                 label="رده سنی"
@@ -547,7 +542,7 @@ export default function StepPassengers({ draft, onBack, onSuccess }: StepPasseng
                   </label>
                 )}
               />
-              {watch("saveToMyPassengers") ? (
+              {/* {watch("saveToMyPassengers") ? (
                 <Controller
                   name="setAsDefault"
                   control={control}
@@ -563,7 +558,7 @@ export default function StepPassengers({ draft, onBack, onSuccess }: StepPasseng
                     </label>
                   )}
                 />
-              ) : null}
+              ) : null} */}
             </div>
 
             <button

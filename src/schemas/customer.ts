@@ -15,7 +15,7 @@ export const updateCustomerInfoSchema = z.object({
   address: z.string().trim().min(1, validationMessages.required),
   city: z.string().trim().min(1, validationMessages.required),
   nationalityId: positiveIntString("ملیت را انتخاب کنید."),
-  birthDate: fieldSchemas.birthDateIso,
+  birthDate: fieldSchemas.birthDate,
   gender: z.string().trim().min(1, "جنسیت را انتخاب کنید."),
 });
 

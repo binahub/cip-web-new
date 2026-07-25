@@ -63,6 +63,7 @@ export default function StepFlightInfo({ initialServiceId, onSuccess }: StepFlig
     control,
     handleSubmit,
     setValue,
+    setError,
     watch,
     formState: { errors },
   } = useForm<CreateDraftFormValues>({
@@ -150,6 +151,20 @@ export default function StepFlightInfo({ initialServiceId, onSuccess }: StepFlig
       : "فرودگاه مقصد";
 
   const onSubmit = handleSubmit(async (values) => {
+    if (flightDate && flightTime) {
+      const selected = new DateObject(flightDate)
+        .setHour(flightTime.hour)
+        .setMinute(flightTime.minute)
+        .setSecond(flightTime.second ?? 0);
+      if (selected.toDate() < new Date()) {
+        setError("flightDate", {
+          type: "manual",
+          message: "تاریخ و زمان پرواز نمی‌تواند قبل از الان باشد.",
+        });
+        return;
+      }
+    }
+
     const draft = await createMutation.mutateAsync({
       tripTypeId: Number(values.tripTypeId),
       airportId: Number(values.airportId),
@@ -250,6 +265,7 @@ export default function StepFlightInfo({ initialServiceId, onSuccess }: StepFlig
           onDateChange={(value) => setFlightDate(value as DateObject)}
           onTimeChange={(value) => setFlightTime(value as DateObject)}
           icon={<Calendar size={20} color="#969696" variant="Linear" />}
+          disablePast
         />
         {errors.flightDate?.message ? (
           <p className="text-xs text-danger">{errors.flightDate.message}</p>

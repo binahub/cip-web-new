@@ -65,7 +65,8 @@ export default function ProfileReservationsSection() {
     {
       key: "flightDate",
       header: "تاریخ پرواز",
-      render: (row) => formatDateFa(row.flightDate),
+      // render: (row) => formatDateFa(row.flightDate),
+      render: (row) => (new Date(row.flightDate).toLocaleDateString("fa-IR")),
     },
     {
       key: "currentStatus",

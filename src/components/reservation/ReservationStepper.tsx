@@ -2,10 +2,9 @@
 
 const STEPS = [
   { id: 1, label: "اطلاعات پرواز" },
-  { id: 2, label: "تایید تعداد" },
-  { id: 3, label: "مسافران" },
-  { id: 4, label: "خدمات" },
-  { id: 5, label: "پرداخت" },
+  { id: 2, label: "مسافران" },
+  { id: 3, label: "خدمات" },
+  { id: 4, label: "پرداخت" },
 ] as const;
 
 interface ReservationStepperProps {

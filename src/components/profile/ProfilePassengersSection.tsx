@@ -95,8 +95,6 @@ export default function ProfilePassengersSection() {
     defaultValues: defaultFormValues,
   });
 
-  const birthDateField = register("birthDate");
-
   function openCreate() {
     setEditing(null);
     reset(defaultFormValues);
@@ -400,17 +398,15 @@ export default function ProfilePassengersSection() {
                 dir="ltr"
                 className="[&_input]:text-left [&_input]:placeholder:text-left [&_input]:tracking-widest [&_input]:placeholder:tracking-widest"
                 error={errors.birthDate?.message}
-                name={birthDateField.name}
-                ref={birthDateField.ref}
-                onBlur={birthDateField.onBlur}
+                {...register("birthDate", {
+                  onChange: (event) => {
+                    event.target.value = maskBirthDateInput(
+                      event.target.value,
+                      getValues("birthDate") ?? "",
+                    );
+                  },
+                })}
                 value={birthDateValue}
-                onChange={(event) => {
-                  event.target.value = maskBirthDateInput(
-                    event.target.value,
-                    getValues("birthDate") ?? "",
-                  );
-                  void birthDateField.onChange(event);
-                }}
               />
             </div>
             <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
@@ -447,7 +443,7 @@ export default function ProfilePassengersSection() {
                 className="size-4 accent-[#c9ada7]"
               />
             </label>
-            <label className="flex items-center justify-between gap-3 rounded-2xl border border-border-input px-4 py-3 text-sm text-white">
+            {/* <label className="flex items-center justify-between gap-3 rounded-2xl border border-border-input px-4 py-3 text-sm text-white">
               <span>مسافر پیش‌فرض</span>
               <input
                 type="checkbox"
@@ -455,7 +451,7 @@ export default function ProfilePassengersSection() {
                 onChange={(event) => setValue("setAsDefault", event.target.checked)}
                 className="size-4 accent-[#c9ada7]"
               />
-            </label>
+            </label> */}
 
             {(createMutation.isError || updateMutation.isError) && (
               <p className="text-sm text-danger">

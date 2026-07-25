@@ -12,6 +12,8 @@ interface DateTimePickerFieldProps {
   onDateChange: (date: DateObject) => void;
   onTimeChange: (time: DateObject) => void;
   icon: ReactNode;
+  /** When true, dates before today and times before now (on today) cannot be selected. */
+  disablePast?: boolean;
 }
 
 const HOURS = Array.from({ length: 24 }, (_, hour) => hour);
@@ -21,18 +23,39 @@ function pad(value: number) {
   return String(value).padStart(2, "0");
 }
 
+function isSameCalendarDay(a: DateObject, b: DateObject) {
+  return (
+    a.year === b.year && a.month.number === b.month.number && a.day === b.day
+  );
+}
+
 function TimePickerDropdown({
   time,
   onTimeChange,
+  minHour = 0,
+  minMinute = 0,
 }: {
   time: DateObject | null;
   onTimeChange: (time: DateObject) => void;
+  minHour?: number;
+  minMinute?: number;
 }) {
   const [open, setOpen] = useState(false);
   const rootRef = useRef<HTMLDivElement>(null);
   const hour = time?.hour ?? 12;
   const minute = time?.minute ?? 0;
   const label = time ? `${pad(hour)}:${pad(minute)}` : "زمان پرواز";
+
+  const availableHours = useMemo(
+    () => HOURS.filter((item) => item >= minHour),
+    [minHour],
+  );
+
+  const availableMinutes = useMemo(() => {
+    if (hour > minHour) return MINUTES;
+    if (hour < minHour) return [];
+    return MINUTES.filter((item) => item >= minMinute);
+  }, [hour, minHour, minMinute]);
 
   useEffect(() => {
     function handleClickOutside(event: MouseEvent) {
@@ -45,8 +68,18 @@ function TimePickerDropdown({
   }, []);
 
   function commit(nextHour: number, nextMinute: number) {
+    let safeHour = nextHour;
+    let safeMinute = nextMinute;
+
+    if (safeHour < minHour) {
+      safeHour = minHour;
+      safeMinute = Math.max(safeMinute, minMinute);
+    } else if (safeHour === minHour && safeMinute < minMinute) {
+      safeMinute = minMinute;
+    }
+
     const next = time ? new DateObject(time) : new DateObject();
-    next.setHour(nextHour).setMinute(nextMinute).setSecond(0);
+    next.setHour(safeHour).setMinute(safeMinute).setSecond(0);
     onTimeChange(next);
   }
 
@@ -74,7 +107,7 @@ function TimePickerDropdown({
           <div className="flex items-stretch" dir="ltr">
             <div className="app-scroll flex max-h-56 flex-1 flex-col overflow-y-auto overscroll-contain py-2">
               <p className="px-3 pb-1 text-center text-[11px] text-text-secondary">ساعت</p>
-              {HOURS.map((item) => (
+              {availableHours.map((item) => (
                 <button
                   key={item}
                   type="button"
@@ -92,7 +125,7 @@ function TimePickerDropdown({
 
             <div className="app-scroll flex max-h-56 flex-1 flex-col overflow-y-auto overscroll-contain py-2">
               <p className="px-3 pb-1 text-center text-[11px] text-text-secondary">دقیقه</p>
-              {MINUTES.map((item) => (
+              {availableMinutes.map((item) => (
                 <button
                   key={item}
                   type="button"
@@ -130,26 +163,79 @@ export default function DateTimePickerField({
   onDateChange,
   onTimeChange,
   icon,
+  disablePast = false,
 }: DateTimePickerFieldProps) {
+  const now = new DateObject({ calendar: persian, locale: persian_fa });
+  // Day-only bound: if minDate keeps the current clock time, "today" is treated as past
+  // and cannot be selected until tomorrow.
+  const minDate = disablePast
+    ? new DateObject(now).setHour(0).setMinute(0).setSecond(0).setMillisecond(0)
+    : undefined;
+  const isToday = Boolean(date && disablePast && isSameCalendarDay(date, now));
+
   const dateLabel = useMemo(() => {
     if (!date) return "تاریخ پرواز";
     return date.format("YYYY/MM/DD");
   }, [date]);
+
+  function handleDateChange(value: DateObject | null) {
+    if (!value) return;
+
+    if (disablePast) {
+      const today = new DateObject({ calendar: persian, locale: persian_fa });
+      const pickedDay = new DateObject(value).setHour(0).setMinute(0).setSecond(0).setMillisecond(0);
+      const todayStart = new DateObject(today).setHour(0).setMinute(0).setSecond(0).setMillisecond(0);
+      if (pickedDay.toDate().getTime() < todayStart.toDate().getTime()) return;
+
+      // Keep an already-chosen time valid when switching onto today.
+      if (isSameCalendarDay(value, today) && time) {
+        const combined = new DateObject(value)
+          .setHour(time.hour)
+          .setMinute(time.minute)
+          .setSecond(0);
+        if (combined.toDate().getTime() < today.toDate().getTime()) {
+          onTimeChange(new DateObject(today).setSecond(0));
+        }
+      }
+    }
+
+    onDateChange(value);
+  }
+
+  function handleTimeChange(value: DateObject) {
+    if (disablePast && date) {
+      const today = new DateObject({ calendar: persian, locale: persian_fa });
+      if (isSameCalendarDay(date, today)) {
+        const combined = new DateObject(date)
+          .setHour(value.hour)
+          .setMinute(value.minute)
+          .setSecond(0);
+        if (combined.toDate().getTime() < today.toDate().getTime()) return;
+      }
+    }
+    onTimeChange(value);
+  }
 
   return (
     <div
       dir="ltr"
       className="relative z-40 flex h-14 w-full min-w-0 flex-1 items-center gap-2 rounded-2xl border border-border-input bg-transparent px-4"
     >
-      <TimePickerDropdown time={time} onTimeChange={onTimeChange} />
+      <TimePickerDropdown
+        time={time}
+        onTimeChange={handleTimeChange}
+        minHour={isToday ? now.hour : 0}
+        minMinute={isToday ? now.minute : 0}
+      />
 
       <div className="h-14 w-px shrink-0 bg-border-input/40" />
 
       <DatePicker
         value={date}
-        onChange={onDateChange}
+        onChange={handleDateChange}
         calendar={persian}
         locale={persian_fa}
+        minDate={minDate}
         containerClassName="min-w-0 flex-1"
         render={(_, openCalendar) => (
           <button

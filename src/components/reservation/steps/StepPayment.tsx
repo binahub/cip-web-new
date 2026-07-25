@@ -4,6 +4,7 @@ import { useState } from "react";
 import { Controller, useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import PriceSummaryCard from "@/components/reservation/PriceSummaryCard";
+import TermsAgreementDialog from "@/components/reservation/TermsAgreementDialog";
 import { getFormErrorMessage } from "@/components/auth/auth-form-utils";
 import Select from "@/components/ui/Select";
 import TextField from "@/components/ui/TextField";
@@ -36,6 +37,7 @@ export default function StepPayment({
   onSuccess,
 }: StepPaymentProps) {
   const [couponCode, setCouponCode] = useState(draft.priceBreakdown.couponCode ?? "");
+  const [termsOpen, setTermsOpen] = useState(false);
   const { data: walletInfo, isPending: walletLoading } = useReservationWalletInfo(true);
   const calculateCoupon = useCalculateCoupon();
   const removeCouponMutation = useRemoveCoupon();
@@ -47,6 +49,7 @@ export default function StepPayment({
     control,
     handleSubmit,
     watch,
+    setValue,
     formState: { errors },
   } = useForm<PaymentFormValues>({
     resolver: zodResolver(paymentFormSchema),
@@ -202,7 +205,7 @@ export default function StepPayment({
         <TextField label="نیازهای ویژه" {...register("specialNeeds")} />
         <TextField label="یادداشت مشتری" {...register("customerNotes")} />
 
-        <Controller
+        {/* <Controller
           name="saveMainPassengerAsDefault"
           control={control}
           render={({ field }) => (
@@ -216,19 +219,30 @@ export default function StepPayment({
               />
             </label>
           )}
-        />
+        /> */}
 
         <Controller
           name="agreeToTerms"
           control={control}
           render={({ field }) => (
-            <label className="flex items-start justify-between gap-3 rounded-2xl border border-border-input px-4 py-3 text-sm text-white">
+            <label
+              className="flex cursor-pointer items-start justify-between gap-3 rounded-2xl border border-border-input px-4 py-3 text-sm text-white"
+              onClick={(event) => {
+                event.preventDefault();
+                if (field.value) {
+                  field.onChange(false);
+                  return;
+                }
+                setTermsOpen(true);
+              }}
+            >
               <span>قوانین و شرایط رزرو را می‌پذیرم.</span>
               <input
                 type="checkbox"
                 checked={field.value}
-                onChange={(event) => field.onChange(event.target.checked)}
-                className="mt-0.5 size-4 accent-accent"
+                readOnly
+                tabIndex={-1}
+                className="pointer-events-none mt-0.5 size-4 accent-accent"
               />
             </label>
           )}
@@ -236,6 +250,15 @@ export default function StepPayment({
         {errors.agreeToTerms?.message ? (
           <p className="text-xs text-danger">{errors.agreeToTerms.message}</p>
         ) : null}
+
+        <TermsAgreementDialog
+          open={termsOpen}
+          onClose={() => setTermsOpen(false)}
+          onConfirm={() => {
+            setValue("agreeToTerms", true, { shouldValidate: true, shouldDirty: true });
+            setTermsOpen(false);
+          }}
+        />
 
         {payError ? (
           <p className="rounded-xl bg-danger/10 px-3 py-2 text-sm text-danger">
@@ -256,7 +279,7 @@ export default function StepPayment({
             disabled={isPaying}
             className="flex h-14 flex-1 items-center justify-center rounded-2xl bg-accent font-extrabold text-black disabled:opacity-50"
           >
-            {isPaying ? "در حال نهایی‌سازی..." : `پرداخت ${formatPrice(amount)} تومان`}
+            {isPaying ? "در حال نهایی‌سازی..." : `پرداخت ${formatPrice(amount)} ريال`}
           </button>
           
         </div>

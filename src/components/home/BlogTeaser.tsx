@@ -28,10 +28,10 @@ export default function BlogTeaser() {
       </div>
 
       {/* CTA button */}
-      <button className="flex items-center gap-2 rounded-xl border border-accent px-4 sm:px-5 py-2 sm:py-2.5 text-sm font-semibold text-accent transition-colors hover:bg-cta-pill-bg">
+      {/* <button className="flex items-center gap-2 rounded-xl border border-accent px-4 sm:px-5 py-2 sm:py-2.5 text-sm font-semibold text-accent transition-colors hover:bg-cta-pill-bg">
         <AddSquare size={16} color="#c9ada7" variant="Linear" />
         <span>ادامه مطلب</span>
-      </button>
+      </button> */}
     </div>
   );
 }

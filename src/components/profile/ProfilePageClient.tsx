@@ -133,7 +133,7 @@ export default function ProfilePageClient() {
               <div>
                 <p className="text-sm text-accent">حساب کاربری</p>
                 <h1 className="mt-1 text-2xl font-black text-white sm:text-3xl">
-                  سلام، {displayName}
+                  {displayName}
                 </h1>
               </div>
               <button

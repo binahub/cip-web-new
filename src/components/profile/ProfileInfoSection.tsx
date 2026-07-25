@@ -9,7 +9,11 @@ import Select from "@/components/ui/Select";
 import Spinner from "@/components/ui/Spinner";
 import TextField from "@/components/ui/TextField";
 import { getFormErrorMessage } from "@/components/auth/auth-form-utils";
-import { dateInputToIso } from "@/lib/format";
+import {
+  birthDateInputToIso,
+  maskBirthDateInput,
+  normalizeBirthDateInput,
+} from "@/lib/format";
 import { toastSuccess } from "@/lib/toast";
 import {
   updateCustomerInfoSchema,
@@ -17,7 +21,27 @@ import {
 } from "@/schemas/customer";
 import { liveFormValidation } from "@/lib/validation";
 import { useCustomerInfo, useUpdateCustomerInfo } from "@/services/customer/customer.queries";
+import type { CustomerInfo } from "@/services/customer/customer.types";
 import { useLookupSelectOptions } from "@/services/lookups/lookups.queries";
+
+function customerTypeLabel(type: string | null | undefined) {
+  if (type === "REAL") return "حقیقی";
+  if (type === "LEGAL") return "حقوقی";
+  return type || "—";
+}
+
+function toFormValues(data: CustomerInfo): UpdateCustomerInfoFormValues {
+  return {
+    firstName: data.firstName ?? "",
+    lastName: data.lastName ?? "",
+    mobileNumber: data.mobileNumber ?? "",
+    address: data.address ?? "",
+    city: data.city ?? "",
+    nationalityId: data.nationalityId != null ? String(data.nationalityId) : "",
+    birthDate: normalizeBirthDateInput(data.birthDate),
+    gender: data.gender ?? "",
+  };
+}
 
 export default function ProfileInfoSection() {
   const [isEditing, setIsEditing] = useState(false);
@@ -34,6 +58,7 @@ export default function ProfileInfoSection() {
     register,
     handleSubmit,
     reset,
+    getValues,
     formState: { errors, isDirty },
   } = useForm<UpdateCustomerInfoFormValues>({
     resolver: zodResolver(updateCustomerInfoSchema),
@@ -52,30 +77,12 @@ export default function ProfileInfoSection() {
 
   useEffect(() => {
     if (!data) return;
-    reset({
-      firstName: data.firstName ?? "",
-      lastName: data.lastName ?? "",
-      mobileNumber: data.mobileNumber ?? "",
-      address: "",
-      city: "",
-      nationalityId: "",
-      birthDate: "",
-      gender: "",
-    });
+    reset(toFormValues(data));
   }, [data, reset]);
 
   function openEdit() {
     if (!data) return;
-    reset({
-      firstName: data.firstName ?? "",
-      lastName: data.lastName ?? "",
-      mobileNumber: data.mobileNumber ?? "",
-      address: "",
-      city: "",
-      nationalityId: "",
-      birthDate: "",
-      gender: "",
-    });
+    reset(toFormValues(data));
     updateMutation.reset();
     setIsEditing(true);
   }
@@ -83,18 +90,7 @@ export default function ProfileInfoSection() {
   function closeEdit() {
     setIsEditing(false);
     updateMutation.reset();
-    if (data) {
-      reset({
-        firstName: data.firstName ?? "",
-        lastName: data.lastName ?? "",
-        mobileNumber: data.mobileNumber ?? "",
-        address: "",
-        city: "",
-        nationalityId: "",
-        birthDate: "",
-        gender: "",
-      });
-    }
+    if (data) reset(toFormValues(data));
   }
 
   const onSubmit = handleSubmit(async (values) => {
@@ -106,7 +102,7 @@ export default function ProfileInfoSection() {
         address: values.address,
         city: values.city,
         gender: values.gender,
-        birthDate: dateInputToIso(values.birthDate),
+        birthDate: birthDateInputToIso(values.birthDate),
         nationalityId: Number(values.nationalityId),
       });
       toastSuccess("اطلاعات با موفقیت به‌روزرسانی شد.");
@@ -125,11 +121,11 @@ export default function ProfileInfoSection() {
 
   const summaryItems = [
     { label: "نام و نام خانوادگی", value: `${data.firstName} ${data.lastName}` },
-    { label: "کد ملی", value: data.nationalId },
+    { label: "کد ملی", value: data.nationalCode },
     { label: "موبایل", value: data.mobileNumber },
-    { label: "سطح مشتری", value: data.customerLevelDescription },
-    { label: "نوع مشتری", value: data.customerTypeObject?.description },
-    { label: "شرکت", value: data.companyName || "—" },
+    { label: "سطح مشتری", value: data.customerLevelName },
+    { label: "نوع مشتری", value: customerTypeLabel(data.customerType) },
+    { label: "ملیت", value: data.nationalityName },
   ];
 
   return (
@@ -189,9 +185,21 @@ export default function ProfileInfoSection() {
           />
           <TextField
             label="تاریخ تولد"
-            type="date"
+            placeholder="..../../.."
+            inputMode="numeric"
+            autoComplete="bday"
+            maxLength={10}
+            dir="ltr"
+            className="[&_input]:text-left [&_input]:placeholder:text-left [&_input]:tracking-widest [&_input]:placeholder:tracking-widest"
             error={errors.birthDate?.message}
-            {...register("birthDate")}
+            {...register("birthDate", {
+              onChange: (event) => {
+                event.target.value = maskBirthDateInput(
+                  event.target.value,
+                  getValues("birthDate") ?? "",
+                );
+              },
+            })}
           />
           <Select
             label="ملیت"

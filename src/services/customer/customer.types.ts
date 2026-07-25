@@ -12,13 +12,20 @@ export interface CipPage<T> {
 }
 
 export interface CustomerInfo {
+  id: number;
   firstName: string;
   lastName: string;
-  companyName: string | null;
-  nationalId: string;
+  nationalCode: string;
   mobileNumber: string;
-  customerLevelDescription: string;
-  customerTypeObject: ValueDescription;
+  customerLevelName: string;
+  customerType: string;
+  nationalityName: string;
+  nationalityId: number;
+  birthDate: string | null;
+  gender: string | null;
+  address: string | null;
+  city: string | null;
+  status: string;
 }
 
 export interface UpdateCustomerInfoPayload {

@@ -31,6 +31,16 @@ export default function CountField({
           ) : null}
         </div>
         <div className="flex shrink-0 items-center gap-3">
+        <button
+            type="button"
+            aria-label={`افزایش ${label}`}
+            disabled={value >= max}
+            onClick={() => onChange(Math.min(max, value + 1))}
+            className="flex h-9 w-9 items-center justify-center rounded-xl border border-border-input text-text-secondary transition-colors hover:bg-cta-pill-bg hover:text-white disabled:opacity-40"
+          >
+            <Add size={16} color="currentColor" variant="Linear" />
+          </button>
+          <span className="w-8 text-center text-base font-bold text-white">{value}</span>
           <button
             type="button"
             aria-label={`کاهش ${label}`}
@@ -40,16 +50,7 @@ export default function CountField({
           >
             <Minus size={16} color="currentColor" variant="Linear" />
           </button>
-          <span className="w-8 text-center text-base font-bold text-white">{value}</span>
-          <button
-            type="button"
-            aria-label={`افزایش ${label}`}
-            disabled={value >= max}
-            onClick={() => onChange(Math.min(max, value + 1))}
-            className="flex h-9 w-9 items-center justify-center rounded-xl border border-border-input text-text-secondary transition-colors hover:bg-cta-pill-bg hover:text-white disabled:opacity-40"
-          >
-            <Add size={16} color="currentColor" variant="Linear" />
-          </button>
+          
         </div>
       </div>
       {error ? <p className="text-xs text-danger">{error}</p> : null}

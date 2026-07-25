@@ -48,7 +48,13 @@ export default function Header() {
           </Link>
           <div className="hidden md:block h-6 w-px bg-border-input/30 ml-2" />
           <nav className="hidden md:flex items-center gap-6 ml-2">
-            <div className="flex items-center gap-1">
+            <Link
+              href="/"
+              className="text-base font-normal text-text-nav hover:text-white transition-colors"
+            >
+              خانه
+            </Link>
+            {/* <div className="flex items-center gap-1">
               <a
                 href="#"
                 className="text-base font-normal text-text-nav hover:text-white transition-colors"
@@ -62,7 +68,7 @@ export default function Header() {
               className="text-base font-normal text-text-nav hover:text-white transition-colors"
             >
               وبلاگ
-            </a>
+            </a> */}
           </nav>
         </div>
 
@@ -155,18 +161,25 @@ export default function Header() {
       {mobileMenuOpen ? (
         <div className="md:hidden border-t border-border-input/20 px-4 py-4">
           <nav className="flex flex-col gap-4">
-            <a
-              href="#"
+            <Link
+              href="/"
+              onClick={() => setMobileMenuOpen(false)}
               className="text-base font-normal text-text-nav hover:text-white transition-colors"
             >
-              وبلاگ
-            </a>
-            <a
+              خانه
+            </Link>
+            {/* <a
               href="#"
               className="text-base font-normal text-text-nav hover:text-white transition-colors"
             >
               خدمات
             </a>
+            <a
+              href="#"
+              className="text-base font-normal text-text-nav hover:text-white transition-colors"
+            >
+              وبلاگ
+            </a> */}
           </nav>
         </div>
       ) : null}

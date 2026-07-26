@@ -75,9 +75,15 @@ jobs:
               exit 1
             fi
 
+            # Old .next (often created by root/previous deploys) causes:
+            # EACCES: permission denied, open '.../.next/cache/.rscinfo'
+            if [ -d .next ]; then
+              rm -rf .next || sudo rm -rf .next
+            fi
+
             npm ci
             npm run build
 
             pm2 delete next-app || true
-            pm2 start npm --name next-app -- start -- --port=4000
+            pm2 start npm --name next-app --cwd "$APP_DIR" -- start -- --port=4000
             pm2 save

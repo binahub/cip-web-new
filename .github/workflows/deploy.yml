@@ -31,7 +31,7 @@ jobs:
       - name: Deploy to VPS via rsync over SSH
         uses: burnett01/rsync-deployments@6.0.0
         with:
-          switches: -avzr --delete --exclude=".git" --exclude="node_modules"
+          switches: -avzr --delete --exclude=".git" --exclude="node_modules" --exclude=".env*"
           path: ./
           remote_path: /home/${{ secrets.VPS_USER }}/apps/site/
           remote_host: ${{ secrets.VPS_HOST }}

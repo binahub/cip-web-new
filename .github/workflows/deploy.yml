@@ -21,19 +21,7 @@ jobs:
       - name: Install dependencies
         run: npm ci
 
-      # Next inlines NEXT_PUBLIC_* at build time. Without this, prerender of
-      # /_not-found (and any page importing config) fails.
-      - name: Write .env.production from secrets
-        env:
-          NEXT_PUBLIC_API_BASE_URL: ${{ secrets.NEXT_PUBLIC_API_BASE_URL }}
-        run: |
-          if [ -z "$NEXT_PUBLIC_API_BASE_URL" ]; then
-            echo "::error::GitHub secret NEXT_PUBLIC_API_BASE_URL is missing or empty. Add it in Repo → Settings → Secrets and variables → Actions."
-            exit 1
-          fi
-          printf 'NEXT_PUBLIC_API_BASE_URL=%s\n' "$NEXT_PUBLIC_API_BASE_URL" > .env.production
-          echo "Wrote .env.production for production build."
-
+      # Uses committed .env.production (NEXT_PUBLIC_* only — safe to ship).
       - name: Build (CI check)
         run: npm run build
 

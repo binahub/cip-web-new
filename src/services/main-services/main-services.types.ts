@@ -79,6 +79,7 @@ export interface RelatedServiceItem {
   id: string;
   description: string;
   relatedMainService: MainService;
+  mainImage?: MainServiceImage[] | null;
 }
 
 export interface MainServiceDetailData {
@@ -126,6 +127,13 @@ export interface ServiceDetailPriceCardView {
   breakdown: { label: string; value: string }[];
 }
 
+export interface ServiceDetailRelatedServiceView {
+  id: string;
+  title: string;
+  imageUrl: string;
+  durationLabel: string;
+}
+
 /** Mapped shape used by /services/[id]. */
 export interface ServiceDetailViewModel {
   id: string;
@@ -137,6 +145,7 @@ export interface ServiceDetailViewModel {
   extraInfo: ServiceDetailExtraInfoView[];
   address: string;
   features: ServiceDetailFeatureView[];
+  relatedServices: ServiceDetailRelatedServiceView[];
   pricing: {
     iranian: ServiceDetailPriceCardView[];
     foreign: ServiceDetailPriceCardView[];

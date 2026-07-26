@@ -1,6 +1,7 @@
 import ServiceImageSlider from "./ServiceImageSlider";
 import ServiceDescription from "./ServiceDescription";
 import ServiceFeatures from "./ServiceFeatures";
+import ServiceRelatedServices from "./ServiceRelatedServices";
 import ServicePricingSection from "./ServicePricingSection";
 import ServiceRules from "./ServiceRules";
 import type { ServiceDetailViewModel } from "@/services/main-services/main-services.types";
@@ -29,6 +30,7 @@ export default function ServiceDetailView({ service }: ServiceDetailViewProps) {
 
           <ServiceFeatures address={service.address} features={service.features} />
 
+
           <ServicePricingSection
             mainServiceId={service.id}
             isMainService={service.isMainService}
@@ -37,6 +39,8 @@ export default function ServiceDetailView({ service }: ServiceDetailViewProps) {
           />
 
           <ServiceRules title={service.rulesTitle} rules={service.rules} />
+          <ServiceRelatedServices items={service.relatedServices} />
+
         </div>
       </div>
     </div>

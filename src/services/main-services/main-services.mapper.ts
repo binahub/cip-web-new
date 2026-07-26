@@ -1,12 +1,16 @@
 import { formatPrice } from "@/lib/format";
 import type {
   MainServiceDetailData,
+  MainServiceImage,
   MinPrice,
+  RelatedServiceItem,
   ServiceDetailPriceCardView,
+  ServiceDetailRelatedServiceView,
   ServiceDetailViewModel,
 } from "./main-services.types";
 
 const FALLBACK_FACILITY_ICON = "/icons/features/hospitality.svg";
+const FALLBACK_RELATED_IMAGE = "/images/home/service-vip-services.svg";
 const IRAN_MAP = "/images/services/iran-map.svg";
 const WORLD_MAP = "/images/services/world-map.svg";
 
@@ -21,6 +25,35 @@ function formatTaxRate(taxRate: string): string {
   const amount = Number(taxRate);
   if (Number.isNaN(amount)) return taxRate;
   return `${formatPrice(amount)} درصد`;
+}
+
+function formatDurationLabel(minutesValue: string): string {
+  const minutes = Number(minutesValue);
+  if (Number.isNaN(minutes) || minutes <= 0) return "—";
+  if (minutes % 60 === 0) {
+    return `${formatPrice(minutes / 60)} ساعت`;
+  }
+  return `${formatPrice(minutes)} دقیقه`;
+}
+
+function resolveRelatedImage(images: MainServiceImage[] | null | undefined): string {
+  if (!images?.length) return FALLBACK_RELATED_IMAGE;
+  const main = images.find((image) => image.isMainImage === true);
+  const chosen = main ?? images[0];
+  return chosen.cdnImage || chosen.localImage || FALLBACK_RELATED_IMAGE;
+}
+
+function mapRelatedServices(
+  relatedServiceList: RelatedServiceItem[],
+): ServiceDetailRelatedServiceView[] {
+  return (relatedServiceList ?? [])
+    .filter((item) => item.relatedMainService?.status === "ACTIVE")
+    .map((item) => ({
+      id: item.relatedMainService.id,
+      title: item.relatedMainService.name || item.description,
+      imageUrl: resolveRelatedImage(item.mainImage),
+      durationLabel: formatDurationLabel(item.relatedMainService.timeDurationMinutes),
+    }));
 }
 
 function mapPriceCard(
@@ -102,6 +135,7 @@ export function mapMainServiceDetail(data: MainServiceDetailData): ServiceDetail
     extraInfo,
     address: mainService.airportObject.description,
     features,
+    relatedServices: mapRelatedServices(data.relatedServiceList ?? []),
     pricing: {
       iranian: mapNationalityPrices(data.priceList, "PERSIAN", "مسافران ایرانی", IRAN_MAP),
       foreign: mapNationalityPrices(data.priceList, "NON_PERSIAN", "مسافران غیر ایرانی", WORLD_MAP),

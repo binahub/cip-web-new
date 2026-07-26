@@ -21,36 +21,17 @@ jobs:
       - name: Install dependencies
         run: npm ci
 
-      # Uses committed .env.production (NEXT_PUBLIC_* only — safe to ship).
-      - name: Build (CI check)
+      - name: Build
         run: npm run build
 
-      # Stop the live app BEFORE rsync. With --delete, a live next start process
-      # can serve HTML that still points at chunk files already removed mid-sync
-      # → "Failed to load chunk /_next/static/chunks/...".
-      - name: Stop PM2 app on VPS
-        uses: appleboy/ssh-action@v1.0.3
-        with:
-          host: ${{ secrets.VPS_HOST }}
-          username: ${{ secrets.VPS_USER }}
-          port: ${{ secrets.VPS_PORT }}
-          key: ${{ secrets.VPS_SSH_KEY }}
-          script: |
-            set -e
-            pm2 stop next-app || true
+      # Optional: run tests if you have them
+      # - name: Test
+      #   run: npm test -- --watchAll=false
 
-      # Sync source + .env.production. Rebuild on VPS so HTML and chunks share one BUILD_ID.
-      - name: Deploy source to VPS via rsync
+      - name: Deploy to VPS via rsync over SSH
         uses: burnett01/rsync-deployments@6.0.0
         with:
-          switches: >-
-            -avzr --delete
-            --exclude=".git"
-            --exclude="node_modules"
-            --exclude=".next"
-            --exclude=".env"
-            --exclude=".env.local"
-            --exclude=".env.*.local"
+          switches: -avzr --delete --exclude=".git" --exclude="node_modules"
           path: ./
           remote_path: /home/${{ secrets.VPS_USER }}/apps/site/
           remote_host: ${{ secrets.VPS_HOST }}
@@ -58,7 +39,7 @@ jobs:
           remote_port: ${{ secrets.VPS_PORT }}
           remote_key: ${{ secrets.VPS_SSH_KEY }}
 
-      - name: Install, build & restart on VPS
+      - name: Install on VPS + Restart PM2
         uses: appleboy/ssh-action@v1.0.3
         with:
           host: ${{ secrets.VPS_HOST }}
@@ -67,23 +48,7 @@ jobs:
           key: ${{ secrets.VPS_SSH_KEY }}
           script: |
             set -e
-            APP_DIR="/home/${{ secrets.VPS_USER }}/apps/site"
-            cd "$APP_DIR"
-
-            if [ ! -f .env.production ] || ! grep -q '^NEXT_PUBLIC_API_BASE_URL=.\+' .env.production; then
-              echo "Missing NEXT_PUBLIC_API_BASE_URL in $APP_DIR/.env.production"
-              exit 1
-            fi
-
-            # Old .next (often created by root/previous deploys) causes:
-            # EACCES: permission denied, open '.../.next/cache/.rscinfo'
-            if [ -d .next ]; then
-              rm -rf .next || sudo rm -rf .next
-            fi
-
+            cd /home/deploy/apps/site
             npm ci
-            npm run build
-
-            pm2 delete next-app || true
-            pm2 start npm --name next-app --cwd "$APP_DIR" -- start -- --port=4000
+            pm2 restart next-app || pm2 start npm --name next-app -- start -- --port=4000
             pm2 save

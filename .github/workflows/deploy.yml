@@ -18,28 +18,19 @@ jobs:
           node-version: "22"
           cache: "npm"
 
+      # Verify the app compiles in CI (catches broken main before touching the VPS).
       - name: Install dependencies
         run: npm ci
 
-      - name: Build
+      - name: Build (CI check)
+        env:
+          NEXT_PUBLIC_API_BASE_URL: ${{ secrets.NEXT_PUBLIC_API_BASE_URL }}
         run: npm run build
 
-      # Optional: run tests if you have them
-      # - name: Test
-      #   run: npm test -- --watchAll=false
-
-      - name: Deploy to VPS via rsync over SSH
-        uses: burnett01/rsync-deployments@6.0.0
-        with:
-          switches: -avzr --delete --exclude=".git" --exclude="node_modules" --exclude=".next/cache"
-          path: ./
-          remote_path: /home/${{ secrets.VPS_USER }}/apps/site/
-          remote_host: ${{ secrets.VPS_HOST }}
-          remote_user: ${{ secrets.VPS_USER }}
-          remote_port: ${{ secrets.VPS_PORT }}
-          remote_key: ${{ secrets.VPS_SSH_KEY }}
-
-      - name: Install on VPS + Restart PM2
+      # Stop the live app BEFORE rsync. With --delete, a live next start process
+      # can serve HTML that still points at chunk files already removed mid-sync
+      # → "Failed to load chunk /_next/static/chunks/...".
+      - name: Stop PM2 app on VPS
         uses: appleboy/ssh-action@v1.0.3
         with:
           host: ${{ secrets.VPS_HOST }}
@@ -48,7 +39,59 @@ jobs:
           key: ${{ secrets.VPS_SSH_KEY }}
           script: |
             set -e
-            cd /home/deploy/apps/site
+            pm2 stop next-app || true
+
+      # Sync source only — do NOT ship CI's .next. Rebuilding on the VPS keeps
+      # server HTML and /_next/static chunks on the same BUILD_ID.
+      - name: Deploy source to VPS via rsync
+        uses: burnett01/rsync-deployments@6.0.0
+        with:
+          switches: >-
+            -avzr --delete
+            --exclude=".git"
+            --exclude="node_modules"
+            --exclude=".next"
+            --exclude=".env"
+            --exclude=".env.local"
+            --exclude=".env.*.local"
+          path: ./
+          remote_path: /home/${{ secrets.VPS_USER }}/apps/site/
+          remote_host: ${{ secrets.VPS_HOST }}
+          remote_user: ${{ secrets.VPS_USER }}
+          remote_port: ${{ secrets.VPS_PORT }}
+          remote_key: ${{ secrets.VPS_SSH_KEY }}
+
+      - name: Install, build & restart on VPS
+        uses: appleboy/ssh-action@v1.0.3
+        with:
+          host: ${{ secrets.VPS_HOST }}
+          username: ${{ secrets.VPS_USER }}
+          port: ${{ secrets.VPS_PORT }}
+          key: ${{ secrets.VPS_SSH_KEY }}
+          script: |
+            set -e
+            APP_DIR="/home/${{ secrets.VPS_USER }}/apps/site"
+            cd "$APP_DIR"
+
             npm ci
-            pm2 restart next-app || pm2 start npm --name next-app -- start -- --port=4000
+
+            # Keep production env on the VPS in .env.production or .env —
+            # do not rely on CI shipping .env files.
+            if [ -f .env.production ]; then
+              set -a
+              # shellcheck disable=SC1091
+              . ./.env.production
+              set +a
+            elif [ -f .env ]; then
+              set -a
+              # shellcheck disable=SC1091
+              . ./.env
+              set +a
+            fi
+
+            npm run build
+
+            # Full restart so PM2 does not keep a stale next process / cwd.
+            pm2 delete next-app || true
+            pm2 start npm --name next-app -- start -- --port=4000
             pm2 save

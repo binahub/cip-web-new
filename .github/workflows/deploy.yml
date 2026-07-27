@@ -56,5 +56,5 @@ jobs:
             set -e
             cd /home/${{ secrets.VPS_USER }}/apps/site
             npm ci --omit=dev
-            sudo systemctl start next-app
-            sudo systemctl status next-app --no-pager
+            systemctl start next-app
+            systemctl status next-app --no-pager

@@ -6,6 +6,7 @@ import type {
   CustomerInfo,
   CustomerPassenger,
   CustomerReservation,
+  CustomerReservationDetail,
   CustomerWallet,
   PassengerListParams,
   PassengerPayload,
@@ -51,6 +52,16 @@ export async function fetchCustomerReservations(
     { params: { page, size } },
   );
   if (!data.data) throw { message: "دریافت رزروها ناموفق بود.", status: 404 };
+  return data.data;
+}
+
+export async function fetchCustomerReservationDetail(
+  reservationNumber: string,
+): Promise<CustomerReservationDetail> {
+  const { data } = await apiClient.get<CipApiResponse<CustomerReservationDetail>>(
+    `/customer/reservations/${encodeURIComponent(reservationNumber)}/detail`,
+  );
+  if (!data.data) throw { message: "دریافت جزئیات رزرو ناموفق بود.", status: 404 };
   return data.data;
 }
 

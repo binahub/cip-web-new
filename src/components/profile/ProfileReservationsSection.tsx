@@ -4,10 +4,11 @@ import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import ProfileSectionCard from "@/components/profile/ProfileSectionCard";
+import ReservationDetailDialog from "@/components/profile/ReservationDetailDialog";
 import DataTable, { type DataTableColumn } from "@/components/ui/DataTable";
 import TextField from "@/components/ui/TextField";
 import { getFormErrorMessage } from "@/components/auth/auth-form-utils";
-import { formatDateFa, formatPrice } from "@/lib/format";
+import { formatPrice } from "@/lib/format";
 import { toastSuccess } from "@/lib/toast";
 import {
   cancelReservationSchema,
@@ -23,6 +24,7 @@ import type { CustomerReservation } from "@/services/customer/customer.types";
 export default function ProfileReservationsSection() {
   const [page, setPage] = useState(0);
   const [cancelTarget, setCancelTarget] = useState<CustomerReservation | null>(null);
+  const [detailNumber, setDetailNumber] = useState<string | null>(null);
   const { data, isPending, error } = useCustomerReservations(page, 20);
   const cancelMutation = useCancelReservation();
 
@@ -65,8 +67,11 @@ export default function ProfileReservationsSection() {
     {
       key: "flightDate",
       header: "تاریخ پرواز",
-      // render: (row) => formatDateFa(row.flightDate),
-      render: (row) => (new Date(row.flightDate).toLocaleDateString("fa-IR")),
+      render: (row) => (
+        <span dir="ltr" className="inline-block text-left tabular-nums">
+          {row.flightDate || "—"}
+        </span>
+      ),
     },
     {
       key: "currentStatus",
@@ -87,13 +92,22 @@ export default function ProfileReservationsSection() {
       key: "actions",
       header: "عملیات",
       render: (row) => (
-        <button
-          type="button"
-          onClick={() => openCancel(row)}
-          className="rounded-lg border border-danger/50 px-3 py-1.5 text-xs text-danger transition-opacity hover:bg-danger/10"
-        >
-          لغو
-        </button>
+        <div className="flex flex-wrap items-center justify-center gap-2">
+          <button
+            type="button"
+            onClick={() => setDetailNumber(row.reservationNumber)}
+            className="rounded-lg border border-accent/40 px-3 py-1.5 text-xs font-semibold text-accent transition-opacity hover:bg-accent/10"
+          >
+            جزئیات
+          </button>
+          <button
+            type="button"
+            onClick={() => openCancel(row)}
+            className="rounded-lg border border-danger/50 px-3 py-1.5 text-xs text-danger transition-opacity hover:bg-danger/10"
+          >
+            لغو
+          </button>
+        </div>
       ),
     },
   ];
@@ -114,6 +128,11 @@ export default function ProfileReservationsSection() {
           onPageChange={setPage}
         />
       )}
+
+      <ReservationDetailDialog
+        reservationNumber={detailNumber}
+        onClose={() => setDetailNumber(null)}
+      />
 
       {cancelTarget ? (
         <div className="fixed inset-0 z-[210] flex items-center justify-center p-4">

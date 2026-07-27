@@ -79,6 +79,98 @@ export interface CustomerReservation {
   createTime: string;
 }
 
+export interface ReservationDetailPassenger {
+  id: number;
+  firstName: string;
+  lastName: string;
+  nationalId: string | null;
+  passportNumber: string | null;
+  birthDate: string | null;
+  gender: string | null;
+  nationalityName: string | null;
+  ageCategoryName: string | null;
+  needsWheelchair: boolean;
+  specialMeal: string | null;
+  medicalConditions: string | null;
+  notes: string | null;
+}
+
+export interface ReservationDetailService {
+  id: number;
+  mainServiceName: string;
+  mainServicePersianName: string | null;
+  quantity: number;
+  unitPrice: number;
+  totalPrice: number;
+  totalTax: number;
+  finalAmount: number;
+}
+
+export interface ReservationDetailPayment {
+  id: number;
+  paymentType: string;
+  paymentTypePersian: string | null;
+  paymentAmount: number;
+  paymentStatus: string;
+  paymentDatetime: string | null;
+  refundAmount: number | null;
+  refundDatetime: string | null;
+  refundReason: string | null;
+  walletDetails: unknown | null;
+  posDetails: unknown | null;
+  vipCardDetails: unknown | null;
+}
+
+export interface CustomerReservationDetail {
+  id: number;
+  reservationNumber: string;
+  reservationSource: string | null;
+  currentStatus: string;
+  currentStatusPersian: string | null;
+  paymentStatus: string;
+  paymentStatusPersian: string | null;
+  airportId: number | null;
+  airportName: string | null;
+  airportIata: string | null;
+  airlineId: number | null;
+  airlineName: string | null;
+  airlineIata: string | null;
+  flightNumber: string | null;
+  flightDate: string | null;
+  destinationAirportId: number | null;
+  destinationAirportName: string | null;
+  destinationAirportIata: string | null;
+  terminal: string | null;
+  tripTypeName: string | null;
+  adultCount: number;
+  childCount: number;
+  infantCount: number;
+  luggageCount: number;
+  primaryMainServiceId: number | null;
+  primaryMainServiceName: string | null;
+  totalPrice: number;
+  totalTax: number;
+  couponDiscountAmount: number;
+  manualDiscountAmount: number;
+  discountAmount: number;
+  finalAmount: number;
+  couponCode: string | null;
+  specialNeeds: string | null;
+  customerNotes: string | null;
+  internalNotes: string | null;
+  checkInTime: string | null;
+  serviceStartTime: string | null;
+  serviceEndTime: string | null;
+  qrCode: string | null;
+  barcode: string | null;
+  assignedOperatorName: string | null;
+  passengers: ReservationDetailPassenger[];
+  services: ReservationDetailService[];
+  payment: ReservationDetailPayment | null;
+  createTime: string | null;
+  updateTime: string | null;
+}
+
 export interface CancelReservationPayload {
   reservationNumber: string;
   cancelReason: string;

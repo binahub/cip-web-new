@@ -5,6 +5,7 @@ import {
   deleteCustomerPassenger,
   fetchCustomerInfo,
   fetchCustomerPassengers,
+  fetchCustomerReservationDetail,
   fetchCustomerReservations,
   fetchCustomerWallet,
   fetchWalletStatement,
@@ -26,6 +27,8 @@ export const customerKeys = {
     [...customerKeys.all, "statement", String(accountId), page, size] as const,
   reservations: (page: number, size: number) =>
     [...customerKeys.all, "reservations", page, size] as const,
+  reservationDetail: (reservationNumber: string) =>
+    [...customerKeys.all, "reservation-detail", reservationNumber] as const,
   passengers: (params: PassengerListParams) =>
     [...customerKeys.all, "passengers", params] as const,
 };
@@ -82,6 +85,18 @@ export function useCustomerReservations(page = 1, size = 20, enabled = true) {
     queryKey: customerKeys.reservations(page, size),
     queryFn: () => fetchCustomerReservations(page, size),
     enabled,
+    ...profileQueryOptions,
+  });
+}
+
+export function useCustomerReservationDetail(
+  reservationNumber: string | null,
+  enabled = true,
+) {
+  return useQuery({
+    queryKey: customerKeys.reservationDetail(reservationNumber ?? ""),
+    queryFn: () => fetchCustomerReservationDetail(reservationNumber!),
+    enabled: enabled && Boolean(reservationNumber),
     ...profileQueryOptions,
   });
 }

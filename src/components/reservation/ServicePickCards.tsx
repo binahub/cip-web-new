@@ -50,12 +50,12 @@ export default function ServicePickCards({
                   : "border-border-input/40 bg-service-chip-bg hover:border-accent/40"
               }`}
             >
-              <div className="relative h-28 w-full bg-black/40">
+              <div className="relative h-28 w-full overflow-hidden bg-black/40">
                 {/* eslint-disable-next-line @next/next/no-img-element */}
                 <img
                   src={resolveCardImage(item)}
                   alt=""
-                  className="h-full w-full object-cover"
+                  className="h-full w-full object-cover object-[center_70%]"
                 />
               </div>
               <div className="space-y-1 px-3 py-3">

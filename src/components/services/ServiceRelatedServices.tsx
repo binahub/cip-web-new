@@ -43,6 +43,7 @@ export default function ServiceRelatedServices({ items }: ServiceRelatedServices
             imageUrl={item.imageUrl}
             durationLabel={item.durationLabel}
             isMainService={false}
+            size="compact"
           />
         ))}
       </div>

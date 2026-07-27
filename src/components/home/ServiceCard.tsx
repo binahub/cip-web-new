@@ -11,6 +11,8 @@ interface ServiceCardData {
   imagePosition?: string;
   isMainService?: boolean;
   durationLabel?: string;
+  /** Compact layout for related/extra services only. */
+  size?: "default" | "compact";
 }
 
 export default function ServiceCard({
@@ -21,10 +23,21 @@ export default function ServiceCard({
   imagePosition = "0% 110%",
   isMainService = false,
   durationLabel,
+  size = "default",
 }: ServiceCardData) {
+  const compact = size === "compact";
+
   return (
-    <div className="relative h-[405px] w-full overflow-hidden rounded-[24px] bg-photo-card-bg">
-      <div className="pointer-events-none absolute inset-x-0 bottom-0 z-0 h-[160px] sm:h-[205px] overflow-hidden">
+    <div
+      className={`relative w-full overflow-hidden rounded-[24px] bg-photo-card-bg ${
+        compact ? "h-[320px] rounded-[20px]" : "h-[405px]"
+      }`}
+    >
+      <div
+        className={`pointer-events-none absolute inset-x-0 bottom-0 z-0 overflow-hidden ${
+          compact ? "h-[130px] sm:h-[150px]" : "h-[160px] sm:h-[205px]"
+        }`}
+      >
         {/* Photo — dynamic, will come from the booking API later. object-position
             approximates Figma's crop bias (source photo is cropped higher than
             center); tune per-image via the `imagePosition` prop once real photos
@@ -35,7 +48,7 @@ export default function ServiceCard({
           fill
           className="object-cover"
           style={{ objectPosition: imagePosition }}
-          sizes="416px"
+          sizes={compact ? "280px" : "416px"}
         />
 
         {/* Gradient fade — always a CSS layer on top of the photo, independent of
@@ -51,8 +64,18 @@ export default function ServiceCard({
       </div>
 
       {/* Content stack — flows with title height so badges never collide on wrap */}
-      <div className="relative z-5 flex flex-col items-center gap-3 px-3 pt-8 sm:px-4">
-        <h3 className="w-full text-center text-xl font-bold leading-snug text-white sm:text-2xl sm:leading-normal">
+      <div
+        className={`relative z-5 flex flex-col items-center px-3 sm:px-4 ${
+          compact ? "gap-2 pt-5" : "gap-3 pt-8"
+        }`}
+      >
+        <h3
+          className={`w-full text-center font-bold leading-snug text-white ${
+            compact
+              ? "text-base sm:text-lg sm:leading-snug"
+              : "text-xl sm:text-2xl sm:leading-normal"
+          }`}
+        >
           {title}
         </h3>
 
@@ -72,23 +95,53 @@ export default function ServiceCard({
         )}
 
         {durationLabel ? (
-          <p className="text-center text-xs text-text-secondary sm:text-sm">
+          <p
+            className={`text-center text-text-secondary ${
+              compact ? "text-[11px] sm:text-xs" : "text-xs sm:text-sm"
+            }`}
+          >
             زمان استفاده: {durationLabel}
           </p>
         ) : null}
 
-        <div className="flex items-end gap-2" dir="rtl">
-          <span className="pb-[9px] text-xs leading-[1.808] text-text-price">قیمت از</span>
-          <span className="text-xl font-bold leading-[1.808] text-white">{price}</span>
-          <span className="pb-[9px] text-xs leading-[1.808] text-text-price">ریال</span>
+        <div className={`flex items-end ${compact ? "gap-1.5" : "gap-2"}`} dir="rtl">
+          <span
+            className={`leading-[1.808] text-text-price ${
+              compact ? "pb-1.5 text-[10px]" : "pb-[9px] text-xs"
+            }`}
+          >
+            قیمت از
+          </span>
+          <span
+            className={`font-bold leading-[1.808] text-white ${
+              compact ? "text-base sm:text-lg" : "text-xl"
+            }`}
+          >
+            {price}
+          </span>
+          <span
+            className={`leading-[1.808] text-text-price ${
+              compact ? "pb-1.5 text-[10px]" : "pb-[9px] text-xs"
+            }`}
+          >
+            ریال
+          </span>
         </div>
 
         <Link
           href={`/services/${id}`}
-          className="flex h-8 items-center justify-center rounded-lg bg-cta-pill-bg px-2 py-1 transition-colors hover:opacity-80"
+          className={`flex items-center justify-center rounded-lg bg-cta-pill-bg px-2 py-1 transition-colors hover:opacity-80 ${
+            compact ? "h-7" : "h-8"
+          }`}
         >
-          <span className="px-2 text-xs font-normal leading-[22px] text-accent">مشاهده جزئیات</span>
-          <ArrowLeft size={20} color="#C9A063" variant="Linear" />
+          <span
+            className={`px-2 font-normal text-accent ${
+              compact ? "text-[11px] leading-5" : "text-xs leading-[22px]"
+            }`}
+          >
+            مشاهده جزئیات
+          </span>
+          <ArrowLeft size={compact ? 16 : 20} color="#C9A063" variant="Linear" />
         </Link>
       </div>
     </div>

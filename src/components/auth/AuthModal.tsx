@@ -60,7 +60,7 @@ export default function AuthModal({
             aria-label="بستن پنجره"
             className="mr-auto flex h-10 w-10 items-center justify-center rounded-xl bg-cta-pill-bg transition-opacity hover:opacity-80"
           >
-            <CloseSquare size={20} color="#c9ada7" variant="Linear" />
+            <CloseSquare size={20} color="#C9A063" variant="Linear" />
           </button>
         </div>
 

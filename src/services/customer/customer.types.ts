@@ -61,6 +61,7 @@ export interface WalletStatementItem {
   accountNumber: string;
   amount: number;
   type: string;
+  typeObject?: ValueDescription;
   realBalance: number;
   availableBalance: number;
   description: string;

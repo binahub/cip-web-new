@@ -155,7 +155,7 @@ export default function StepServices({ draft, onBack, onSuccess }: StepServicesP
             onClick={() => append(emptyService)}
             className="inline-flex h-11 items-center gap-2 rounded-xl bg-cta-pill-bg px-4 text-sm font-semibold text-accent"
           >
-            <Add size={18} color="#c9ada7" variant="Linear" />
+            <Add size={18} color="#C9A063" variant="Linear" />
             افزودن خدمت
           </button>
         </div>
@@ -178,7 +178,7 @@ export default function StepServices({ draft, onBack, onSuccess }: StepServicesP
                   onClick={() => remove(index)}
                   className="rounded-xl border border-border-input p-2 text-accent hover:bg-cta-pill-bg"
                 >
-                  <Trash size={18} color="#c9ada7" variant="Linear" />
+                  <Trash size={18} color="#C9A063" variant="Linear" />
                 </button>
               </div>
 

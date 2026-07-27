@@ -88,7 +88,7 @@ export default function ServiceCard({
           className="flex h-8 items-center justify-center rounded-lg bg-cta-pill-bg px-2 py-1 transition-colors hover:opacity-80"
         >
           <span className="px-2 text-xs font-normal leading-[22px] text-accent">مشاهده جزئیات</span>
-          <ArrowLeft size={20} color="#c9ada7" variant="Linear" />
+          <ArrowLeft size={20} color="#C9A063" variant="Linear" />
         </Link>
       </div>
     </div>

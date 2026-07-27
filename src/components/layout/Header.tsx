@@ -54,6 +54,12 @@ export default function Header() {
             >
               خانه
             </Link>
+            <Link
+              href="/reservation"
+              className="text-base font-normal text-text-nav hover:text-white transition-colors"
+            >
+              رزرو
+            </Link>
             {/* <div className="flex items-center gap-1">
               <a
                 href="#"
@@ -80,9 +86,9 @@ export default function Header() {
                 onClick={() => setAccountOpen((prev) => !prev)}
                 className="hidden sm:flex items-center gap-2 rounded-xl bg-login-pill-bg px-4 py-2 text-sm font-semibold text-accent transition-colors hover:opacity-80"
               >
-                <User size={18} color="#c9ada7" variant="Bulk" />
+                <User size={18} color="#C9A063" variant="Bulk" />
                 <span className="max-w-[140px] truncate">{displayName}</span>
-                <ArrowDown2 size={14} color="#c9ada7" variant="Linear" />
+                <ArrowDown2 size={14} color="#C9A063" variant="Linear" />
               </button>
               <button
                 type="button"
@@ -90,7 +96,7 @@ export default function Header() {
                 className="sm:hidden flex items-center justify-center w-10 h-10 rounded-xl bg-login-pill-bg transition-colors hover:opacity-80"
                 aria-label="حساب کاربری"
               >
-                <User size={20} color="#c9ada7" variant="Bulk" />
+                <User size={20} color="#C9A063" variant="Bulk" />
               </button>
 
               {accountOpen ? (
@@ -104,7 +110,7 @@ export default function Header() {
                     onClick={() => setAccountOpen(false)}
                     className="flex w-full items-center justify-start gap-2 px-4 py-3 text-sm text-text-secondary transition-colors hover:bg-cta-pill-bg hover:text-accent"
                   >
-                    <User size={18} color="#c9ada7" variant="Linear" />
+                    <User size={18} color="#C9A063" variant="Linear" />
                     <span>پروفایل من</span>
                   </Link>
                   <button
@@ -117,7 +123,7 @@ export default function Header() {
                     className="flex w-full items-center justify-start gap-2 px-4 py-3 text-sm text-text-secondary transition-colors hover:bg-cta-pill-bg hover:text-accent"
                   >
                     
-                    <LogoutCurve size={18} color="#c9ada7" variant="Linear" />
+                    <LogoutCurve size={18} color="#C9A063" variant="Linear" />
                     <span>خروج</span>
                   </button>
                 </div>
@@ -130,7 +136,7 @@ export default function Header() {
                 onClick={() => openAuthModal("login")}
                 className="hidden sm:flex items-center gap-2 rounded-xl bg-login-pill-bg px-4 py-2 text-sm font-semibold text-accent transition-colors hover:opacity-80"
               >
-                <User size={18} color="#c9ada7" variant="Bulk" />
+                <User size={18} color="#C9A063" variant="Bulk" />
                 <span>ورود | ثبت نام</span>
               </button>
               <button
@@ -139,7 +145,7 @@ export default function Header() {
                 className="sm:hidden flex items-center justify-center w-10 h-10 rounded-xl bg-login-pill-bg transition-colors hover:opacity-80"
                 aria-label="ورود یا ثبت نام"
               >
-                <User size={20} color="#c9ada7" variant="Bulk" />
+                <User size={20} color="#C9A063" variant="Bulk" />
               </button>
             </>
           )}
@@ -167,6 +173,13 @@ export default function Header() {
               className="text-base font-normal text-text-nav hover:text-white transition-colors"
             >
               خانه
+            </Link>
+            <Link
+              href="/reservation"
+              onClick={() => setMobileMenuOpen(false)}
+              className="text-base font-normal text-text-nav hover:text-white transition-colors"
+            >
+              رزرو
             </Link>
             {/* <a
               href="#"

@@ -84,7 +84,7 @@ export default function CaptchaField({
             className="flex w-12 items-center justify-center rounded-2xl border border-border-input bg-cta-pill-bg text-accent transition-opacity hover:opacity-80 disabled:cursor-not-allowed disabled:opacity-50"
           >
             <span className={isLoading ? "inline-flex animate-spin" : "inline-flex"}>
-              <Refresh size={18} color="#c9ada7" variant="Linear" />
+              <Refresh size={18} color="#C9A063" variant="Linear" />
             </span>
           </button>
         </div>

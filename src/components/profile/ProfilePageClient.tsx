@@ -160,7 +160,7 @@ export default function ProfilePageClient() {
                         : "border-border-input/40 bg-transparent text-text-secondary hover:text-white"
                     }`}
                   >
-                    <Icon size={18} color={active ? "#c9ada7" : "#969696"} variant="Linear" />
+                    <Icon size={18} color={active ? "#C9A063" : "#969696"} variant="Linear" />
                     {tab.label}
                   </button>
                 );

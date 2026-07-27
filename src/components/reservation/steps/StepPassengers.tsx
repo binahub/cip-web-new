@@ -304,7 +304,7 @@ export default function StepPassengers({ draft, onBack, onSuccess }: StepPasseng
             }
             className="inline-flex h-11 items-center gap-2 rounded-xl bg-cta-pill-bg px-4 text-sm font-semibold text-accent disabled:opacity-40"
           >
-            <Add size={18} color="#c9ada7" variant="Linear" />
+            <Add size={18} color="#C9A063" variant="Linear" />
             افزودن مسافر جدید
           </button>
         </div>
@@ -406,7 +406,7 @@ export default function StepPassengers({ draft, onBack, onSuccess }: StepPasseng
                     }`}
                   >
                     <div className="flex items-center justify-end gap-1.5">
-                      {selected ? <TickCircle size={16} color="#c9ada7" variant="Bold" /> : null}
+                      {selected ? <TickCircle size={16} color="#C9A063" variant="Bold" /> : null}
                       <p className="text-sm font-semibold text-white">
                         {passenger.firstName} {passenger.lastName}
                       </p>

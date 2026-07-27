@@ -2,19 +2,19 @@ import { Shield, Headphone, Microscope } from "iconsax-react";
 
 const features = [
   {
-    icon: <Shield size={32} color="#c9ada7" variant="Bulk" />,
+    icon: <Shield size={32} color="#C9A063" variant="Bulk" />,
     title: "آرامش قبل از پرواز",
     description:
       "در سالن اختصاصی استراحت کنید و پذیرایی شوید؛ دریافت کارت پرواز و ترانسفر تا پای هواپیما با ما.",
   },
   {
-    icon: <Headphone size={32} color="#c9ada7" variant="Bulk" />,
+    icon: <Headphone size={32} color="#C9A063" variant="Bulk" />,
     title: "VIP سفر کنید",
     description:
       "بدون صف و شلوغی از گیت اختصاصی عبور کنید و با خودروی تشریفاتی تا پای پلکان هواپیما بروید.",
   },
   {
-    icon: <Microscope size={32} color="#c9ada7" variant="Bulk" />,
+    icon: <Microscope size={32} color="#C9A063" variant="Bulk" />,
     title: "پرواز بدون معطلی",
     description:
       "صفر تا صد امور پروازی (بار و کارت پرواز) توسط تیم ما؛ شما فقط از بوفه و اینترنت لذت ببرید.",

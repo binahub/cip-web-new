@@ -37,7 +37,7 @@ export default function NotFound() {
           aria-labelledby="not-found-title"
         >
           <div className="mb-6 flex h-16 w-16 items-center justify-center rounded-2xl bg-cta-pill-bg sm:mb-8 sm:h-20 sm:w-20">
-            <SearchStatus size={36} color="#c9ada7" variant="Bulk" aria-hidden />
+            <SearchStatus size={36} color="#C9A063" variant="Bulk" aria-hidden />
           </div>
 
           <p

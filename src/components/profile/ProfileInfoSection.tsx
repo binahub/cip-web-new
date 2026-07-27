@@ -143,7 +143,7 @@ export default function ProfileInfoSection() {
             onClick={closeEdit}
             className="inline-flex h-11 items-center gap-2 rounded-xl border border-border-input px-4 text-sm text-text-secondary transition-opacity hover:bg-cta-pill-bg"
           >
-            <CloseSquare size={18} color="#c9ada7" variant="Linear" />
+            <CloseSquare size={18} color="#C9A063" variant="Linear" />
             انصراف
           </button>
         ) : (

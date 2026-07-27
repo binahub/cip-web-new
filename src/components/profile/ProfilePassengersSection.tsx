@@ -215,14 +215,14 @@ export default function ProfilePassengersSection() {
       key: "actions",
       header: "عملیات",
       render: (row) => (
-        <div className="flex items-center justify-end gap-2">
+        <div className="flex items-center justify-center gap-2">
           <button
             type="button"
             onClick={() => openEdit(row)}
             className="rounded-lg border border-border-input p-2 text-accent hover:bg-cta-pill-bg"
             aria-label="ویرایش"
           >
-            <Edit2 size={16} color="#c9ada7" variant="Linear" />
+            <Edit2 size={16} color="#C9A063" variant="Linear" />
           </button>
           <button
             type="button"
@@ -346,7 +346,7 @@ export default function ProfilePassengersSection() {
               aria-label="بستن"
               className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-cta-pill-bg transition-opacity hover:opacity-80"
             >
-              <CloseSquare size={20} color="#c9ada7" variant="Linear" />
+              <CloseSquare size={20} color="#C9A063" variant="Linear" />
             </button>
           </div>
 
@@ -485,7 +485,7 @@ export default function ProfilePassengersSection() {
                 type="checkbox"
                 checked={watch("needsWheelchair")}
                 onChange={(event) => setValue("needsWheelchair", event.target.checked)}
-                className="size-4 accent-[#c9ada7]"
+                className="size-4 accent-[#C9A063]"
               />
             </label>
             {/* <label className="flex items-center justify-between gap-3 rounded-2xl border border-border-input px-4 py-3 text-sm text-white">

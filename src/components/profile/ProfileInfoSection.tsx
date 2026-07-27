@@ -10,9 +10,9 @@ import Spinner from "@/components/ui/Spinner";
 import TextField from "@/components/ui/TextField";
 import { getFormErrorMessage } from "@/components/auth/auth-form-utils";
 import {
-  birthDateInputToIso,
   maskBirthDateInput,
   normalizeBirthDateInput,
+  toEnglishDigits,
 } from "@/lib/format";
 import { toastSuccess } from "@/lib/toast";
 import {
@@ -102,7 +102,7 @@ export default function ProfileInfoSection() {
         address: values.address,
         city: values.city,
         gender: values.gender,
-        birthDate: birthDateInputToIso(values.birthDate),
+        birthDate: toEnglishDigits(values.birthDate),
         nationalityId: Number(values.nationalityId),
       });
       toastSuccess("اطلاعات با موفقیت به‌روزرسانی شد.");

@@ -1,10 +1,10 @@
 "use client";
 
 import { useEffect, useState, useSyncExternalStore } from "react";
-import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
 import Header from "@/components/layout/Header";
 import ReservationStepper from "@/components/reservation/ReservationStepper";
+import ReservationSuccessSummary from "@/components/reservation/ReservationSuccessSummary";
 import StepFlightInfo from "@/components/reservation/steps/StepFlightInfo";
 import StepPassengers from "@/components/reservation/steps/StepPassengers";
 import StepPayment from "@/components/reservation/steps/StepPayment";
@@ -34,8 +34,9 @@ export default function ReservationWizard() {
   const initialServiceId = searchParams.get("serviceId") ?? "";
   const [step, setStep] = useState(1);
   const [draft, setDraft] = useState<ReservationDraft | null>(null);
-  const [primaryServiceId, setPrimaryServiceId] = useState(initialServiceId);
+  const [selectedServiceId, setSelectedServiceId] = useState<string | null>(null);
   const [completed, setCompleted] = useState<FinalizedReservation | null>(null);
+  const primaryServiceId = selectedServiceId ?? initialServiceId;
 
   useEffect(() => {
     if (!isClient) return;
@@ -43,10 +44,6 @@ export default function ReservationWizard() {
       openAuthModal("login");
     }
   }, [isClient, isAuthenticated, openAuthModal]);
-
-  useEffect(() => {
-    if (initialServiceId) setPrimaryServiceId(initialServiceId);
-  }, [initialServiceId]);
 
   if (!isClient) {
     return (
@@ -87,30 +84,8 @@ export default function ReservationWizard() {
       <div className="min-h-screen overflow-x-hidden bg-bg">
         <div className="mx-auto max-w-[1440px] px-4 sm:px-6 lg:px-12 xl:px-[72px]">
           <Header />
-          <div className="mx-auto max-w-xl py-16 text-center" dir="rtl">
-            <div className="rounded-[24px] border border-accent/40 bg-service-detail-card p-8">
-              <p className="text-sm text-accent">رزرو با موفقیت ثبت شد</p>
-              <h1 className="mt-2 text-2xl font-black text-white sm:text-3xl">
-                {completed.reservationNumber}
-              </h1>
-              <p className="mt-3 text-text-secondary">
-                وضعیت: {completed.currentStatus} · پرداخت: {completed.paymentStatus}
-              </p>
-              <div className="mt-8 flex flex-col gap-3 sm:flex-row sm:justify-center">
-                <Link
-                  href="/profile?tab=reservations"
-                  className="inline-flex h-12 items-center justify-center rounded-2xl bg-accent px-6 font-extrabold text-black"
-                >
-                  مشاهده رزروها
-                </Link>
-                <Link
-                  href="/"
-                  className="inline-flex h-12 items-center justify-center rounded-2xl border border-border-input px-6 text-text-secondary"
-                >
-                  بازگشت به خانه
-                </Link>
-              </div>
-            </div>
+          <div className="py-12 sm:py-16">
+            <ReservationSuccessSummary reservation={completed} />
           </div>
         </div>
       </div>
@@ -155,7 +130,7 @@ export default function ReservationWizard() {
                   initialServiceId={primaryServiceId}
                   onSuccess={(nextDraft, selectedServiceId) => {
                     setDraft(nextDraft);
-                    setPrimaryServiceId(
+                    setSelectedServiceId(
                       selectedServiceId ||
                         String(nextDraft.services[0]?.mainServiceId ?? ""),
                     );

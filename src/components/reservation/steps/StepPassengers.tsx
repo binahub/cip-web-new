@@ -14,7 +14,12 @@ import {
   draftPassengerSchema,
   type DraftPassengerFormValues,
 } from "@/schemas/reservation";
-import { liveFormValidation } from "@/lib/validation";
+import {
+  applyEnglishNameInputFilter,
+  filterPassportInput,
+  liveFormValidation,
+  validationMessages,
+} from "@/lib/validation";
 import {
   useAddDraftPassengers,
   useDraftMyPassengers,
@@ -106,6 +111,10 @@ export default function StepPassengers({ draft, onBack, onSuccess }: StepPasseng
   const [formError, setFormError] = useState<string | null>(null);
   const [isSavingNew, setIsSavingNew] = useState(false);
   const [savedPickValue, setSavedPickValue] = useState("");
+  const [keyboardHints, setKeyboardHints] = useState<{
+    firstName?: string;
+    lastName?: string;
+  }>({});
 
   const savedPassengers = useMemo<DraftMyPassenger[]>(
     () => savedPage?.list ?? [],
@@ -178,6 +187,7 @@ export default function StepPassengers({ draft, onBack, onSuccess }: StepPasseng
       setFormError(`تعداد مسافران این رزرو کامل است (${requiredCount} نفر).`);
       return;
     }
+    setKeyboardHints({});
     reset(emptyPassenger());
     setIsAddingNew(true);
     setFormError(null);
@@ -185,6 +195,7 @@ export default function StepPassengers({ draft, onBack, onSuccess }: StepPasseng
 
   function cancelNewPassengerForm() {
     setIsAddingNew(false);
+    setKeyboardHints({});
     reset(emptyPassenger());
   }
 
@@ -223,6 +234,7 @@ export default function StepPassengers({ draft, onBack, onSuccess }: StepPasseng
 
       setSelectedPassengers((prev) => [...prev, nextPassenger]);
       setIsAddingNew(false);
+      setKeyboardHints({});
       reset(emptyPassenger());
     } catch (error) {
       setFormError(getFormErrorMessage(error, "افزودن مسافر ناموفق بود."));
@@ -437,15 +449,43 @@ export default function StepPassengers({ draft, onBack, onSuccess }: StepPasseng
                 label="نام (انگلیسی)"
                 dir="ltr"
                 className="[&_input]:text-left [&_input]:placeholder:text-left"
-                error={errors.firstName?.message}
-                {...register("firstName")}
+                autoComplete="given-name"
+                error={keyboardHints.firstName ?? errors.firstName?.message}
+                {...register("firstName", {
+                  onChange: (event) => {
+                    const { value, blockedNonEnglish } = applyEnglishNameInputFilter(
+                      event.target.value,
+                    );
+                    event.target.value = value;
+                    setKeyboardHints((prev) => ({
+                      ...prev,
+                      firstName: blockedNonEnglish
+                        ? validationMessages.firstNameEnglish
+                        : undefined,
+                    }));
+                  },
+                })}
               />
               <TextField
                 label="نام خانوادگی (انگلیسی)"
                 dir="ltr"
                 className="[&_input]:text-left [&_input]:placeholder:text-left"
-                error={errors.lastName?.message}
-                {...register("lastName")}
+                autoComplete="family-name"
+                error={keyboardHints.lastName ?? errors.lastName?.message}
+                {...register("lastName", {
+                  onChange: (event) => {
+                    const { value, blockedNonEnglish } = applyEnglishNameInputFilter(
+                      event.target.value,
+                    );
+                    event.target.value = value;
+                    setKeyboardHints((prev) => ({
+                      ...prev,
+                      lastName: blockedNonEnglish
+                        ? validationMessages.lastNameEnglish
+                        : undefined,
+                    }));
+                  },
+                })}
               />
               <TextField
                 label="کد ملی"
@@ -459,8 +499,15 @@ export default function StepPassengers({ draft, onBack, onSuccess }: StepPasseng
               />
               <TextField
                 label="شماره پاسپورت"
+                maxLength={9}
+                dir="ltr"
+                className="[&_input]:text-left [&_input]:placeholder:text-left"
                 error={errors.passportNumber?.message}
-                {...register("passportNumber")}
+                {...register("passportNumber", {
+                  onChange: (event) => {
+                    event.target.value = filterPassportInput(event.target.value);
+                  },
+                })}
               />
               <Select
                 label="جنسیت"

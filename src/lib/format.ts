@@ -22,6 +22,19 @@ export function formatDateFa(dateString: string): string {
   }).format(date);
 }
 
+/** Persian date + time for reservation receipts and timestamps. */
+export function formatDateTimeFa(dateString: string): string {
+  const date = new Date(dateString);
+  if (Number.isNaN(date.getTime())) return dateString;
+  return new Intl.DateTimeFormat("fa-IR", {
+    year: "numeric",
+    month: "long",
+    day: "numeric",
+    hour: "2-digit",
+    minute: "2-digit",
+  }).format(date);
+}
+
 /**
  * Format a number as currency.
  */

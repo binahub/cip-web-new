@@ -50,7 +50,7 @@ export const draftPassengerSchema = z.object({
   lastName: fieldSchemas.lastNameEnglish,
   nationalCode: fieldSchemas.nationalCodeOptional,
   mobileNumber: fieldSchemas.mobileNumber,
-  passportNumber: z.string().trim().optional(),
+  passportNumber: fieldSchemas.passportNumberOptional,
   gender: z.string().trim().min(1, "جنسیت را انتخاب کنید."),
   birthDate: fieldSchemas.birthDate,
   ageCategoryId: z.string().trim().min(1, "رده سنی را انتخاب کنید."),

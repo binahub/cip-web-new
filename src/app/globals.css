@@ -19,7 +19,8 @@
   --color-text-secondary: #969696;
   --color-text-nav: #979dac;
   --color-text-price: #555555;
-  --color-accent: #c9ada7;
+  /* --color-accent: #c9ada7; */
+  --color-accent: #C9A063;
   --color-badge-bg: rgba(34, 34, 59, 0.6);
   --color-header-bg: rgba(23, 28, 31, 0.47);
   --color-search-card-bg: rgba(23, 28, 31, 0.6);

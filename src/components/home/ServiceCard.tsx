@@ -10,6 +10,7 @@ interface ServiceCardData {
   imageUrl: string;
   imagePosition?: string;
   isMainService?: boolean;
+  durationLabel?: string;
 }
 
 export default function ServiceCard({
@@ -19,6 +20,7 @@ export default function ServiceCard({
   imageUrl,
   imagePosition = "0% 110%",
   isMainService = false,
+  durationLabel,
 }: ServiceCardData) {
   return (
     <div className="relative h-[405px] w-full overflow-hidden rounded-[24px] bg-photo-card-bg">
@@ -68,6 +70,12 @@ export default function ServiceCard({
             />
           </div>
         )}
+
+        {durationLabel ? (
+          <p className="text-center text-xs text-text-secondary sm:text-sm">
+            زمان استفاده: {durationLabel}
+          </p>
+        ) : null}
 
         <div className="flex items-end gap-2" dir="rtl">
           <span className="pb-[9px] text-xs leading-[1.808] text-text-price">قیمت از</span>

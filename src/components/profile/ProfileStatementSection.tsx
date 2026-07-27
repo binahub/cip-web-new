@@ -41,7 +41,8 @@ const columns: DataTableColumn<WalletStatementItem>[] = [
 ];
 
 export default function ProfileStatementSection() {
-  const { data: wallet, isPending: walletLoading } = useCustomerWallet();
+  const { data: wallet, isPending: walletLoading, isFetching: walletFetching } =
+    useCustomerWallet();
   const [accountId, setAccountId] = useState<string>("");
   const [page, setPage] = useState(0);
 
@@ -52,7 +53,7 @@ export default function ProfileStatementSection() {
   const selectedAccountId =
     accountId || (accounts[0] != null ? String(accounts[0].id) : "");
 
-  const { data, isPending, error } = useWalletStatement(
+  const { data, isPending, isFetching, error } = useWalletStatement(
     selectedAccountId || null,
     page,
     20,
@@ -67,7 +68,7 @@ export default function ProfileStatementSection() {
     [accounts],
   );
 
-  if (walletLoading) return <Spinner className="py-16" />;
+  if (walletLoading && !wallet) return <Spinner className="py-16" />;
 
   return (
     <ProfileSectionCard
@@ -98,7 +99,7 @@ export default function ProfileStatementSection() {
           columns={columns}
           rows={data?.list ?? []}
           rowKey={(row) => row.id}
-          isLoading={isPending}
+          isLoading={isPending || isFetching || walletFetching}
           page={data?.number ?? page}
           totalPages={data?.totalPages ?? 0}
           minPage={0}

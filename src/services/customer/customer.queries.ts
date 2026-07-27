@@ -30,11 +30,18 @@ export const customerKeys = {
     [...customerKeys.all, "passengers", params] as const,
 };
 
+/** Profile tabs remount often; always hit the API so data stays fresh. */
+const profileQueryOptions = {
+  staleTime: 0,
+  refetchOnMount: "always" as const,
+};
+
 export function useCustomerInfo(enabled = true) {
   return useQuery({
     queryKey: customerKeys.info(),
     queryFn: fetchCustomerInfo,
     enabled,
+    ...profileQueryOptions,
   });
 }
 
@@ -53,6 +60,7 @@ export function useCustomerWallet(enabled = true) {
     queryKey: customerKeys.wallet(),
     queryFn: fetchCustomerWallet,
     enabled,
+    ...profileQueryOptions,
   });
 }
 
@@ -65,6 +73,7 @@ export function useWalletStatement(
     queryKey: customerKeys.statement(walletAccountId ?? "none", page, size),
     queryFn: () => fetchWalletStatement(walletAccountId!, page, size),
     enabled: walletAccountId != null && walletAccountId !== "",
+    ...profileQueryOptions,
   });
 }
 
@@ -73,6 +82,7 @@ export function useCustomerReservations(page = 1, size = 20, enabled = true) {
     queryKey: customerKeys.reservations(page, size),
     queryFn: () => fetchCustomerReservations(page, size),
     enabled,
+    ...profileQueryOptions,
   });
 }
 
@@ -91,6 +101,7 @@ export function useCustomerPassengers(params: PassengerListParams, enabled = tru
     queryKey: customerKeys.passengers(params),
     queryFn: () => fetchCustomerPassengers(params),
     enabled,
+    ...profileQueryOptions,
   });
 }
 

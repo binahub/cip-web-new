@@ -15,10 +15,16 @@ import {
   maskBirthDateInput,
   normalizeBirthDateInput,
   nullIfEmpty,
+  toEnglishDigits,
 } from "@/lib/format";
 import { toastSuccess } from "@/lib/toast";
 import { passengerFormSchema, type PassengerFormValues } from "@/schemas/customer";
-import { liveFormValidation } from "@/lib/validation";
+import {
+  applyEnglishNameInputFilter,
+  filterPassportInput,
+  liveFormValidation,
+  validationMessages,
+} from "@/lib/validation";
 import {
   useCreatePassenger,
   useCustomerPassengers,
@@ -53,6 +59,10 @@ export default function ProfilePassengersSection() {
   const [editorOpen, setEditorOpen] = useState(false);
   const [editing, setEditing] = useState<CustomerPassenger | null>(null);
   const [pendingDelete, setPendingDelete] = useState<CustomerPassenger | null>(null);
+  const [keyboardHints, setKeyboardHints] = useState<{
+    firstName?: string;
+    lastName?: string;
+  }>({});
 
   const params = useMemo(
     () => ({
@@ -97,12 +107,14 @@ export default function ProfilePassengersSection() {
 
   function openCreate() {
     setEditing(null);
+    setKeyboardHints({});
     reset(defaultFormValues);
     setEditorOpen(true);
   }
 
   function openEdit(row: CustomerPassenger) {
     setEditing(row);
+    setKeyboardHints({});
     setEditorOpen(true);
     reset({
       firstName: row.firstName ?? "",
@@ -125,7 +137,6 @@ export default function ProfilePassengersSection() {
   const genderValue = watch("gender");
   const ageCategoryValue = watch("ageCategoryId");
   const nationalityValue = watch("nationalityId");
-  const birthDateValue = watch("birthDate");
 
   const onSubmit = handleSubmit(async (values) => {
     const payload = {
@@ -135,7 +146,7 @@ export default function ProfilePassengersSection() {
       mobileNumber: values.mobileNumber,
       passportNumber: nullIfEmpty(values.passportNumber),
       gender: values.gender,
-      birthDate: values.birthDate,
+      birthDate: toEnglishDigits(values.birthDate),
       ageCategoryId: Number(values.ageCategoryId),
       nationalityId: Number(values.nationalityId),
       needsWheelchair: values.needsWheelchair,
@@ -346,16 +357,44 @@ export default function ProfilePassengersSection() {
                 dir="ltr"
                 className="[&_input]:text-left [&_input]:placeholder:text-left"
                 placeholder="Ali"
-                error={errors.firstName?.message}
-                {...register("firstName")}
+                autoComplete="given-name"
+                error={keyboardHints.firstName ?? errors.firstName?.message}
+                {...register("firstName", {
+                  onChange: (event) => {
+                    const { value, blockedNonEnglish } = applyEnglishNameInputFilter(
+                      event.target.value,
+                    );
+                    event.target.value = value;
+                    setKeyboardHints((prev) => ({
+                      ...prev,
+                      firstName: blockedNonEnglish
+                        ? validationMessages.firstNameEnglish
+                        : undefined,
+                    }));
+                  },
+                })}
               />
               <TextField
                 label="نام خانوادگی (انگلیسی)"
                 dir="ltr"
                 className="[&_input]:text-left [&_input]:placeholder:text-left"
                 placeholder="Rezaei"
-                error={errors.lastName?.message}
-                {...register("lastName")}
+                autoComplete="family-name"
+                error={keyboardHints.lastName ?? errors.lastName?.message}
+                {...register("lastName", {
+                  onChange: (event) => {
+                    const { value, blockedNonEnglish } = applyEnglishNameInputFilter(
+                      event.target.value,
+                    );
+                    event.target.value = value;
+                    setKeyboardHints((prev) => ({
+                      ...prev,
+                      lastName: blockedNonEnglish
+                        ? validationMessages.lastNameEnglish
+                        : undefined,
+                    }));
+                  },
+                })}
               />
             </div>
             <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
@@ -376,8 +415,15 @@ export default function ProfilePassengersSection() {
             </div>
             <TextField
               label="شماره پاسپورت"
+              maxLength={9}
+              dir="ltr"
+              className="[&_input]:text-left [&_input]:placeholder:text-left"
               error={errors.passportNumber?.message}
-              {...register("passportNumber")}
+              {...register("passportNumber", {
+                onChange: (event) => {
+                  event.target.value = filterPassportInput(event.target.value);
+                },
+              })}
             />
             <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
               <Select
@@ -406,7 +452,6 @@ export default function ProfilePassengersSection() {
                     );
                   },
                 })}
-                value={birthDateValue}
               />
             </div>
             <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">

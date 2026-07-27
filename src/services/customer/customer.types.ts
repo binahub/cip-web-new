@@ -35,6 +35,7 @@ export interface UpdateCustomerInfoPayload {
   nationalityId: number;
   firstName: string;
   lastName: string;
+  /** Jalali or Gregorian calendar date as `YYYY/MM/DD`. */
   birthDate: string;
   gender: string;
 }

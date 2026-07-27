@@ -148,7 +148,7 @@ export interface FinalizePaymentBase {
   amount: number;
 }
 
-export interface FinalizePostpaidPayload extends FinalizePaymentBase {}
+export type FinalizePostpaidPayload = FinalizePaymentBase;
 
 export interface FinalizeWalletPayload extends FinalizePaymentBase {
   walletAccountId: number;
@@ -288,6 +288,8 @@ export interface FinalizedReservation {
   flightDate: string;
   currentStatus: string;
   paymentStatus: string;
+  currentStatusObject: ValueDescription;
+  paymentStatusObject: ValueDescription;
   finalAmount: number;
   services: FinalizedReservationService[];
   passengers: FinalizedReservationPassenger[];

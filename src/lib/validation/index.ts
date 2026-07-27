@@ -20,6 +20,7 @@ export const validationMessages = {
   birthDateFormat: "تاریخ تولد را به صورت ۱۳۶۶/۰۶/۱۸ یا 1986/06/18 وارد کنید.",
   birthDateInvalid: "ماه یا روز تاریخ تولد معتبر نیست.",
   birthDateIsoFormat: "تاریخ تولد را انتخاب کنید.",
+  passportMax: "شماره پاسپورت حداکثر ۹ کاراکتر است.",
 } as const;
 
 /** Shared RHF options: validate after first interaction, then live on change. */
@@ -30,6 +31,35 @@ export const liveFormValidation = {
 
 /** Latin letters only; spaces / hyphen / apostrophe allowed between parts. */
 const ENGLISH_NAME_PATTERN = /^[A-Za-z]+(?:[ '\-][A-Za-z]+)*$/;
+
+/** True when input includes characters not allowed in English name fields. */
+export function hasRejectedEnglishNameChars(raw: string): boolean {
+  return /[^A-Za-z '\-]/.test(raw);
+}
+
+/** Strip non-English name characters while typing (keeps A–Z, space, ' , -). */
+export function filterEnglishNameInput(raw: string, maxLength = 50): string {
+  return raw.replace(/[^A-Za-z '\-]/g, "").slice(0, maxLength);
+}
+
+/**
+ * Filter English-name input and report whether non-English chars were blocked
+ * (so the UI can prompt the user to switch keyboard language).
+ */
+export function applyEnglishNameInputFilter(
+  raw: string,
+  maxLength = 50,
+): { value: string; blockedNonEnglish: boolean } {
+  return {
+    value: filterEnglishNameInput(raw, maxLength),
+    blockedNonEnglish: hasRejectedEnglishNameChars(raw),
+  };
+}
+
+/** Passport input: max 9 characters. */
+export function filterPassportInput(raw: string, maxLength = 9): string {
+  return raw.slice(0, maxLength);
+}
 
 export function isEnglishName(value: string): boolean {
   return ENGLISH_NAME_PATTERN.test(value.trim());
@@ -131,6 +161,9 @@ export const fieldSchemas = {
     .trim()
     .min(1, validationMessages.birthDateRequired)
     .refine(isValidIsoDateInput, validationMessages.birthDateIsoFormat),
+
+  /** Empty allowed; max 9 characters when filled. */
+  passportNumberOptional: z.string().trim().max(9, validationMessages.passportMax),
 } as const;
 
 export type FieldErrors = Record<string, string>;

@@ -222,7 +222,7 @@ export default function ProfileInfoSection() {
             <button
               type="submit"
               disabled={updateMutation.isPending || !isDirty}
-              className="flex h-14 flex-1 items-center justify-center rounded-2xl bg-accent transition-opacity hover:opacity-90 disabled:opacity-50 sm:flex-none sm:min-w-[200px] sm:px-8"
+              className="flex h-14 min-h-14 w-full shrink-0 items-center justify-center rounded-2xl bg-accent transition-opacity hover:opacity-90 disabled:opacity-50 sm:w-auto sm:min-w-[200px] sm:px-8"
             >
               <span className="text-base font-extrabold text-black">
                 {updateMutation.isPending ? "در حال ذخیره..." : "ذخیره تغییرات"}
@@ -232,7 +232,7 @@ export default function ProfileInfoSection() {
               type="button"
               onClick={closeEdit}
               disabled={updateMutation.isPending}
-              className="flex h-14 flex-1 items-center justify-center rounded-2xl border border-border-input text-text-secondary transition-opacity hover:bg-cta-pill-bg disabled:opacity-50 sm:flex-none sm:min-w-[140px] sm:px-6"
+              className="flex h-14 min-h-14 w-full shrink-0 items-center justify-center rounded-2xl border border-border-input text-text-secondary transition-opacity hover:bg-cta-pill-bg disabled:opacity-50 sm:w-auto sm:min-w-[140px] sm:px-6"
             >
               انصراف
             </button>

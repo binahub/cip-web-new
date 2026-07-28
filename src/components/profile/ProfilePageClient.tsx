@@ -136,13 +136,13 @@ export default function ProfilePageClient() {
                   {displayName}
                 </h1>
               </div>
-              <button
+              {/* <button
                 type="button"
                 onClick={() => router.push("/")}
                 className="rounded-xl border border-border-input px-4 py-2 text-sm text-text-secondary hover:text-white"
               >
                 بازگشت به صفحه اصلی
-              </button>
+              </button> */}
             </div>
 
             <div className="app-scroll mb-6 flex gap-2 overflow-x-auto overscroll-x-contain pb-1.5">

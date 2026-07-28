@@ -21,6 +21,7 @@ import {
 import type {
   FinalizedReservation,
   ReservationDraft,
+  WalletAccountOption,
 } from "@/services/reservation/reservation.types";
 
 interface StepPaymentProps {
@@ -70,7 +71,7 @@ export default function StepPayment({
     finalizePostpaidMutation.isPending || finalizeWalletMutation.isPending;
 
   const walletOptions =
-    walletInfo?.walletAccounts.map((account) => ({
+    walletInfo?.walletAccounts.map((account: WalletAccountOption) => ({
       value: String(account.id),
       label: `${account.walletAccountCurrencyObject.description} - (${formatPrice(account.balance) + " ريال"})`,
     })) ?? [];

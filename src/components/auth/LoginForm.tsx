@@ -82,7 +82,7 @@ export default function LoginForm({ onSuccess, onGoSignup }: LoginFormProps) {
       <div className="space-y-1 text-right">
         <h2 className="text-xl font-bold text-white sm:text-2xl">ورود به حساب</h2>
         <p className="text-sm text-text-secondary">
-          برای شروع سفارش وارد حساب کاربری خود شوید.
+          برای شروع رزرو وارد حساب کاربری خود شوید.
         </p>
       </div>
 

@@ -356,7 +356,7 @@ export default function ProfilePassengersSection() {
                 label="نام (انگلیسی)"
                 dir="ltr"
                 className="[&_input]:text-left [&_input]:placeholder:text-left"
-                placeholder="Ali"
+                // placeholder="Ali"
                 autoComplete="given-name"
                 error={keyboardHints.firstName ?? errors.firstName?.message}
                 {...register("firstName", {
@@ -378,7 +378,7 @@ export default function ProfilePassengersSection() {
                 label="نام خانوادگی (انگلیسی)"
                 dir="ltr"
                 className="[&_input]:text-left [&_input]:placeholder:text-left"
-                placeholder="Rezaei"
+                // placeholder="Rezaei"
                 autoComplete="family-name"
                 error={keyboardHints.lastName ?? errors.lastName?.message}
                 {...register("lastName", {
@@ -408,7 +408,7 @@ export default function ProfilePassengersSection() {
                 inputMode="tel"
                 dir="ltr"
                 className="[&_input]:text-left [&_input]:placeholder:text-left"
-                placeholder="09123456789"
+                // placeholder="09123456789"
                 error={errors.mobileNumber?.message}
                 {...register("mobileNumber")}
               />

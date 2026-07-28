@@ -154,7 +154,7 @@ function ReservationDetailContent({ detail }: { detail: CustomerReservationDetai
 
   return (
     <div className="space-y-4" dir="rtl">
-      <div className="flex flex-wrap items-center gap-2">
+      {/* <div className="flex flex-wrap items-center gap-2">
         {hasDisplayValue(statusLabel) ? (
           <span className="rounded-lg border border-accent/30 bg-accent/10 px-2.5 py-1 text-xs font-semibold text-accent">
             {statusLabel}
@@ -165,7 +165,7 @@ function ReservationDetailContent({ detail }: { detail: CustomerReservationDetai
             پرداخت: {paymentStatusLabel}
           </span>
         ) : null}
-      </div>
+      </div> */}
 
       <DetailSection title="اطلاعات رزرو">
         <DetailRow label="شماره رزرو" value={detail.reservationNumber} ltr />

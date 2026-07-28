@@ -15,6 +15,7 @@ import {
 import { liveFormValidation } from "@/lib/validation";
 import { useLookupSelectOptions } from "@/services/lookups/lookups.queries";
 import { useActiveSubServiceItems } from "@/services/main-services/main-services.queries";
+import type { ActiveMainServiceSummaryItem } from "@/services/main-services/main-services.types";
 import { useAddDraftServices } from "@/services/reservation/reservation.queries";
 import type { ReservationDraft } from "@/services/reservation/reservation.types";
 
@@ -45,13 +46,15 @@ export default function StepServices({ draft, onBack, onSuccess }: StepServicesP
     nationalitiesLoading,
   } = useLookupSelectOptions();
 
-  const serviceOptions = (mainServices ?? []).map((item) => ({
+  const serviceOptions = (mainServices ?? []).map((item: ActiveMainServiceSummaryItem) => ({
     value: item.mainService.id,
     label: item.mainService.name,
   }));
 
   const getSymbolByServiceId = (id: string) =>
-    (mainServices ?? []).find((item) => item.mainService.id === id)?.mainService.symbol;
+    (mainServices ?? []).find(
+      (item: ActiveMainServiceSummaryItem) => item.mainService.id === id,
+    )?.mainService.symbol;
 
   const {
     register,

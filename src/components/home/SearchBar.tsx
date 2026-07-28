@@ -33,7 +33,7 @@ export default function SearchBar() {
   return (
     <form
       onSubmit={handleSubmit}
-      className="mt-4 w-full rounded-3xl bg-search-card-bg p-3 sm:mt-6 sm:flex sm:h-[104px] sm:items-center sm:gap-4 sm:p-0 sm:px-4 lg:gap-6"
+      className="mt-4 w-full rounded-3xl bg-search-card-bg p-3 sm:mt-6 sm:flex sm:items-center sm:gap-4 sm:px-4 sm:py-4 lg:gap-6"
     >
       <div className="flex w-full min-w-0 flex-col gap-3 sm:flex-1 sm:flex-row sm:items-center sm:gap-3 lg:gap-4">
         <Select
@@ -59,7 +59,7 @@ export default function SearchBar() {
 
       <button
         type="submit"
-        className="mt-3 flex h-14 w-full shrink-0 items-center justify-center rounded-xl bg-accent sm:mt-0 sm:h-[88px] sm:w-[173px] sm:rounded-2xl"
+        className="mt-3 flex h-14 w-full shrink-0 items-center justify-center rounded-2xl bg-accent sm:mt-0 sm:w-auto sm:min-w-[148px] sm:px-6"
       >
         <span dir="rtl" className="text-sm font-extrabold text-black sm:text-base">
           بررسی خدمات

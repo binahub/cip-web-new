@@ -1,0 +1,38 @@
+# Example nginx config for serving the Next.js static export (`out/`).
+#
+# Deploy steps:
+# 1. Copy the contents of `out/` to the nginx root (e.g. /var/www/cip-web).
+# 2. Edit `runtime-config.js` in that root — set API_BASE_URL for this env.
+#    Changing only that file does NOT require a rebuild.
+# 3. Ensure the API allows CORS from this site's origin.
+#
+# Put only public (non-secret) values in runtime-config.js.
+
+server {
+    listen 80;
+    server_name example.com;
+
+    root /var/www/cip-web;
+    index index.html;
+
+    # Hard refresh on /services/:id → exported shell at /services/index.html
+    location ~ ^/services/[^/]+/?$ {
+        try_files /services/index.html =404;
+    }
+
+    location / {
+        try_files $uri $uri.html $uri/ =404;
+    }
+
+    # Optional: cache hashed Next assets aggressively
+    location /_next/static/ {
+        expires 1y;
+        add_header Cache-Control "public, immutable";
+    }
+
+    # Do not long-cache runtime config — DevOps may change it without a new build
+    location = /runtime-config.js {
+        expires -1;
+        add_header Cache-Control "no-store";
+    }
+}

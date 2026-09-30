@@ -1,5 +1,4 @@
 import Image from "next/image";
-import Link from "next/link";
 import { ArrowLeft } from "iconsax-react";
 import Badge from "@/components/ui/Badge";
 
@@ -128,8 +127,8 @@ export default function ServiceCard({
           </span>
         </div>
 
-        <Link
-          href={`/services/${id}`}
+        <a
+          href={`/services/${id}/`}
           className={`flex items-center justify-center rounded-lg bg-cta-pill-bg px-2 py-1 transition-colors hover:opacity-80 ${
             compact ? "h-7" : "h-8"
           }`}
@@ -142,7 +141,7 @@ export default function ServiceCard({
             مشاهده جزئیات
           </span>
           <ArrowLeft size={compact ? 16 : 20} color="#C9A063" variant="Linear" />
-        </Link>
+        </a>
       </div>
     </div>
   );

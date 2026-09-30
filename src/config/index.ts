@@ -1,21 +1,43 @@
 /**
  * App config — single place to read env vars.
  *
- * IMPORTANT: Next.js only inlines `NEXT_PUBLIC_*` into the client bundle when
- * accessed with a static key (`process.env.NEXT_PUBLIC_FOO`). Dynamic access
- * like `process.env[name]` is undefined in the browser.
+ * Production/stage (static export): values come from `/runtime-config.js`
+ * which sets `window.__ENV__` before the app loads. DevOps can change that
+ * file without rebuilding.
  *
- * Values come from `.env.local` (local) or the host/CI env (stage/prod).
- * See `.env.example`.
+ * Local optional fallback: `NEXT_PUBLIC_API_BASE_URL` in `.env.local`.
  */
-const apiBaseUrl = process.env.NEXT_PUBLIC_API_BASE_URL;
 
-if (!apiBaseUrl) {
-  throw new Error(
-    "Missing NEXT_PUBLIC_API_BASE_URL. Copy .env.example to .env.local and restart the dev server.",
-  );
+export type RuntimeEnv = {
+  API_BASE_URL?: string;
+};
+
+declare global {
+  interface Window {
+    __ENV__?: RuntimeEnv;
+  }
+}
+
+function resolveApiBaseUrl(): string {
+  if (typeof window !== "undefined") {
+    const fromRuntime = window.__ENV__?.API_BASE_URL?.trim();
+    if (fromRuntime) return fromRuntime;
+  }
+
+  const fromBuild = process.env.NEXT_PUBLIC_API_BASE_URL?.trim();
+  if (fromBuild) return fromBuild;
+
+  return "";
 }
 
 export const config = {
-  apiBaseUrl,
+  get apiBaseUrl(): string {
+    const url = resolveApiBaseUrl();
+    if (!url) {
+      throw new Error(
+        "Missing API base URL. For static hosting, set API_BASE_URL in runtime-config.js. For local dev, copy .env.example to .env.local or edit public/runtime-config.js.",
+      );
+    }
+    return url;
+  },
 } as const;

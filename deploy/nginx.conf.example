@@ -1,7 +1,8 @@
 # Example nginx config for serving the Next.js static export (`out/`).
 #
 # Deploy steps:
-# 1. Copy the contents of `out/` to the nginx root (e.g. /var/www/cip-web).
+# 1. Copy the *contents* of `out/` to the nginx root (e.g. /var/www/cip-web).
+#    Do not nest an extra `out/` folder under the root.
 # 2. Edit `runtime-config.js` in that root — set API_BASE_URL for this env.
 #    Changing only that file does NOT require a rebuild.
 # 3. Ensure the API allows CORS from this site's origin.
@@ -14,6 +15,21 @@ server {
 
     root /var/www/cip-web;
     index index.html;
+
+    # Static assets: serve the file only (never fall through to HTML rewrites).
+    # This avoids 404s on root-level and nested public files (.svg, .png, …).
+    location ~* \.(?:js|css|png|jpe?g|gif|ico|svg|webp|woff2?|ttf|map|txt)$ {
+        try_files $uri =404;
+        expires 7d;
+        add_header Cache-Control "public";
+    }
+
+    # Do not long-cache runtime config — DevOps may change it without a new build
+    location = /runtime-config.js {
+        expires -1;
+        add_header Cache-Control "no-store";
+        try_files $uri =404;
+    }
 
     # Hard refresh on /services/:id → exported shell at /services/index.html
     location ~ ^/services/[^/]+/?$ {
@@ -28,11 +44,5 @@ server {
     location /_next/static/ {
         expires 1y;
         add_header Cache-Control "public, immutable";
-    }
-
-    # Do not long-cache runtime config — DevOps may change it without a new build
-    location = /runtime-config.js {
-        expires -1;
-        add_header Cache-Control "no-store";
     }
 }

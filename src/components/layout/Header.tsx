@@ -39,7 +39,7 @@ export default function Header() {
               className="object-contain"
             />
             <Image
-              src="/cip-lounge-text-header.svg"
+              src="/brand/cip-lounge-text-header.svg"
               alt="Mehrabad CIP Lounge"
               width={104}
               height={24}

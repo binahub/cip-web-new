@@ -19,9 +19,14 @@ import type { AuthSessionData } from "@/services/auth/auth.types";
 interface LoginFormProps {
   onSuccess: (session: AuthSessionData) => void;
   onGoSignup: () => void;
+  onGoForgotPassword: () => void;
 }
 
-export default function LoginForm({ onSuccess, onGoSignup }: LoginFormProps) {
+export default function LoginForm({
+  onSuccess,
+  onGoSignup,
+  onGoForgotPassword,
+}: LoginFormProps) {
   const { data: captcha, isPending: captchaLoading, isFetching } = useCaptcha(true);
   const refreshCaptcha = useRefreshCaptcha();
   const loginMutation = useLoginMutation();
@@ -87,8 +92,8 @@ export default function LoginForm({ onSuccess, onGoSignup }: LoginFormProps) {
       </div>
 
       <TextField
-        label="نام کاربری"
-        placeholder="نام کاربری خود را وارد کنید"
+        label="کد ملی"
+        placeholder="کد ملی خود را وارد کنید"
         autoComplete="username"
         leadingIcon={<User size={20} color="#969696" variant="Linear" />}
         error={errors.username?.message || apiFieldErrors.username}
@@ -118,6 +123,16 @@ export default function LoginForm({ onSuccess, onGoSignup }: LoginFormProps) {
         error={errors.password?.message || apiFieldErrors.password}
         {...register("password")}
       />
+
+      <div className="flex justify-start">
+        <button
+          type="button"
+          onClick={onGoForgotPassword}
+          className="text-sm font-medium text-accent transition-opacity hover:opacity-80"
+        >
+          فراموشی رمز عبور؟
+        </button>
+      </div>
 
       <CaptchaField
         captcha={captcha}

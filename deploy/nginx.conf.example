@@ -1,0 +1,53 @@
+# Example nginx config for serving the Next.js static export (`out/`).
+#
+# Deploy steps:
+# 1. Copy the *contents* of `out/` to the nginx root (e.g. /var/www/cip-web).
+#    Do not nest an extra `out/` folder under the root.
+# 2. Edit `runtime-config.js` in that root — set API_BASE_URL for this env.
+#    Changing only that file does NOT require a rebuild.
+# 3. Ensure the API allows CORS from this site's origin.
+#
+# Service detail URLs:
+#   Canonical (works with static export): /services/?id=123
+#   Pretty path /services/123/ is redirected to the canonical form below.
+#
+# Put only public (non-secret) values in runtime-config.js.
+
+server {
+    listen 80;
+    server_name cip.cip-mehr.ir;
+
+    root /var/www/cip-web;
+    index index.html;
+
+    # Static assets: serve the file only (never fall through to HTML rewrites).
+    location ~* \.(?:js|css|png|jpe?g|gif|ico|svg|webp|woff2?|ttf|map|txt)$ {
+        try_files $uri =404;
+        expires 7d;
+        add_header Cache-Control "public";
+    }
+
+    # Do not long-cache runtime config — DevOps may change it without a new build
+    location = /runtime-config.js {
+        expires -1;
+        add_header Cache-Control "no-store";
+        try_files $uri =404;
+    }
+
+    # Pretty /services/:id → canonical query form (static export cannot invent :id pages).
+    location ~ ^/services/([^/]+)/?$ {
+        return 302 /services/?id=$1;
+    }
+
+    location /_next/static/ {
+        expires 1y;
+        add_header Cache-Control "public, immutable";
+    }
+
+    location / {
+        # Do NOT append /index.html here.
+        # Wrong:  try_files $uri $uri/ /index.html;
+        # That SPA fallback makes unknown paths show the home page.
+        try_files $uri $uri.html $uri/ =404;
+    }
+}

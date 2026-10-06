@@ -1,6 +1,7 @@
 "use client";
 
 import { CloseSquare } from "iconsax-react";
+import ForgotPasswordForm from "@/components/auth/ForgotPasswordForm";
 import LoginForm from "@/components/auth/LoginForm";
 import SignupForm from "@/components/auth/SignupForm";
 import { useBodyScrollLock } from "@/hooks/useBodyScrollLock";
@@ -68,17 +69,20 @@ export default function AuthModal({
           {view === "login" ? (
             <LoginForm
               onGoSignup={() => onViewChange("signup")}
+              onGoForgotPassword={() => onViewChange("forgot-password")}
               onSuccess={(session) =>
                 onAuthenticated(session, { successMessage: "با موفقیت وارد شدید." })
               }
             />
-          ) : (
+          ) : view === "signup" ? (
             <SignupForm
               onGoLogin={() => onViewChange("login")}
               onSuccess={(session) =>
                 onAuthenticated(session, { successMessage: "ثبت‌نام با موفقیت انجام شد." })
               }
             />
+          ) : (
+            <ForgotPasswordForm onGoLogin={() => onViewChange("login")} />
           )}
         </div>
       </div>

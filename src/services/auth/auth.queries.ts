@@ -1,12 +1,16 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import {
   fetchCaptcha,
+  forgotPasswordSendOtpRequest,
+  forgotPasswordVerifyOtpRequest,
   loginRequest,
   logoutRequest,
   signupSendOtpRequest,
   signupVerifyOtpRequest,
 } from "./auth.api";
 import type {
+  ForgotPasswordSendOtpPayload,
+  ForgotPasswordVerifyOtpPayload,
   LoginPayload,
   SignupSendOtpPayload,
   SignupVerifyOtpPayload,
@@ -51,6 +55,22 @@ export function useSignupSendOtpMutation() {
 export function useSignupVerifyOtpMutation() {
   return useMutation({
     mutationFn: (payload: SignupVerifyOtpPayload) => signupVerifyOtpRequest(payload),
+    meta: { suppressErrorToast: true },
+  });
+}
+
+export function useForgotPasswordSendOtpMutation() {
+  return useMutation({
+    mutationFn: (payload: ForgotPasswordSendOtpPayload) =>
+      forgotPasswordSendOtpRequest(payload),
+    meta: { suppressErrorToast: true },
+  });
+}
+
+export function useForgotPasswordVerifyOtpMutation() {
+  return useMutation({
+    mutationFn: (payload: ForgotPasswordVerifyOtpPayload) =>
+      forgotPasswordVerifyOtpRequest(payload),
     meta: { suppressErrorToast: true },
   });
 }

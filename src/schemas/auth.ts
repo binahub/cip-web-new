@@ -31,3 +31,16 @@ export const signupVerifySchema = z
   });
 
 export type SignupVerifyFormValues = z.infer<typeof signupVerifySchema>;
+
+export const forgotPasswordInfoSchema = z.object({
+  nationalCode: fieldSchemas.nationalCode,
+  mobileNumber: fieldSchemas.mobileNumber,
+  captchaAnswer: fieldSchemas.captchaAnswer,
+});
+
+export type ForgotPasswordInfoFormValues = z.infer<typeof forgotPasswordInfoSchema>;
+
+/** Same shape as signup verify: OTP + new password + confirm. */
+export const forgotPasswordVerifySchema = signupVerifySchema;
+
+export type ForgotPasswordVerifyFormValues = SignupVerifyFormValues;

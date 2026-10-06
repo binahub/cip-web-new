@@ -1,19 +1,9 @@
 import type { Metadata } from "next";
-import { Geist, Geist_Mono } from "next/font/google";
 import localFont from "next/font/local";
+import Script from "next/script";
 import { AuthProvider } from "@/providers/auth-provider";
 import QueryProvider from "@/providers/query-provider";
 import "./globals.css";
-
-const geistSans = Geist({
-  variable: "--font-geist-sans",
-  subsets: ["latin"],
-});
-
-const geistMono = Geist_Mono({
-  variable: "--font-geist-mono",
-  subsets: ["latin"],
-});
 
 const yekanBakh = localFont({
   src: [
@@ -40,9 +30,10 @@ export default function RootLayout({
     <html
       dir="rtl"
       lang="fa"
-      className={`${geistSans.variable} ${geistMono.variable} ${yekanBakh.variable} h-full antialiased`}
+      className={`${yekanBakh.variable} h-full antialiased`}
     >
       <body className="min-h-full flex flex-col overflow-x-hidden">
+        <Script src="/runtime-config.js" strategy="beforeInteractive" />
         <QueryProvider>
           <AuthProvider>
             <main className="flex-1 overflow-x-hidden">{children}</main>

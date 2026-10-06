@@ -32,14 +32,14 @@ export default function Hero() {
             className="mb-2 object-contain w-[50px] h-[51px] sm:w-[76px] sm:h-[77px]"
           />
           <Image
-            src="/cip-lounge-text-wide.svg"
+            src="/brand/cip-lounge-text-wide.svg"
             alt="Mehrabad CIP Lounge"
             width={435}
             height={23}
             className="w-[250px] sm:w-[435px] h-auto"
           />
           <Image
-            src="/cip-mehr-farsi-text.svg"
+            src="/brand/cip-mehr-farsi-text.svg"
             alt="سی آی پی فرودگاه مهرآباد"
             width={181}
             height={21}

@@ -3,6 +3,9 @@ import type { CipApiResponse } from "@/types";
 import type {
   AuthSessionData,
   CaptchaData,
+  ForgotPasswordSendOtpData,
+  ForgotPasswordSendOtpPayload,
+  ForgotPasswordVerifyOtpPayload,
   LoginPayload,
   SignupSendOtpData,
   SignupSendOtpPayload,
@@ -65,6 +68,38 @@ export async function signupVerifyOtpRequest(
   }
 
   return data.data;
+}
+
+export async function forgotPasswordSendOtpRequest(
+  payload: ForgotPasswordSendOtpPayload,
+): Promise<ForgotPasswordSendOtpData> {
+  const { data } = await apiClient.post<CipApiResponse<ForgotPasswordSendOtpData>>(
+    "/auth/forgotPassword/sendOtp",
+    payload,
+    { skipAuth: true },
+  );
+
+  if (!data.data) {
+    throw { message: "ارسال کد تایید ناموفق بود.", status: 400 };
+  }
+
+  return data.data;
+}
+
+export async function forgotPasswordVerifyOtpRequest(
+  payload: ForgotPasswordVerifyOtpPayload,
+): Promise<string> {
+  const { data } = await apiClient.post<CipApiResponse<string>>(
+    "/auth/forgotPassword/verifyOtp",
+    payload,
+    { skipAuth: true },
+  );
+
+  if (!data.success) {
+    throw { message: "بازیابی رمز عبور ناموفق بود.", status: 400 };
+  }
+
+  return data.data ?? "رمز عبور با موفقیت تغییر کرد.";
 }
 
 /** Invalidates the current access token on the server. Requires Bearer auth. */

@@ -40,8 +40,8 @@
   --font-kavo-serif: "Kavo Serif", serif;
   --font-rokh: "Rokh", serif;
   --font-inter: "Inter", sans-serif;
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
+  --font-sans: var(--font-yekan-bakh-local);
+  --font-mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
 }
 
 body {

@@ -20,7 +20,6 @@ declare module "axios" {
 }
 
 const apiClient = axios.create({
-  baseURL: config.apiBaseUrl,
   timeout: 100_000,
   headers: {
     "Content-Type": "application/json",
@@ -89,6 +88,10 @@ function resolveHttpErrorMessage(
 
 apiClient.interceptors.request.use(
   (request: InternalAxiosRequestConfig) => {
+    // Resolve at request time so static builds can use runtime-config.js
+    // without baking NEXT_PUBLIC_* into the bundle.
+    request.baseURL = config.apiBaseUrl;
+
     if (typeof FormData !== "undefined" && request.data instanceof FormData) {
       delete request.headers["Content-Type"];
     }

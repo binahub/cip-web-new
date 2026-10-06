@@ -51,4 +51,20 @@ export interface SignupVerifyOtpPayload {
   repeatPassword: string;
 }
 
-export type AuthModalView = "login" | "signup";
+export interface ForgotPasswordSendOtpPayload {
+  nationalCode: string;
+  mobileNumber: string;
+  captchaUuid: string;
+  captchaAnswer: string;
+}
+
+export type ForgotPasswordSendOtpData = SignupSendOtpData;
+
+export interface ForgotPasswordVerifyOtpPayload {
+  hashedCode: string;
+  otp: string;
+  password: string;
+  repeatPassword: string;
+}
+
+export type AuthModalView = "login" | "signup" | "forgot-password";

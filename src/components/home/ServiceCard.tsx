@@ -128,7 +128,7 @@ export default function ServiceCard({
         </div>
 
         <a
-          href={`/services/${id}/`}
+          href={`/services/?id=${encodeURIComponent(id)}`}
           className={`flex items-center justify-center rounded-lg bg-cta-pill-bg px-2 py-1 transition-colors hover:opacity-80 ${
             compact ? "h-7" : "h-8"
           }`}

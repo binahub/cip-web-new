@@ -4,5 +4,5 @@
  * Put only non-secret client values here (never tokens/passwords).
  */
 window.__ENV__ = {
-  API_BASE_URL: "http://cip.cip-mehr.ir/cip/api/v1",
+  API_BASE_URL: "https://cip.cip-mehr.ir/cip/api/v1",
 };
